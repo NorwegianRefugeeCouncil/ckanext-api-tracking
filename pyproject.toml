@@ -1,0 +1,86 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ckanext-tracking"
+# see tool.setuptools.dynamic in this file
+dynamic = ["version"]
+description = "CKAN extension to track users activity"
+readme = "README.md"
+requires-python = ">=3.10"
+
+authors = [
+    { name = "Norwegian Refugee Council (NRC)", email = "nrc@nrc.no" },
+    { name = "Open Knowledge Foundation", email = "info@okfn.org" },
+]
+maintainers = [
+  { name = "Open Knowledge Foundation", email = "info@okfn.org" },
+]
+
+keywords = ["CKAN", "Tracking", "Activity"]
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/NorwegianRefugeeCouncil/ckanext-tracking"
+"Issues" = "https://github.com/NorwegianRefugeeCouncil/ckanext-tracking/issues"
+
+# [project.dependencies]
+# Dependencies should be listed in requirements.txt as per CKAN extension best practices
+# Example:
+# requests = "*"
+# flask = "*"
+
+[project.optional-dependencies]
+# Optional dependencies can be listed here
+# dev = [
+#     "pytest",
+#     "flake8",
+# ]
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["contrib", "docs", "tests*"]
+namespaces = true
+
+[tool.setuptools.package-data]
+include = ["*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "ckanext.tracking.__VERSION__"}
+
+[tool.setuptools.data-files]
+# Data files can be listed here
+# Example:
+# "my_data" = ["path/to/data/file"]
+
+[project.scripts]
+# Entry points for console scripts can be added here
+# Example:
+# your_command = "your_module:main"
+
+[project.entry-points."ckan.plugins"]
+tracking = "ckanext.tracking.plugin:TrackingPlugin"
+
+[project.entry-points."babel.extractors"]
+ckan = "ckan.lib.extract:extract_ckan"
+
+[tool.babel.extractors.ckanext]
+"**.py" = "python"
+"**.js" = "javascript"
+"**/templates/**.html" = "ckan"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::sqlalchemy.exc.SADeprecationWarning",
+    "ignore::sqlalchemy.exc.SAWarning",
+    "ignore::DeprecationWarning"
+]
+addopts = "--ckan-ini test.ini"

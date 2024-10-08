@@ -1,0 +1,14 @@
+# tracking-js:
+#   filter: rjsmin
+#   output: ckanext-tracking/%(version)s-tracking.js
+#   contents:
+#     - js/tracking.js
+#   extra:
+#     preload:
+#       - base/main
+
+# tracking-css:
+#   filter: cssrewrite
+#   output: ckanext-tracking/%(version)s-tracking.css
+#   contents:
+#     - css/tracking.css
