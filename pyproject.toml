@@ -18,10 +18,10 @@ maintainers = [
   { name = "Open Knowledge Foundation", email = "info@okfn.org" },
 ]
 
-keywords = ["CKAN", "Tracking", "Activity"]
+keywords = ["CKAN", "Tracking", "Activity", "API", "token"]
 
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",

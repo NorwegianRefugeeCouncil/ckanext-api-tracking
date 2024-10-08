@@ -1,8 +1,8 @@
 [![Tests](https://github.com/NorwegianRefugeeCouncil/ckanext-tracking/workflows/Tests/badge.svg?branch=main)](https://github.com/NorwegianRefugeeCouncil/ckanext-tracking/actions)
 
-# CKAN user token usage
+# CKAN tracking extension
 
-CKAN extension to track users API tokens usage
+CKAN extension to track users activities on the site through the CKAN API.
 
 ## Requirements
 
@@ -10,7 +10,7 @@ Compatibility with core CKAN versions:
 
 | CKAN version    | Compatible?   |
 | --------------- | ------------- |
-| 2.10            | not yet       |
+| 2.10            | in progress   |
 | 2.11            | not yet       |
 
 
@@ -21,7 +21,7 @@ To install ckanext-tracking:
 Install the package:
 
     pip install -e "git+https://github.com/NorwegianRefugeeCouncil/ckanext-tracking.git@main#egg=ckanext-tracking"
-    pip install -r https://raw.githubusercontent.com/okfn/ckanext-tracking/main/requirements.txt
+    pip install -r https://raw.githubusercontent.com/NorwegianRefugeeCouncil/ckanext-tracking/main/requirements.txt
 
 or clone the source and install it on the virtualenv
 
