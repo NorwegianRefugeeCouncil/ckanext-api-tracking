@@ -5,11 +5,15 @@ from ckan.plugins import toolkit
 from ckanext.tracking.interfaces import IUsage
 from ckanext.tracking.middleware import TrackingUsageMiddleware
 
+from ckanext.tracking import actions, auth
+
 
 log = logging.getLogger(__name__)
 
 
 class TrackingPlugin(plugins.SingletonPlugin):
+    plugins.implements(plugins.IActions)
+    plugins.implements(plugins.IAuthFunctions)
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IMiddleware, inherit=True)
     plugins.implements(IUsage, inherit=True)
@@ -31,3 +35,17 @@ class TrackingPlugin(plugins.SingletonPlugin):
 
     # IUsage
     # Available to use dynamic functions like track_METHOD_TYPE
+
+    # IAthFunctions
+
+    def get_auth_functions(self):
+        return {
+            "most_accessed_dataset_with_token": auth.queries.most_accessed_dataset_with_token,
+        }
+
+    # IActions
+
+    def get_actions(self):
+        return {
+            "most_accessed_dataset_with_token": actions.queries.most_accessed_dataset_with_token,
+        }
