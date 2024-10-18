@@ -1,5 +1,5 @@
 from ckan import model
-from ckanext.tracking.models import Tracking
+from ckanext.tracking.models import TrackingUsage
 
 
 def get_most_accessed_dataset_with_token(limit=10):
@@ -21,13 +21,13 @@ def get_most_accessed_dataset_with_token(limit=10):
 
     """
     query = model.Session.query(
-        Tracking.object_id,
-        model.func.count(Tracking.object_id).label('total')
+        TrackingUsage.object_id,
+        model.func.count(TrackingUsage.object_id).label('total')
     ).filter(
-        Tracking.object_id.isnot(None),
-        Tracking.token_name.isnot(None),
-        Tracking.object_type == 'dataset'
-    ).group_by(Tracking.object_id).order_by(
+        TrackingUsage.object_id.isnot(None),
+        TrackingUsage.token_name.isnot(None),
+        TrackingUsage.object_type == 'dataset'
+    ).group_by(TrackingUsage.object_id).order_by(
         model.desc('total')
     ).limit(limit)
 
