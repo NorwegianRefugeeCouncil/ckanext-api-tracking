@@ -2,8 +2,10 @@ import logging
 from ckan import plugins
 from ckan.plugins import toolkit
 
+from ckanext.tracking import blueprints
 from ckanext.tracking.interfaces import IUsage
 from ckanext.tracking.middleware import TrackingUsageMiddleware
+from ckanext.tracking.auth import csv as auth_csv
 from ckanext.tracking.auth import queries as auth_queries
 from ckanext.tracking.actions import queries as action_queries
 
@@ -14,6 +16,7 @@ log = logging.getLogger(__name__)
 class TrackingPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IActions)
     plugins.implements(plugins.IAuthFunctions)
+    plugins.implements(plugins.IBlueprint)
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IMiddleware, inherit=True)
     plugins.implements(IUsage, inherit=True)
@@ -41,6 +44,7 @@ class TrackingPlugin(plugins.SingletonPlugin):
     def get_auth_functions(self):
         return {
             "most_accessed_dataset_with_token": auth_queries.most_accessed_dataset_with_token,
+            "most_accessed_dataset_with_token_csv": auth_csv.most_accessed_dataset_with_token_csv,
         }
 
     # IActions
@@ -49,3 +53,10 @@ class TrackingPlugin(plugins.SingletonPlugin):
         return {
             "most_accessed_dataset_with_token": action_queries.most_accessed_dataset_with_token,
         }
+
+    # IBlueprint
+
+    def get_blueprint(self):
+        return [
+            blueprints.tracking_csv_blueprint,
+        ]
