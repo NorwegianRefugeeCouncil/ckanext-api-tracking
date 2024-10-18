@@ -4,8 +4,8 @@ from ckan.plugins import toolkit
 
 from ckanext.tracking.interfaces import IUsage
 from ckanext.tracking.middleware import TrackingUsageMiddleware
-
-from ckanext.tracking import actions, auth
+from ckanext.tracking.auth import queries as auth_queries
+from ckanext.tracking.actions import queries as action_queries
 
 
 log = logging.getLogger(__name__)
@@ -40,12 +40,12 @@ class TrackingPlugin(plugins.SingletonPlugin):
 
     def get_auth_functions(self):
         return {
-            "most_accessed_dataset_with_token": auth.queries.most_accessed_dataset_with_token,
+            "most_accessed_dataset_with_token": auth_queries.most_accessed_dataset_with_token,
         }
 
     # IActions
 
     def get_actions(self):
         return {
-            "most_accessed_dataset_with_token": actions.queries.most_accessed_dataset_with_token,
+            "most_accessed_dataset_with_token": action_queries.most_accessed_dataset_with_token,
         }
