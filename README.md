@@ -40,16 +40,13 @@ or clone the source and install it on the virtualenv
 
 None at present
 
+## Data access
+
+URL to get CSV file with most accessed datasets with token: /tracking-csv/most-accessed-dataset-with-token.csv  
+API call: /api/action/most_accessed_dataset_with_token  
+
+In progress
+
 ## License
 
 [AGPL](https://www.gnu.org/licenses/agpl-3.0.en.html)
-
-## More content to be moved as documentation
-
-TODO
-
-URL to get CSV file with most accessed datasets with token:
-https://localhost:5000/tracking-csv/most-accessed-dataset-with-token.csv
-
-API call
-https://localhost:5000/api/action/most_accessed_dataset_with_token
