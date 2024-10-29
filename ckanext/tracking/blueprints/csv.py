@@ -45,8 +45,10 @@ def most_accessed_dataset_with_token():
             'total': row['total'],
         })
 
+    headers = ['Dataset ID', 'Dataset title', 'Dataset url', 'total']
+    
     buffer = StringIO()
-    writer = csv.DictWriter(buffer, fieldnames=rows[0].keys())
+    writer = csv.DictWriter(buffer, fieldnames=headers)
 
     writer.writeheader()
     for row in rows:
@@ -95,8 +97,9 @@ def most_accessed_token():
             'total': row['total'],
         })
 
+    headers = ['User ID', 'User fullname', 'User name', 'User url', 'total']
     buffer = StringIO()
-    writer = csv.DictWriter(buffer, fieldnames=rows[0].keys())
+    writer = csv.DictWriter(buffer, fieldnames=headers)
 
     writer.writeheader()
     for row in rows:
