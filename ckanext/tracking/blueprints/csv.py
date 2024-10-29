@@ -46,7 +46,6 @@ def most_accessed_dataset_with_token():
         })
 
     headers = ['Dataset ID', 'Dataset title', 'Dataset url', 'total']
-    
     buffer = StringIO()
     writer = csv.DictWriter(buffer, fieldnames=headers)
 
