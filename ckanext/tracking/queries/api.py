@@ -21,3 +21,21 @@ def get_most_accessed_dataset_with_token(limit=10):
     ).limit(limit)
 
     return query.all()
+
+
+def get_most_accessed_token(limit=10):
+    """
+    Get most accessed tokens
+    Returns a query result with the most accessed tokens
+    """
+    query = model.Session.query(
+        TrackingUsage.user_id,
+        TrackingUsage.token_name,
+        func.count(TrackingUsage.token_name).label('total')
+    ).filter(
+        TrackingUsage.token_name.isnot(None)
+    ).group_by(TrackingUsage.token_name, TrackingUsage.user_id).order_by(
+        desc('total')
+    ).limit(limit)
+
+    return query.all()
