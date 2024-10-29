@@ -24,7 +24,7 @@ def most_accessed_dataset_with_token():
     current_user_name = current_user.name if current_user else None
     context = {'user': current_user_name}
     toolkit.check_access('most_accessed_dataset_with_token_csv', context)
-    data = get_most_accessed_dataset_with_token(limit=1000)
+    data = get_most_accessed_dataset_with_token(limit=10)
 
     # Create CSV including package details
     rows = []
@@ -65,7 +65,7 @@ def most_accessed_token():
     current_user_name = current_user.name if current_user else None
     context = {'user': current_user_name}
     toolkit.check_access('most_accessed_token_csv', context)
-    data = get_most_accessed_token(limit=1000)
+    data = get_most_accessed_token(limit=10)
     """
     'user_id': user_id,
             'user_name': user_name,
