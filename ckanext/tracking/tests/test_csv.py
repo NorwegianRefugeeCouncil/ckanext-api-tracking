@@ -10,6 +10,7 @@ from ckanext.tracking.tests import factories as tf
 @pytest.fixture
 def base_data():
     obj = SimpleNamespace()
+    obj.sysadmin = factories.SysadminWithToken()
     obj.user1 = factories.UserWithToken()
     obj.user2 = factories.UserWithToken()
     obj.dataset1 = factories.Dataset()
@@ -26,15 +27,23 @@ def base_data():
 @pytest.mark.usefixtures('clean_db', 'tracking_migrate')
 class TestTrackingCSVView:
     """ Test basic tracking from requests """
-    def test_dataset_with_token_csv_no_auth(self, app):
-        url = url_for('tracking_csv.most_accessed_dataset_with_token')
+    def test_dataset_with_token_csv_no_user(self, app):
+        """ Test the endpoint is closed for anonymous users """
+        url = url_for('tracking_csv.most_accessed_dataset_with_token_csv')
         with pytest.raises(toolkit.NotAuthorized):
             app.get(url)
 
-    def test_dataset_with_token_csv(self, app, base_data):
-        url = url_for('tracking_csv.most_accessed_dataset_with_token')
-        # download the CSV
+    def test_dataset_with_token_csv_no_auth(self, app, base_data):
+        """ Test the endpoint is closed for regular users """
+        url = url_for('tracking_csv.most_accessed_dataset_with_token_csv')
         auth = {"Authorization": base_data.user1['token']}
+        with pytest.raises(toolkit.NotAuthorized):
+            app.get(url, extra_environ=auth)
+
+    def test_dataset_with_token_csv(self, app, base_data):
+        url = url_for('tracking_csv.most_accessed_dataset_with_token_csv')
+        # download the CSV
+        auth = {"Authorization": base_data.sysadmin['token']}
         response = app.get(url, extra_environ=auth)
         assert response.status_code == 200
         # save the response locally
