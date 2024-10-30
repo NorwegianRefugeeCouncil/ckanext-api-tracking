@@ -22,10 +22,8 @@ def all_token_usage_data(limit=1000):
     for row in data:
         user_id = row['user_id']
         user = model.User.get(user_id)
-        if user:
-            user_name = user.fullname or user.name
-        else:
-            user_name = None
+        user_name = user.name if user else None
+        user_fullname = user.fullname if user else None
         object_id = row['object_id']
         object_type = row['object_type']
         organization_url = None
@@ -55,7 +53,7 @@ def all_token_usage_data(limit=1000):
             'timestamp': row['timestamp'],
             'user_id': user_id,
             'user_name': user_name,
-            'user_fullname': user.fullname if user else None,
+            'user_fullname': user_fullname,
             'token_name': row['token_name'],
             'tracking_type': row['tracking_type'],
             'tracking_sub_type': row['tracking_sub_type'],
