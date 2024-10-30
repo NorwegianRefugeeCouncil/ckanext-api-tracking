@@ -54,7 +54,7 @@ class TestTrackingCSVView:
         # check the CSV content
         lines = full_response.splitlines()
         header = lines[0].split(',')
-        assert header == ['Dataset ID', 'Dataset title', 'Dataset url', 'total']
+        assert header == ['dataset_id', 'dataset_title', 'dataset_url', 'total']
         rows = lines[1:]
         # They are just two datasets
         assert len(rows) == 2
@@ -62,11 +62,11 @@ class TestTrackingCSVView:
             fields = row.split(',')
             if fields[0] == base_data.dataset1['id']:
                 assert fields[1] == base_data.dataset1['title']
-                assert fields[2] == url_for('dataset.read', id=base_data.dataset1['id'], qualified=True)
+                assert fields[2] == url_for('dataset.read', id=base_data.dataset1['name'], qualified=True)
                 assert fields[3] == '6'
             elif fields[0] == base_data.dataset2['id']:
                 assert fields[1] == base_data.dataset2['title']
-                assert fields[2] == url_for('dataset.read', id=base_data.dataset2['id'], qualified=True)
+                assert fields[2] == url_for('dataset.read', id=base_data.dataset2['name'], qualified=True)
                 assert fields[3] == '3'
             else:
                 assert False, f"Unexpected dataset id: {fields[0]}"
