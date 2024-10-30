@@ -54,7 +54,7 @@ class TestTrackingCSVView:
         # check the CSV content
         lines = full_response.splitlines()
         header = lines[0].split(',')
-        assert header == ['Dataset ID', 'Dataset title', 'Dataset url', 'total']
+        assert header == ['dataset_id', 'dataset_title', 'dataset_url', 'total']
         rows = lines[1:]
         # They are just two datasets
         assert len(rows) == 2
