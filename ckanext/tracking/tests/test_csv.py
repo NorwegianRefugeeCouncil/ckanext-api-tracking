@@ -1,0 +1,63 @@
+import pytest
+from types import SimpleNamespace
+from ckan.plugins import toolkit
+from ckan.lib.helpers import url_for
+from ckan.tests import factories
+
+from ckanext.tracking.tests import factories as tf
+
+
+@pytest.fixture
+def base_data():
+    obj = SimpleNamespace()
+    obj.user1 = factories.UserWithToken()
+    obj.user2 = factories.UserWithToken()
+    obj.dataset1 = factories.Dataset()
+    obj.dataset2 = factories.Dataset()
+    obj.trackings = []
+    for user in [obj.user1, obj.user1, obj.user2]:
+        for dataset in [obj.dataset1, obj.dataset1, obj.dataset2]:
+            new_tracking = tf.TrackingUsageAPIDataset(user=user, object_id=dataset['id'])
+            obj.trackings.append(new_tracking)
+
+    return obj
+
+
+@pytest.mark.usefixtures('clean_db', 'tracking_migrate')
+class TestTrackingCSVView:
+    """ Test basic tracking from requests """
+    def test_dataset_with_token_csv_no_auth(self, app):
+        url = url_for('tracking_csv.most_accessed_dataset_with_token')
+        with pytest.raises(toolkit.NotAuthorized):
+            app.get(url)
+
+    def test_dataset_with_token_csv(self, app, base_data):
+        url = url_for('tracking_csv.most_accessed_dataset_with_token')
+        # download the CSV
+        auth = {"Authorization": base_data.user1['token']}
+        response = app.get(url, extra_environ=auth)
+        assert response.status_code == 200
+        # save the response locally
+        full_response = response.body
+        with open('most-accessed-dataset-with-token.csv', 'w') as f:
+            f.write(full_response)
+
+        # check the CSV content
+        lines = full_response.splitlines()
+        header = lines[0].split(',')
+        assert header == ['Dataset ID', 'Dataset title', 'Dataset url', 'total']
+        rows = lines[1:]
+        # They are just two datasets
+        assert len(rows) == 2
+        for row in rows:
+            fields = row.split(',')
+            if fields[0] == base_data.dataset1['id']:
+                assert fields[1] == base_data.dataset1['title']
+                assert fields[2] == url_for('dataset.read', id=base_data.dataset1['id'], qualified=True)
+                assert fields[3] == '6'
+            elif fields[0] == base_data.dataset2['id']:
+                assert fields[1] == base_data.dataset2['title']
+                assert fields[2] == url_for('dataset.read', id=base_data.dataset2['id'], qualified=True)
+                assert fields[3] == '3'
+            else:
+                assert False, f"Unexpected dataset id: {fields[0]}"

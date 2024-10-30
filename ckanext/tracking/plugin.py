@@ -45,6 +45,8 @@ class TrackingPlugin(plugins.SingletonPlugin):
         return {
             "most_accessed_dataset_with_token": auth_queries.most_accessed_dataset_with_token,
             "most_accessed_dataset_with_token_csv": auth_csv.most_accessed_dataset_with_token_csv,
+            "most_accessed_token": auth_queries.most_accessed_token,
+            "most_accessed_token_csv": auth_csv.most_accessed_token_csv,
         }
 
     # IActions
@@ -52,6 +54,7 @@ class TrackingPlugin(plugins.SingletonPlugin):
     def get_actions(self):
         return {
             "most_accessed_dataset_with_token": action_queries.most_accessed_dataset_with_token,
+            "most_accessed_token": action_queries.most_accessed_token,
         }
 
     # IBlueprint
