@@ -19,7 +19,7 @@ tracking_csv_blueprint = Blueprint('tracking_csv', __name__, url_prefix='/tracki
 
 
 @tracking_csv_blueprint.route('/most-accessed-dataset-with-token.csv', methods=["GET"])
-def most_accessed_dataset_with_token():
+def most_accessed_dataset_with_token_csv():
     """ Get most accessed (using a API token) datasets """
 
     current_user_name = current_user.name if current_user else None
@@ -61,7 +61,7 @@ def most_accessed_dataset_with_token():
 
 
 @tracking_csv_blueprint.route('/most-accessed-token.csv', methods=["GET"])
-def most_accessed_token():
+def most_accessed_token_csv():
     """ Get most accessed tokens """
 
     current_user_name = current_user.name if current_user else None
@@ -105,7 +105,7 @@ def most_accessed_token():
 
 
 @tracking_csv_blueprint.route('/all-token-usage.csv', methods=["GET"])
-def all_token_usage():
+def all_token_usage_csv():
     """ Get all tokens usage """
 
     current_user_name = current_user.name if current_user else None
