@@ -8,6 +8,7 @@ from ckan.common import current_user
 from ckan.plugins import toolkit
 
 from ckanext.tracking.queries.api import (
+    get_all_token_usage,
     get_most_accessed_token,
     get_most_accessed_dataset_with_token,
 )
@@ -67,13 +68,6 @@ def most_accessed_token():
     context = {'user': current_user_name}
     toolkit.check_access('most_accessed_token_csv', context)
     data = get_most_accessed_token(limit=10)
-    """
-    'user_id': user_id,
-            'user_name': user_name,
-            'user_url': user_url,
-            'token_name': row['token_name'],
-            'total': row['total'],
-    """
     # Create CSV including package details
     rows = []
     for row in data:
@@ -106,5 +100,48 @@ def most_accessed_token():
 
     response = Response(buffer.getvalue(), mimetype='text/csv')
     filename = 'most-accessed-tokens.csv'
+    response.headers.set("Content-Disposition", "attachment", filename=filename)
+    return response
+
+
+@tracking_csv_blueprint.route('/all-token-usage.csv', methods=["GET"])
+def all_token_usage():
+    """ Get all tokens usage """
+
+    current_user_name = current_user.name if current_user else None
+    context = {'user': current_user_name}
+    toolkit.check_access('most_accessed_token_csv', context)
+    data = get_all_token_usage(limit=1000)
+    # Create CSV including package details
+    rows = []
+    for row in data:
+        user_id = row['user_id']
+        user = model.User.get(user_id)
+        user_name = user.name if user else None
+
+        rows.append({
+            'User ID': user_id,
+            'User name': user_name,
+            'Token name': row['token_name'],
+            'Tracking type': row['tracking_type'],
+            'Tracking sub type': row['tracking_sub_type'],
+            'Object type': row['object_type'],
+            'Object ID': row['object_id'],
+            'Timestamp': row['timestamp'],
+        })
+
+    headers = [
+        'User ID', 'User name', 'Token name', 'Tracking type', 'Tracking sub type',
+        'Object type', 'Object ID', 'Timestamp'
+    ]
+    buffer = StringIO()
+    writer = csv.DictWriter(buffer, fieldnames=headers)
+
+    writer.writeheader()
+    for row in rows:
+        writer.writerow(row)
+
+    response = Response(buffer.getvalue(), mimetype='text/csv')
+    filename = 'all-token-usage.csv'
     response.headers.set("Content-Disposition", "attachment", filename=filename)
     return response

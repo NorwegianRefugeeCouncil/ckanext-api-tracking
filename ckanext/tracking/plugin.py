@@ -43,6 +43,8 @@ class TrackingPlugin(plugins.SingletonPlugin):
 
     def get_auth_functions(self):
         return {
+            "all_token_usage": auth_queries.all_token_usage,
+            "all_token_usage_csv": auth_csv.all_token_usage_csv,
             "most_accessed_dataset_with_token": auth_queries.most_accessed_dataset_with_token,
             "most_accessed_dataset_with_token_csv": auth_csv.most_accessed_dataset_with_token_csv,
             "most_accessed_token": auth_queries.most_accessed_token,
@@ -53,6 +55,7 @@ class TrackingPlugin(plugins.SingletonPlugin):
 
     def get_actions(self):
         return {
+            "all_token_usage": action_queries.all_token_usage,
             "most_accessed_dataset_with_token": action_queries.most_accessed_dataset_with_token,
             "most_accessed_token": action_queries.most_accessed_token,
         }
