@@ -1,8 +1,51 @@
-[![Tests](https://github.com/NorwegianRefugeeCouncil/ckanext-tracking/workflows/Tests/badge.svg?branch=main)](https://github.com/NorwegianRefugeeCouncil/ckanext-tracking/actions)
+[![Tests](https://github.com/NorwegianRefugeeCouncil/ckanext-tracking/workflows/Tests/badge.svg)](https://github.com/NorwegianRefugeeCouncil/ckanext-tracking/actions)
 
-# CKAN tracking extension
+# CKAN API tracking extension
 
-CKAN extension to track users activities on the site through the CKAN API.
+This repository contains a CKAN open-source extension that can be added to any CKAN instance. It was developed by Norwegian Refugee Council (NRC) and Open Knowledge Foundation (OKFN).  
+It is intended to help other CKAN portals be able to **monitor API usage** for UI usage metrics and data privacy concerns.
+
+## Use-Case
+
+NRC uses this extension in the following way:
+
+ - Track API usage by dataset and organization.
+ - Track API usage by users.
+ - Track API usage by API token.
+
+## How it works?
+
+This extension adds a new middleware to the CKAN application that intercept all API requests and log them into a database.  
+A new database table was created to store this information. This table is similar to the current CKAN `tracking` extension table.  
+Considering the similarities with the `tracking` CKAN core extension, a possible future for extension is to capture all calls and unify usage tracking.  
+
+### Sample screenshots
+
+![Token usage by name](/DOCS/imgs/token-usage-by-name.png)
+![Token usage by dataset](/DOCS/imgs/token-usage-by-data-file.png)
+![Latest Token usage](/DOCS/imgs/latest-token-usage.png)
+
+### API endpoints
+
+ - all_token_usage: `/api/action/all_token_usage[?limit=10]` It returns all API requests with a user token. Sort by date.
+ - most_accessed_dataset_with_token: `/api/action/most_accessed_dataset_with_token[?limit=10]` It returns the most accessed datasets with a user token. Sort by most requested dataset.
+ - most_accessed_token: `/api/action/most_accessed_token[?limit=10]` It returns the most accessed user token. Sort by most used token.
+
+![Api calls](/DOCS/imgs/api-calls.png)
+
+### CSV endpoints
+
+A more _human-readable_ way to access the same API data through CSV files.  
+The following endpoints are available:
+
+ - `/tracking-csv/most-accessed-dataset-with-token.csv`
+ - `/tracking-csv/most-accessed-token.csv`
+ - `/tracking-csv/all-token-usage.csv`
+
+### Questions / issues
+
+Please feel free to [start an issue](https://github.com/NorwegianRefugeeCouncil/ckanext-tracking/issues) or send direct questions to Andrés Vázquez (@avdata99) or Nadine Levin (@nadineisabel).  
+
 
 ## Requirements
 
