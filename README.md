@@ -1,9 +1,11 @@
 [![Tests](https://github.com/NorwegianRefugeeCouncil/ckanext-tracking/workflows/Tests/badge.svg)](https://github.com/NorwegianRefugeeCouncil/ckanext-tracking/actions)
 
+This repository contains a CKAN open-source extension that can be added to any CKAN 2.10+ instance.  
+It was developed by Norwegian Refugee Council (NRC) and Open Knowledge Foundation (OKFN).  
+
 # CKAN API tracking extension
 
-This repository contains a CKAN open-source extension that can be added to any CKAN instance. It was developed by Norwegian Refugee Council (NRC) and Open Knowledge Foundation (OKFN).  
-It is intended to help other CKAN portals be able to **monitor API usage** for UI usage metrics and data privacy concerns.
+This extension allows CKAN portals to monitor the use of API tokens by users or services accounts.  
 
 ## Use-Case
 
