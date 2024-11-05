@@ -5,7 +5,7 @@ It was developed by Norwegian Refugee Council (NRC) and Open Knowledge Foundatio
 
 # CKAN API tracking extension
 
-This extension allows CKAN portals to monitor the use of API tokens by users or services accounts.  
+This extension allows CKAN portals to monitor the use of API tokens by users or service accounts.  
 
 ## Use-Case
 
@@ -17,9 +17,15 @@ NRC uses this extension in the following way:
 
 ## How it works?
 
-This extension adds a new middleware to the CKAN application that intercept all API requests and log them into a database.  
-A new database table was created to store this information. This table is similar to the current CKAN `tracking` extension table.  
-Considering the similarities with the `tracking` CKAN core extension, a possible future for extension is to capture all calls and unify usage tracking.  
+This extension adds a new middleware to the CKAN application that intercept all API requests and log them into the CKAN database.  
+A new database table was created to store this information. This table is similar to the current CKAN `tracking_raw` table (in
+use at the `TrackingMiddleware`).  
+Considering the similarities with this CKAN core feature, a possible future for extension is to capture all calls and unify usage tracking.  
+
+This extension also includes a series of dashboards with a summary of the available data.  
+These dashboards are based on the CKAN core `StatsPlugin` plugin. This extension eventually will attempt to replace the current `stats` plugin.  
+
+All data from this extension is only accessible by sysadmins.
 
 ### Sample screenshots
 
