@@ -1,0 +1,69 @@
+{% extends "dashboard/base.html" %}
+
+{% block primary_content %}
+  <article class="module">
+    
+    <section id="stats-dataset-views" class="module-content tab-content active">
+      <h2>{{ _('Resource Downloads') }}</h2>
+      <p>Unique visits</p>
+      <h3>Last year</h3>
+      <table class="table table-chunky table-bordered table-striped">
+        <thead>
+          <tr><th>{{ _("Resource") }}</th><th>{{ _("Downloads") }}</th></tr>
+        </thead>
+        <tbody>
+          {% for row in resource_downloads_365 %}
+            <tr>
+              <th>
+                <a href="{{ row.url }}">{{ row.title }}</a>
+              </th>
+              <td>
+                {{ row.downloads }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h3>Last month</h3>
+      <table class="table table-chunky table-bordered table-striped">
+        <thead>
+          <tr><th>{{ _("Resource") }}</th><th>{{ _("Downloads") }}</th></tr>
+        </thead>
+        <tbody>
+          {% for row in resource_downloads_30 %}
+            <tr>
+              <th>
+                <a href="{{ row.url }}">{{ row.title }}</a>
+              </th>
+              <td>
+                {{ row.downloads }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h3>Last week</h3>
+      <table class="table table-chunky table-bordered table-striped">
+        <thead>
+          <tr><th>{{ _("Resource") }}</th><th>{{ _("Downloads") }}</th></tr>
+        </thead>
+        <tbody>
+          {% for row in resource_downloads_7 %}
+            <tr>
+              <th>
+                <a href="{{ row.url }}">{{ row.title }}</a>
+              </th>
+              <td>
+                {{ row.downloads }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </section>
+
+  </article>
+{% endblock %}

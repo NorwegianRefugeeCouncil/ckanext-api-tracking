@@ -28,6 +28,9 @@ class TrackingPlugin(plugins.SingletonPlugin):
         toolkit.add_public_directory(config_, "public")
         toolkit.add_resource("assets", "tracking")
 
+        # Add the dashboard tab to the sysadmin panel
+        toolkit.add_ckan_admin_tab(config_, 'tracking_dashboard.index', 'Dashboard', icon='bar-chart')
+
     # IMiddleware
 
     def make_middleware(self, app, config):
@@ -65,4 +68,5 @@ class TrackingPlugin(plugins.SingletonPlugin):
     def get_blueprint(self):
         return [
             blueprints.tracking_csv_blueprint,
+            blueprints.tracking_dashboard_blueprint,
         ]

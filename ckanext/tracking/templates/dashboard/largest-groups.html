@@ -1,0 +1,35 @@
+{% extends "dashboard/base.html" %}
+
+{% block primary_content %}
+  <article class="module">
+
+    <section id="stats-largest-groups" class="module-content tab-content active">
+      <h2>{{ _('Largest Organizations') }}</h2>
+      {% if largest_groups %}
+        <table class="table table-chunky table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>{{ _('Group') }}</th>
+              <th class="metric">{{ _('Number of datasets') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for group, num_packages in largest_groups %}
+              <tr>
+                <td>
+                  <a href="{{ h.url_for(controller=group.type, action='read', id=group.name) }}">
+                    {{group.title or group.name}}
+                  </a>
+                </td>
+                <td class="metric">{{ num_packages }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="empty">{{ _('No groups') }}</p>
+      {% endif %}
+    </section>
+
+  </article>
+{% endblock %}

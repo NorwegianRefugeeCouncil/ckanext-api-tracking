@@ -1,0 +1,80 @@
+{% extends "dashboard/base.html" %}
+
+{% block primary_content %}
+  <article class="module">
+    
+    <section id="stats-dataset-views" class="module-content tab-content active">
+      <h2>{{ _('Most Viewed Datasets') }}</h2>
+      <p>Daily unique visits</p>
+      <p>
+        This dashboard consider "Daily unique visits" as the number of users that have visited a dataset page every day.
+        If a user visits a dataset page multiple times in a day, it will be counted as one visit.
+        If the same user visits the dataset page tomorrow, it will be counted as another (the second) visit.
+      </p>
+      <h3>Last year</h3>
+      <table class="table table-chunky table-bordered table-striped">
+        <thead>
+          <tr><th>{{ _("Dataset") }}</th><th>{{ _("Daily unique visits") }}</th></tr>
+        </thead>
+        <tbody>
+          {% for row in dataset_views_365 %}
+            <tr>
+              <th>
+                <a href="{{ h.url_for('dataset.read', id=row.name) }}">
+                  {{ row.title or row.name }}
+                </a>
+              </th>
+              <td>
+                {{ row.views }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h3>Last month</h3>
+      <table class="table table-chunky table-bordered table-striped">
+        <thead>
+          <tr><th>{{ _("Dataset") }}</th><th>{{ _("Daily unique visits") }}</th></tr>
+        </thead>
+        <tbody>
+          {% for row in dataset_views_30 %}
+            <tr>
+              <th>
+                <a href="{{ h.url_for('dataset.read', id=row.name) }}">
+                  {{ row.title or row.name }}
+                </a>
+              </th>
+              <td>
+                {{ row.views }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h3>Last week</h3>
+      <table class="table table-chunky table-bordered table-striped">
+        <thead>
+          <tr><th>{{ _("Dataset") }}</th><th>{{ _("Daily unique visits") }}</th></tr>
+        </thead>
+        <tbody>
+          {% for row in dataset_views_7 %}
+            <tr>
+              <th>
+                <a href="{{ h.url_for('dataset.read', id=row.name) }}">
+                  {{ row.title or row.name }}
+                </a>
+              </th>
+              <td>
+                {{ row.views }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </section>
+
+  </article>
+{% endblock %}
