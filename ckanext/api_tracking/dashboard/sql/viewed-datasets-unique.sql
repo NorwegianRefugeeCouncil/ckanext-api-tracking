@@ -4,7 +4,7 @@ If a user views a dataset multiple times in a period, it will only be counted on
 
 Based on the tracking_raw table because the tracking_summary table does not allow to count unique views in a period.
 
-This query is used in ckanext/tracking/dashboard/stats.py module to collect views statistics.
+This query is used in ckanext/api_tracking/dashboard/stats.py module to collect views statistics.
 */
 
 SELECT 
