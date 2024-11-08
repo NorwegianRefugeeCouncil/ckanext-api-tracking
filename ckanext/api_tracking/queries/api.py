@@ -1,6 +1,6 @@
 from ckan import model
 from sqlalchemy import func, desc
-from ckanext.tracking.models import TrackingUsage
+from ckanext.api_tracking.models import TrackingUsage
 
 
 def get_most_accessed_dataset_with_token(limit=10):

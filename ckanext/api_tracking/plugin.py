@@ -2,12 +2,12 @@ import logging
 from ckan import plugins
 from ckan.plugins import toolkit
 
-from ckanext.tracking import blueprints
-from ckanext.tracking.interfaces import IUsage
-from ckanext.tracking.middleware import TrackingUsageMiddleware
-from ckanext.tracking.auth import csv as auth_csv
-from ckanext.tracking.auth import queries as auth_queries
-from ckanext.tracking.actions import queries as action_queries
+from ckanext.api_tracking import blueprints
+from ckanext.api_tracking.interfaces import IUsage
+from ckanext.api_tracking.middleware import TrackingUsageMiddleware
+from ckanext.api_tracking.auth import csv as auth_csv
+from ckanext.api_tracking.auth import queries as auth_queries
+from ckanext.api_tracking.actions import queries as action_queries
 
 
 log = logging.getLogger(__name__)

@@ -4,7 +4,7 @@ Stats for our dashboard
 import logging
 from datetime import datetime, timedelta
 from ckan import model
-from ckanext.tracking.dashboard import query_results
+from ckanext.api_tracking.dashboard import query_results
 
 
 log = logging.getLogger(__name__)

@@ -1,4 +1,4 @@
 # flake8: noqa: F401
 
-from ckanext.tracking.models.tracking import TrackingUsage
-from ckanext.tracking.models.url import CKANURL
+from ckanext.api_tracking.models.tracking import TrackingUsage
+from ckanext.api_tracking.models.url import CKANURL

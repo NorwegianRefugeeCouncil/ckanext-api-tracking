@@ -3,7 +3,7 @@ Stats about API for our dashboard
 """
 import logging
 from ckan.plugins import toolkit
-from ckanext.tracking.queries.data import (
+from ckanext.api_tracking.queries.data import (
     all_token_usage_data,
     most_accessed_token_data,
     most_accessed_dataset_with_token_data,

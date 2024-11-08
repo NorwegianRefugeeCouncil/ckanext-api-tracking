@@ -4,7 +4,7 @@ from ckan.plugins import toolkit
 from ckan.lib.helpers import url_for
 from ckan.tests import factories
 
-from ckanext.tracking.tests import factories as tf
+from ckanext.api_tracking.tests import factories as tf
 
 
 @pytest.fixture

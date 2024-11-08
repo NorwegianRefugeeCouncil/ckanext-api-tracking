@@ -3,7 +3,7 @@ from ckan import model
 from ckan.lib.helpers import url_for
 from ckan.tests import factories
 
-from ckanext.tracking.models.tracking import TrackingUsage
+from ckanext.api_tracking.models.tracking import TrackingUsage
 
 
 class TestTrackingUsageBasic:

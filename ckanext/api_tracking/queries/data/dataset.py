@@ -6,7 +6,7 @@ import logging
 from ckan import model
 from ckan.plugins import toolkit
 
-from ckanext.tracking.queries.api import get_most_accessed_dataset_with_token
+from ckanext.api_tracking.queries.api import get_most_accessed_dataset_with_token
 
 
 log = logging.getLogger(__name__)

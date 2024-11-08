@@ -7,7 +7,7 @@ from ckan.lib import api_token
 from ckan.model import ApiToken
 from ckan.types import CKANApp
 
-from ckanext.tracking.interfaces import IUsage
+from ckanext.api_tracking.interfaces import IUsage
 
 
 log = logging.getLogger(__name__)

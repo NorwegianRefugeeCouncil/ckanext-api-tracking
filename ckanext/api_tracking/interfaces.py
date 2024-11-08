@@ -1,7 +1,7 @@
 import logging
 from ckan import plugins
 from ckan.plugins.interfaces import Interface
-from ckanext.tracking.models import TrackingUsage, CKANURL
+from ckanext.api_tracking.models import TrackingUsage, CKANURL
 
 
 log = logging.getLogger(__name__)

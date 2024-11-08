@@ -1,5 +1,5 @@
 from ckan.plugins import toolkit
-from ckanext.tracking.queries.api import (
+from ckanext.api_tracking.queries.api import (
     get_all_token_usage,
     get_most_accessed_dataset_with_token,
     get_most_accessed_token,
