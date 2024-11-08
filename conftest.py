@@ -1,3 +1,3 @@
 pytest_plugins = [
-    u'ckanext.tracking.tests.fixtures',
+    u'ckanext.api_tracking.tests.fixtures',
 ]

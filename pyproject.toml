@@ -54,7 +54,7 @@ namespaces = true
 include = ["*"]
 
 [tool.setuptools.dynamic]
-version = {attr = "ckanext.tracking.__VERSION__"}
+version = {attr = "ckanext.api_tracking.__VERSION__"}
 
 [tool.setuptools.data-files]
 # Data files can be listed here
@@ -67,7 +67,7 @@ version = {attr = "ckanext.tracking.__VERSION__"}
 # your_command = "your_module:main"
 
 [project.entry-points."ckan.plugins"]
-api_tracking = "ckanext.tracking.plugin:TrackingPlugin"
+api_tracking = "ckanext.api_tracking.plugin:TrackingPlugin"
 
 [project.entry-points."babel.extractors"]
 ckan = "ckan.lib.extract:extract_ckan"
