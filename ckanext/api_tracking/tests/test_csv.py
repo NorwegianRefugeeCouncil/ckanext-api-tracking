@@ -24,7 +24,7 @@ def base_data():
     return obj
 
 
-@pytest.mark.usefixtures('clean_db', 'tracking_migrate')
+@pytest.mark.usefixtures('clean_db', 'api_tracking_migrate')
 class TestTrackingCSVView:
     """ Test basic tracking from requests """
     def test_dataset_with_token_csv_no_user(self, app):

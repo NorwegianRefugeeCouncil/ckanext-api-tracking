@@ -30,7 +30,7 @@ def setup_data():
     return obj
 
 
-@pytest.mark.usefixtures('clean_db', 'clean_index', 'tracking_migrate')
+@pytest.mark.usefixtures('clean_db', 'clean_index', 'api_tracking_migrate')
 class TestDashboardTabs:
     """ Test dashboard tabks """
     def _test_dashboard_tab(self, app, user, fn, status):

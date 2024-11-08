@@ -18,7 +18,7 @@ def setup_data():
     return obj
 
 
-@pytest.mark.usefixtures('clean_db', 'clean_index', 'tracking_migrate')
+@pytest.mark.usefixtures('clean_db', 'clean_index', 'api_tracking_migrate')
 class TestDashboardTab:
     """ Test who can see the dashboard tab """
     def test_member_admin_cant_see(self, app, setup_data):
