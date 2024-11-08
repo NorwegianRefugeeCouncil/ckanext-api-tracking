@@ -20,7 +20,7 @@ NRC uses this extension in the following way:
 This extension adds a new middleware to the CKAN application that intercept all API requests and log them into the CKAN database.  
 A new database table was created to store this information. This table is similar to the current CKAN `tracking_raw` table (in
 use at the `TrackingMiddleware`).  
-Considering the similarities with this CKAN core feature, a possible future for extension is to capture all calls and unify usage tracking.  
+Considering the similarities with the CKAN core feature, a possible future for this extension is to capture all calls and unify usage tracking.  
 
 This extension also includes a series of dashboards with a summary of the available data.  
 These dashboards are based on the CKAN core `StatsPlugin` plugin. This extension eventually will attempt to replace the current `stats` plugin.  
