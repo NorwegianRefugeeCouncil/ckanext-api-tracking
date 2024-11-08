@@ -1,0 +1,77 @@
+{% extends "dashboard/base.html" %}
+
+{% block primary_content %}
+  <article class="module">
+    
+    <section id="stats-latest-api" class="module-content tab-content active">
+      <h2>{{ _('API token usage by data file') }}</h2>
+      <p>
+        <a class="btn btn-primary" href="{{ links.download_by_dataset_csv }}">{{ _('Download as CSV') }}</a>
+        <a class="btn btn-primary" href="{{ links.json_by_dataset }}" target="_blank">{{ _('View API') }}</a>
+      </p>
+      <table class="table table-chunky table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>{{ _("Dataset") }}</th>
+            <th>{{ _("Total") }}</th>
+            <th>{{ _("Organization") }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in by_dataset %}
+            <tr>
+              <th>
+                {% if row.dataset_title %}
+                  <a href="{{ row.dataset_url }}">{{ row.dataset_title }}</a>
+                {% else %}
+                  <span title="Dataset ID {{ row.dataset_id }} (probably deleted)"><small>dataset probably deleted</small></span>
+                {% endif %}
+              </th>
+              <td>{{ row.total }}</td>
+              <td>
+                {% if row.organization_url %}
+                  <a href="{{ row.organization_url }}">{{ row.organization_title }}</a>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </section>
+
+    <section id="stats-latest-api" class="module-content tab-content active">
+      <h2>{{ _('API token usage by token name') }}</h2>
+      <p>
+        <a class="btn btn-primary" href="{{ links.download_by_token_csv }}">{{ _('Download as CSV') }}</a>
+        <a class="btn btn-primary" href="{{ links.json_by_token }}" target="_blank">{{ _('View API') }}</a>
+      </p>
+      <table class="table table-chunky table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>{{ _("Token") }}</th>
+            <th>{{ _("User") }}</th>
+            <th>{{ _("Total requests") }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in by_token_name %}
+            <tr>
+              <th>{{ row.token_name }}</th>
+              <th>
+                {% if row.user_name %}
+                  <a href="{{ row.user_url }}">{{ row.user_name }}</a>
+                {% else %}
+                  <span title="User ID {{ row.user_id }} (probably deleted)"><small>user probably deleted</small></span>
+                {% endif %}
+              </th>
+              <td>{{ row.total }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </section>
+
+  </article>
+{% endblock %}

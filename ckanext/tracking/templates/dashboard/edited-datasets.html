@@ -1,0 +1,35 @@
+{% extends "dashboard/base.html" %}
+
+{% block primary_content %}
+  <article class="module">
+
+    <section id="stats-most-edited" class="module-content tab-content active">
+      <h2>{{ _('Most Edited Datasets') }}</h2>
+      {% if most_edited_packages %}
+        <table class="table table-chunky table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>{{ _('Dataset') }}</th>
+              <th class="metric">{{ _('Number of edits') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for package, edits in most_edited_packages %}
+              <tr py:for="package, edits in most_edited_packages">
+                <td>
+                  <a href="{{ h.url_for('dataset.read', id=package.name) }}">
+                    {{package.title or package.name}}
+                  </a>
+                </td>
+                <td class="metric">{{ edits }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="empty">{{ _('No edited datasets') }}</p>
+      {% endif %}
+    </section>
+
+  </article>
+{% endblock %}

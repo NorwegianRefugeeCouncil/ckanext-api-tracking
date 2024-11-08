@@ -1,0 +1,65 @@
+{% extends "dashboard/base.html" %}
+
+{% block primary_content %}
+  <article class="module">
+    
+    <section id="stats-latest-api" class="module-content tab-content active">
+      <h2>{{ _('Latest API token usage') }}</h2>
+      <p>
+        This dashboard shows the latest API token usage.
+      </p>
+      <p>
+        <a class="btn btn-primary" href="{{ links.download_csv }}">{{ _('Download as CSV') }}</a>
+        <a class="btn btn-primary" href="{{ links.view_json }}" target="_blank">{{ _('View API') }}</a>
+      </p>
+      <table class="table table-chunky table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>{{ _("Date API accessed") }}</th>
+            <th>{{ _("User") }}</th>
+            <th>{{ _("Token name") }}</th>
+            <th>{{ _("Object type") }}</th>
+            <th>{{ _("Object name") }}</th>
+            <th>{{ _("Organization") }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in latest_api_usage %}
+            <tr>
+              <td>
+                <span title="{{ h.render_datetime(row.timestamp, with_hours=True, with_seconds=True) }}">
+                  {{ h.render_datetime(row.timestamp, with_hours=False, with_seconds=False) }}
+                </span>
+              </td>
+              <th>
+                <a href="{{ h.url_for('user.read', id=row.user_id) }}">
+                  {{ row.user_name }}
+                </a>
+              </th>
+              <td>{{ row.token_name }}</td>
+              <td>{{ row.object_type }}</td>
+              <th>
+                {% if row.object_id %}
+                  {% if row.object_title %}
+                  <a href="{{ row.object_url }}">
+                    {{ row.object_title }}
+                  </a>
+                  {% else %}
+                  {{ row.object_id }} (probably deleted)
+                  {% endif %}
+                {% endif %}
+              </th>
+              <td>
+                {% if row.organization_url %}
+                  <a href="{{ row.organization_url }}">{{ row.organization_title }}</a>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </section>
+
+  </article>
+{% endblock %}

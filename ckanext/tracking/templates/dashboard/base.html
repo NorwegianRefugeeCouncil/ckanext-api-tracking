@@ -1,0 +1,70 @@
+{% extends "page.html" %}
+{# This started as copy of ckanext/stats/templates/ckanext/stats/index.html which is not easy to extend #}
+
+
+{% block breadcrumb_content %}
+  <li class="active">{{ _("Dashboard") }}</li>
+{% endblock %}
+
+{% block primary_content %}
+{% endblock %}
+
+{% block secondary_content %}
+  <section class="module module-narrow">
+    <h2 class="module-heading"><i class="fa fa-chart-bar"></i>{{ _('Statistics Menu') }}</h2>
+    <nav data-module="stats-nav">
+      <ul class="unstyled nav nav-simple">
+        <li class="nav-item {% if active == 'dataset-unique-views'%}active{% endif %}">
+          <a href="{% url_for 'tracking_dashboard.dataset_unique_views' %}">
+            {{ _('Most Viewed Datasets') }}
+          </a>
+        </li>
+        <li class="nav-item {% if active == 'dataset-views'%}active{% endif %}">
+          <a href="{% url_for 'tracking_dashboard.dataset_views' %}">
+            {{ _('Most viewed datasets (daily)') }}
+          </a>
+        </li>
+        <li class="nav-item {% if active == 'resource-downloads'%}active{% endif %}">
+          <a href="{% url_for 'tracking_dashboard.resource_downloads' %}">
+            {{ _('Resource Downloads') }}
+          </a>
+        </li>
+        <li class="nav-item {% if active == 'largest-groups'%}active{% endif %}">
+          <a href="{% url_for 'tracking_dashboard.largest_groups' %}">
+            {{ _('Largest Organizations') }}
+          </a>
+        </li>
+        <li class="nav-item {% if active == 'total-datasets'%}active{% endif %}">
+          <a href="{% url_for 'tracking_dashboard.total_datasets' %}">
+            {{ _('Total Number of Datasets') }}
+          </a>
+        </li>
+        <li class="nav-item {% if active == 'edited-datasets'%}active{% endif %}">
+          <a href="{% url_for 'tracking_dashboard.edited_datasets' %}">
+            {{ _('Most Edited Datasets') }}
+          </a>
+        </li>
+        <li class="nav-item {% if active == 'most-create'%}active{% endif %}">
+          <a href="{% url_for 'tracking_dashboard.most_create' %}">
+            {{ _('Users Creating Most Datasets') }}
+          </a>
+        </li>
+        <li class="nav-item {% if active == 'latest-api'%}active{% endif %}">
+          <a href="{% url_for 'tracking_dashboard.latest_api_token_usage' %}">
+            {{ _('Latest API token usage') }}
+          </a>
+        </li>
+        <li class="nav-item {% if active == 'api-aggregated'%}active{% endif %}">
+          <a href="{% url_for 'tracking_dashboard.api_token_usage_aggregated' %}">
+            {{ _('API token usage aggregated') }}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  {% asset "ckanext_stats/stats" %}
+{% endblock %}
