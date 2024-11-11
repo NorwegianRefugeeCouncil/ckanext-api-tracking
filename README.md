@@ -1,13 +1,12 @@
-[![Tests](https://github.com/NorwegianRefugeeCouncil/ckanext-tracking/workflows/Tests/badge.svg)](https://github.com/NorwegianRefugeeCouncil/ckanext-tracking/actions)
+[![Tests](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/workflows/Tests/badge.svg)](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/actions)
 
-This repository contains a CKAN open-source extension that can be added to any CKAN 2.10+ instance.  
-It was developed by Norwegian Refugee Council (NRC) and Open Knowledge Foundation (OKFN).  
+This repository contains a CKAN open-source extension that can be added to any CKAN 2.10+ instance. It was developed by Norwegian Refugee Council (NRC) and Open Knowledge Foundation (OKFN).  
 
 # CKAN API tracking extension
 
 This extension allows CKAN portals to monitor the use of API tokens by users or service accounts.  
 
-## Use-Case
+## Use-cases
 
 NRC uses this extension in the following way:
 
@@ -15,15 +14,11 @@ NRC uses this extension in the following way:
  - Track API usage by users.
  - Track API usage by API token.
 
-## How it works?
+## How it works
 
-This extension adds a new middleware to the CKAN application that intercept all API requests and log them into the CKAN database.  
-A new database table was created to store this information. This table is similar to the current CKAN `tracking_raw` table (in
-use at the `TrackingMiddleware`).  
-Considering the similarities with the CKAN core feature, a possible future for this extension is to capture all calls and unify usage tracking.  
+This extension adds a new middleware to the CKAN application that intercept all API requests and log them into the CKAN database. A new database table was created to store this information. This table is similar to the current CKAN `tracking_raw` table (in use at the `TrackingMiddleware`). Considering the similarities with the CKAN core feature, a possible future for this extension is to capture all calls and unify usage tracking.  
 
-This extension also includes a series of dashboards with a summary of the available data.  
-These dashboards are based on the CKAN core `StatsPlugin` plugin. This extension eventually will attempt to replace the current `stats` plugin.  
+This extension also includes a series of dashboards with a summary of the available data. These dashboards are based on the CKAN core `StatsPlugin` plugin. This extension eventually will attempt to replace the current `stats` plugin.  
 
 All data from this extension is only accessible by sysadmins.
 
@@ -43,8 +38,7 @@ All data from this extension is only accessible by sysadmins.
 
 ### CSV endpoints
 
-A more _human-readable_ way to access the same API data through CSV files.  
-The following endpoints are available:
+A more _human-readable_ way to access the same API data through CSV files. The following endpoints are available:
 
  - `/tracking-csv/most-accessed-dataset-with-token.csv`
  - `/tracking-csv/most-accessed-token.csv`
@@ -52,7 +46,7 @@ The following endpoints are available:
 
 ### Questions / issues
 
-Please feel free to [start an issue](https://github.com/NorwegianRefugeeCouncil/ckanext-tracking/issues) or send direct questions to Andrés Vázquez (@avdata99) or Nadine Levin (@nadineisabel).  
+Please feel free to [start an issue](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/issues) or send direct questions to Andrés Vázquez (@avdata99) or Nadine Levin (@nadineisabel). Thanks for reading!
 
 
 ## Requirements
@@ -62,22 +56,22 @@ Compatibility with core CKAN versions:
 | CKAN version    | Compatible?   |
 | --------------- | ------------- |
 | 2.10            | Yes           |
-| 2.11            | not tested    |
+| 2.11            | Not tested    |
 
 
 ## Installation
 
-To install ckanext-tracking:
+To install ckanext-api-tracking:
 
 Install the package:
 
-    pip install -e "git+https://github.com/NorwegianRefugeeCouncil/ckanext-tracking.git@main#egg=ckanext-tracking"
-    pip install -r https://raw.githubusercontent.com/NorwegianRefugeeCouncil/ckanext-tracking/main/requirements.txt
+    pip install -e "git+https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking.git@main#egg=ckanext-api-tracking"
+    pip install -r https://raw.githubusercontent.com/NorwegianRefugeeCouncil/ckanext-api-tracking/main/requirements.txt
 
 or clone the source and install it on the virtualenv
 
-    git clone https://github.com/NorwegianRefugeeCouncil/ckanext-tracking.git
-    cd ckanext-tracking
+    git clone https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking.git
+    cd ckanext-api-tracking
     pip install -e .
 	pip install -r requirements.txt
 
@@ -89,7 +83,7 @@ or clone the source and install it on the virtualenv
 
 ## Config settings
 
-None at present
+None at present.
 
 ## License
 
