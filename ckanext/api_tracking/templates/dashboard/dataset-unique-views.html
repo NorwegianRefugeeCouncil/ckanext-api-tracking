@@ -11,13 +11,13 @@
         in the last year, month, or week.
         If a user visits a dataset page multiple times in a day, week, month or year, it will be counted as one unique visit.
       </p>
-      <h3>Last year</h3>
+      <h3>Last week</h3>
       <table class="table table-chunky table-bordered table-striped">
         <thead>
           <tr><th>{{ _("Dataset") }}</th><th>{{ _("Unique visits") }}</th></tr>
         </thead>
         <tbody>
-          {% for row in dataset_views_365 %}
+          {% for row in dataset_views_7 %}
             <tr>
               <th>
                 <a href="{{ h.url_for('dataset.read', id=row.name) }}">
@@ -53,13 +53,13 @@
         </tbody>
       </table>
 
-      <h3>Last week</h3>
+      <h3>Last year</h3>
       <table class="table table-chunky table-bordered table-striped">
         <thead>
           <tr><th>{{ _("Dataset") }}</th><th>{{ _("Unique visits") }}</th></tr>
         </thead>
         <tbody>
-          {% for row in dataset_views_7 %}
+          {% for row in dataset_views_365 %}
             <tr>
               <th>
                 <a href="{{ h.url_for('dataset.read', id=row.name) }}">
