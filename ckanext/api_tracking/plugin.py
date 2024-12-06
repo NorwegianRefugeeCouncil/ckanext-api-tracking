@@ -50,6 +50,8 @@ class TrackingPlugin(plugins.SingletonPlugin):
             "all_token_usage_csv": auth_csv.all_token_usage_csv,
             "most_accessed_dataset_with_token": auth_queries.most_accessed_dataset_with_token,
             "most_accessed_dataset_with_token_csv": auth_csv.most_accessed_dataset_with_token_csv,
+            "most_accessed_resource_with_token": auth_queries.most_accessed_resource_with_token,
+            "most_accessed_resource_with_token_csv": auth_csv.most_accessed_resource_with_token_csv,
             "most_accessed_token": auth_queries.most_accessed_token,
             "most_accessed_token_csv": auth_csv.most_accessed_token_csv,
         }
