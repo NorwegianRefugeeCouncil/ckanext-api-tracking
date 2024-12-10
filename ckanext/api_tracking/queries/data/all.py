@@ -34,20 +34,23 @@ def all_token_usage_data(limit=1000):
         if object_id:
             if object_type == 'dataset':
                 obj = model.Package.get(object_id)
-                obj_title = obj.title
-                object_url = toolkit.url_for('dataset.read', id=obj.id)
-                pkg = toolkit.get_action('package_show')({'ignore_auth': True}, {'id': obj.id})
-                owner_org = pkg.get('organization', {})
-                organization_title = owner_org.get('title')
-                organization_url = toolkit.url_for('organization.read', id=owner_org.get('id'))
+                obj_title = obj.title if obj else None
+                if obj:
+                    object_url = toolkit.url_for('dataset.read', id=obj.id)
+                    pkg = toolkit.get_action('package_show')({'ignore_auth': True}, {'id': obj.id})
+                    owner_org = pkg.get('organization', {})
+                    organization_title = owner_org.get('title')
+                    organization_url = toolkit.url_for('organization.read', id=owner_org.get('id'))
             elif object_type == 'resource':
                 obj = model.Resource.get(object_id)
-                obj_title = obj.name
-                object_url = toolkit.url_for('dataset_resource.read', id=obj.package_id, resource_id=obj.id)
+                obj_title = obj.name if obj else None
+                if obj:
+                    object_url = toolkit.url_for('dataset_resource.read', id=obj.package_id, resource_id=obj.id)
             elif object_type == 'organization':
                 obj = model.Organization.get(object_id)
-                obj_title = obj.title
-                object_url = toolkit.url_for('organization.read', id=obj.id)
+                obj_title = obj.title if obj else None
+                if obj:
+                    object_url = toolkit.url_for('organization.read', id=obj.id)
 
         rows.append({
             'timestamp': row['timestamp'],
