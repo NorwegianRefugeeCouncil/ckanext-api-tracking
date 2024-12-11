@@ -62,6 +62,7 @@ class TrackingPlugin(plugins.SingletonPlugin):
         return {
             "all_token_usage": action_queries.all_token_usage,
             "most_accessed_dataset_with_token": action_queries.most_accessed_dataset_with_token,
+            "most_accessed_resource_with_token": action_queries.most_accessed_resource_with_token,
             "most_accessed_token": action_queries.most_accessed_token,
         }
 

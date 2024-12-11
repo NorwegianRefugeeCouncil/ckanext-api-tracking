@@ -15,7 +15,7 @@ def get_most_accessed_resource_with_token(limit=10):
     ).filter(
         TrackingUsage.object_id.isnot(None),
         TrackingUsage.token_name.isnot(None),
-        TrackingUsage.object_type == 'dataset'
+        TrackingUsage.object_type == 'resource'
     ).group_by(TrackingUsage.object_id).order_by(
         desc('total')
     ).limit(limit)

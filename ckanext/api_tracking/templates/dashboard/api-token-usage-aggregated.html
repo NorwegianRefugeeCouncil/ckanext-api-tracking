@@ -14,6 +14,7 @@
           <tr>
             <th>{{ _("Resource") }}</th>
             <th>{{ _("Total") }}</th>
+            <th>{{ _("Dataset") }}</th>
             <th>{{ _("Organization") }}</th>
           </tr>
         </thead>
@@ -21,13 +22,18 @@
           {% for row in by_resource %}
             <tr>
               <th>
-                {% if row.dataset_title %}
-                  <a href="{{ row.dataset_url }}">{{ row.dataset_title }}</a>
+                {% if row.resource_title %}
+                  <a href="{{ row.resource_url }}">{{ row.resource_title }}</a>
                 {% else %}
-                  <span title="Dataset ID {{ row.dataset_id }} (probably deleted)"><small>dataset probably deleted</small></span>
+                  <span title="Resource ID {{ row.resource_id }} (probably deleted)"><small>resource probably deleted</small></span>
                 {% endif %}
               </th>
               <td>{{ row.total }}</td>
+              <td>
+                {% if row.package_url %}
+                  <a href="{{ row.package_url }}">{{ row.package_title }}</a>
+                {% endif %}
+              </td>
               <td>
                 {% if row.organization_url %}
                   <a href="{{ row.organization_url }}">{{ row.organization_title }}</a>
