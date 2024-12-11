@@ -80,6 +80,12 @@ class TrackingUsageAPIDataset(TrackingUsageF):
     object_type = 'dataset'
 
 
+class TrackingUsageAPIResource(TrackingUsageF):
+    tracking_type = 'api'
+    tracking_sub_type = 'show'
+    object_type = 'resource'
+
+
 class TrackingUsageAPIResourceDownload(TrackingUsageF):
     tracking_type = 'api'
     tracking_sub_type = 'download'

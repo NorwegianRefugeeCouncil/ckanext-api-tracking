@@ -6,6 +6,49 @@
     <section id="stats-latest-api" class="module-content tab-content active">
       <h2>{{ _('API token usage by data file') }}</h2>
       <p>
+        <a class="btn btn-primary" href="{{ links.download_by_resource_csv }}">{{ _('Download as CSV') }}</a>
+        <a class="btn btn-primary" href="{{ links.json_by_resource }}" target="_blank">{{ _('View API') }}</a>
+      </p>
+      <table class="table table-chunky table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>{{ _("Resource") }}</th>
+            <th>{{ _("Total") }}</th>
+            <th>{{ _("Dataset") }}</th>
+            <th>{{ _("Organization") }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in by_resource %}
+            <tr>
+              <th>
+                {% if row.resource_title %}
+                  <a href="{{ row.resource_url }}">{{ row.resource_title }}</a>
+                {% else %}
+                  <span title="Resource ID {{ row.resource_id }} (probably deleted)"><small>resource probably deleted</small></span>
+                {% endif %}
+              </th>
+              <td>{{ row.total }}</td>
+              <td>
+                {% if row.package_url %}
+                  <a href="{{ row.package_url }}">{{ row.package_title }}</a>
+                {% endif %}
+              </td>
+              <td>
+                {% if row.organization_url %}
+                  <a href="{{ row.organization_url }}">{{ row.organization_title }}</a>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </section>
+
+    <section id="stats-latest-api" class="module-content tab-content active">
+      <h2>{{ _('API token usage by dataset') }}</h2>
+      <p>
         <a class="btn btn-primary" href="{{ links.download_by_dataset_csv }}">{{ _('Download as CSV') }}</a>
         <a class="btn btn-primary" href="{{ links.json_by_dataset }}" target="_blank">{{ _('View API') }}</a>
       </p>

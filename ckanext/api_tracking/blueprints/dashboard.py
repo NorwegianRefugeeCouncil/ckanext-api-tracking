@@ -125,6 +125,7 @@ def api_token_usage_aggregated():
     usage = get_api_token_usage_aggregated(limit=50)
     extra_vars = {
         'by_dataset': usage['by_dataset'],
+        'by_resource': usage['by_resource'],
         'by_token_name': usage['by_token_name'],
         'active': 'api-aggregated',
         'links': usage['links'],
