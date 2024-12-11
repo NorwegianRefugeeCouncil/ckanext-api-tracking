@@ -2,7 +2,7 @@
 
 {% block primary_content %}
   <article class="module">
-    
+
     <section id="stats-latest-api" class="module-content tab-content active">
       <h2>{{ _('Latest API token usage') }}</h2>
       <p>
@@ -32,9 +32,13 @@
                 </span>
               </td>
               <th>
-                <a href="{{ h.url_for('user.read', id=row.user_id) }}">
-                  {{ row.user_name }}
-                </a>
+                {% if row.user_id %}
+                  <a href="{{ h.url_for('user.read', id=row.user_id) }}">
+                    {{ row.user_name }}
+                  </a>
+                {% else %}
+                  <span>{{ _('Anonymous') }}</span>
+                {% endif %}
               </th>
               <td>{{ row.token_name }}</td>
               <td>{{ row.object_type }}</td>
