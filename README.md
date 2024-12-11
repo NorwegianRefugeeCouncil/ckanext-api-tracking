@@ -1,10 +1,10 @@
 [![Tests](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/workflows/Tests/badge.svg)](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/actions)
 
-This repository contains a CKAN open-source extension that can be added to any CKAN 2.10+ instance. It was developed by Norwegian Refugee Council (NRC) and Open Knowledge Foundation (OKFN).  
+This repository contains a CKAN open-source extension that can be added to any CKAN 2.10+ instance. It was developed by Norwegian Refugee Council (NRC) and Open Knowledge Foundation (OKFN).
 
 # CKAN API tracking extension
 
-This extension allows CKAN portals to monitor the use of API tokens by users or service accounts.  
+This extension allows CKAN portals to monitor the use of API tokens by users or service accounts.
 
 ## Use-cases
 
@@ -16,9 +16,9 @@ NRC uses this extension in the following way:
 
 ## How it works
 
-This extension adds a new middleware to the CKAN application that intercept all API requests and log them into the CKAN database. A new database table was created to store this information. This table is similar to the current CKAN `tracking_raw` table (in use at the `TrackingMiddleware`). Considering the similarities with the CKAN core feature, a possible future for this extension is to capture all calls and unify usage tracking.  
+This extension adds a new middleware to the CKAN application that intercept all API requests and log them into the CKAN database. A new database table was created to store this information. This table is similar to the current CKAN `tracking_raw` table (in use at the `TrackingMiddleware`). Considering the similarities with the CKAN core feature, a possible future for this extension is to capture all calls and unify usage tracking.
 
-This extension also includes a series of dashboards with a summary of the available data. These dashboards are based on the CKAN core `StatsPlugin` plugin. This extension eventually will attempt to replace the current `stats` plugin.  
+This extension also includes a series of dashboards with a summary of the available data. These dashboards are based on the CKAN core `StatsPlugin` plugin. This extension eventually will attempt to replace the current `stats` plugin.
 
 All data from this extension is only accessible by sysadmins.
 
@@ -83,7 +83,13 @@ or clone the source and install it on the virtualenv
 
 ## Config settings
 
-None at present.
+#### track_anon
+
+By default, this plugin does not track actions if there is no Authorization header or API Token present in the request. To enable tracking of anonymous actions (no user logged in), enable the following config option:
+
+```
+ckanext.api_tracking.track_anon = True
+```
 
 ## License
 

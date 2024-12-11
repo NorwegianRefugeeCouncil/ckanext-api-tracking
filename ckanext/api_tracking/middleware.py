@@ -97,7 +97,7 @@ class TrackingUsageMiddleware:
         # TODO we are not able to identify the user yet
         # If we managed to do it, we can also track no-api-token users
 
-        if not api_token:
+        if not api_token and not plugins.toolkit.asbool(plugins.toolkit.config.get('ckanext.api_tracking.track_anon', False)):
             return self.app(environ, start_response)
 
         # Allow this and other extensions to do something with this data
