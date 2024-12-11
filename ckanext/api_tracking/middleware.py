@@ -40,6 +40,8 @@ class TrackingUsageMiddleware:
         if not apitoken:
             apitoken = environ.get(u'HTTP_AUTHORIZATION')
         if not apitoken:
+            apitoken = environ.get(u'HTTP_X_CKAN_API_KEY')
+        if not apitoken:
             apitoken = environ.get(u'Authorization', '')
             # Forget HTTP Auth credentials (they have spaces).
             if ' ' in apitoken:
