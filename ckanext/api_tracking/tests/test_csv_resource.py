@@ -31,6 +31,11 @@ def base_data():
         for resource in [obj.resource11, obj.resource12, obj.resource13, obj.resource21, obj.resource22]:
             new_tracking = tf.TrackingUsageAPIResourceDownload(user=user, object_id=resource['id'])
             obj.trackings.append(new_tracking)
+
+    tf.TrackingUsageAPIResourceDownload(user=user, object_id=obj.resource11['id'])
+    tf.TrackingUsageAPIResourceDownload(user=user, object_id=obj.resource11['id'])
+    tf.TrackingUsageAPIResourceDownload(user=user, object_id=obj.resource12['id'])
+
     return obj
 
 
@@ -82,13 +87,22 @@ class TestTrackingCSVView:
                     resource_id=base_data.resource11['id'],
                     qualified=True
                 )
-                assert fields[9] == '6'
+                assert fields[9] == '8'
             elif fields[0] == base_data.resource12['id']:
                 assert fields[4] == base_data.dataset1['title']
                 assert fields[2] == url_for(
                     'dataset_resource.read',
                     id=base_data.dataset1['name'],
                     resource_id=base_data.resource12['id'],
+                    qualified=True
+                )
+                assert fields[9] == '7'
+            elif fields[0] == base_data.resource21['id']:
+                assert fields[4] == base_data.dataset2['title']
+                assert fields[2] == url_for(
+                    'dataset_resource.read',
+                    id=base_data.dataset2['name'],
+                    resource_id=base_data.resource21['id'],
                     qualified=True
                 )
                 assert fields[9] == '6'
