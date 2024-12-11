@@ -76,7 +76,7 @@ class TestTrackingCSVView:
         ]
         rows = lines[1:]
         # They are just two datasets
-        assert len(rows) == 2
+        assert len(rows) == 5
         for row in rows:
             fields = row.split(',')
             if fields[0] == base_data.resource11['id']:
