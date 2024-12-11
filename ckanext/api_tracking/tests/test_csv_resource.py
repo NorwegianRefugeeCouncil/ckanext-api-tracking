@@ -37,20 +37,20 @@ def base_data():
 @pytest.mark.usefixtures('clean_db', 'api_tracking_migrate')
 class TestTrackingCSVView:
     """ Test basic tracking from requests """
-    def test_dataset_with_token_csv_no_user(self, app):
+    def test_resource_with_token_csv_no_user(self, app):
         """ Test the endpoint is closed for anonymous users """
         url = url_for('tracking_csv.most_accessed_resource_with_token_csv')
         with pytest.raises(toolkit.NotAuthorized):
             app.get(url)
 
-    def test_dataset_with_token_csv_no_auth(self, app, base_data):
+    def test_resource_with_token_csv_no_auth(self, app, base_data):
         """ Test the endpoint is closed for regular users """
         url = url_for('tracking_csv.most_accessed_resource_with_token_csv')
         auth = {"Authorization": base_data.user1['token']}
         with pytest.raises(toolkit.NotAuthorized):
             app.get(url, extra_environ=auth)
 
-    def test_dataset_with_token_csv(self, app, base_data):
+    def test_resource_with_token_csv(self, app, base_data):
         url = url_for('tracking_csv.most_accessed_resource_with_token_csv')
         # download the CSV
         auth = {"Authorization": base_data.sysadmin['token']}
@@ -58,25 +58,39 @@ class TestTrackingCSVView:
         assert response.status_code == 200
         # save the response locally
         full_response = response.body
-        with open('most-accessed-dataset-with-token.csv', 'w') as f:
+        with open('most-accessed-resource-with-token.csv', 'w') as f:
             f.write(full_response)
 
         # check the CSV content
         lines = full_response.splitlines()
         header = lines[0].split(',')
-        assert header == ['dataset_id', 'dataset_title', 'dataset_url', 'total']
+        assert header == [
+            'resource_id', 'resource_title', 'resource_url', 'package_id',
+            'package_title', 'package_url', 'organization_title', 'organization_url',
+            'organization_id', 'total',
+        ]
         rows = lines[1:]
         # They are just two datasets
         assert len(rows) == 2
         for row in rows:
             fields = row.split(',')
-            if fields[0] == base_data.dataset1['id']:
-                assert fields[1] == base_data.dataset1['title']
-                assert fields[2] == url_for('dataset.read', id=base_data.dataset1['name'], qualified=True)
-                assert fields[3] == '6'
-            elif fields[0] == base_data.dataset2['id']:
-                assert fields[1] == base_data.dataset2['title']
-                assert fields[2] == url_for('dataset.read', id=base_data.dataset2['name'], qualified=True)
-                assert fields[3] == '3'
+            if fields[0] == base_data.resource11['id']:
+                assert fields[4] == base_data.dataset1['title']
+                assert fields[2] == url_for(
+                    'dataset_resource.read',
+                    id=base_data.dataset1['name'],
+                    resource_id=base_data.resource11['id'],
+                    qualified=True
+                )
+                assert fields[9] == '6'
+            elif fields[0] == base_data.resource12['id']:
+                assert fields[4] == base_data.dataset1['title']
+                assert fields[2] == url_for(
+                    'dataset_resource.read',
+                    id=base_data.dataset1['name'],
+                    resource_id=base_data.resource12['id'],
+                    qualified=True
+                )
+                assert fields[9] == '6'
             else:
                 assert False, f"Unexpected dataset id: {fields[0]}"

@@ -5,8 +5,8 @@ from ckanext.api_tracking.models import TrackingUsage
 
 def get_most_accessed_resource_with_token(limit=10):
     """
-    Get most accessed datasets with token
-    Returns a query result with the most accessed datasets with token
+    Get most accessed resources with token
+    Returns a query result with the most accessed resources with token
 
     """
     query = model.Session.query(

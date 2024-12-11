@@ -61,7 +61,7 @@ def most_accessed_resource_with_token_csv():
         'most_accessed_resource_with_token_csv',
         most_accessed_resource_with_token_data,
         {'limit': 10},
-        'most-accessed-dataset-with-token.csv',
+        'most-accessed-resoure-with-token.csv',
     )
 
 
