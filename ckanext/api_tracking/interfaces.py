@@ -38,6 +38,9 @@ class IUsage(Interface):
         log.debug(f"Track: {method} :: {tracking_type}")
         fn_name = f'track_{method}_{tracking_type}'
         fn = getattr(self, fn_name, None)
+        for item in plugins.PluginImplementations(IUsage):
+            if hasattr(item, fn_name):
+                fn = getattr(item, fn_name, None)
         if fn:
             ret_data = fn(ckan_url)
         else:
