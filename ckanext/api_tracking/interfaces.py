@@ -31,7 +31,10 @@ class IUsage(Interface):
             # we can do something with the data after it has been tracked
             data = item.before_track_usage(data)
 
-        environ = data.pop('environ')
+        environ = data.pop('environ', None)
+        if not environ:
+            log.warning('No environment initialized for request. Unable to track')
+            return
         ckan_url = CKANURL(environ)
         method = ckan_url.method.lower()
         tracking_type = data['tracking_type']
