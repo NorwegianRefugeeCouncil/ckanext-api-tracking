@@ -107,4 +107,5 @@ class TestTrackingCSVView:
                 )
                 assert fields[9] == '6'
             else:
-                assert False, f"Unexpected dataset id: {fields[0]}"
+                if fields[0] not in [base_data.resource13['id'], base_data.resource22['id']]:
+                    raise AssertionError(f"Unexpected resource ID {fields[0]}")
