@@ -21,6 +21,14 @@ def most_accessed_resource_with_token_data(limit=10):
     know_orgs = {}
     for row in data:
         object_id = row['object_id']
+        obj_title = None
+        object_url = None
+        package_title = None
+        package_url = None
+        org_title = None
+        org_url = None
+        org_id = None
+
         obj = model.Resource.get(object_id)
         if obj:
             obj_title = obj.name if obj.name else f'Resource ID {obj.id}'
@@ -41,15 +49,6 @@ def most_accessed_resource_with_token_data(limit=10):
                 org_id = org.id
                 org_title = org.title
                 org_url = toolkit.url_for('organization.read', id=org.name, qualified=True)
-
-        else:
-            obj_title = None
-            object_url = None
-            package_title = None
-            package_url = None
-            org_title = None
-            org_url = None
-            org_id = None
 
         rows.append({
             'resource_id': object_id,
