@@ -42,8 +42,12 @@ def all_token_usage_data(limit=1000):
                 organization_url = toolkit.url_for('organization.read', id=owner_org.get('id'))
             elif object_type == 'resource':
                 obj = model.Resource.get(object_id)
-                obj_title = obj.name
-                object_url = toolkit.url_for('dataset_resource.read', id=obj.package_id, resource_id=obj.id)
+                if obj:
+                    obj_title = obj.name
+                    object_url = toolkit.url_for('dataset_resource.read', id=obj.package_id, resource_id=obj.id)
+                else:
+                    obj_title = f'Resource ID {object_id} (deleted)'
+                    object_url = None
             elif object_type == 'organization':
                 obj = model.Organization.get(object_id)
                 obj_title = obj.title

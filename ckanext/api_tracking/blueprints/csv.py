@@ -10,6 +10,7 @@ from ckanext.api_tracking.queries.data import (
     all_token_usage_data,
     most_accessed_token_data,
     most_accessed_dataset_with_token_data,
+    most_accessed_resource_with_token_data,
 )
 
 
@@ -49,6 +50,18 @@ def most_accessed_dataset_with_token_csv():
         most_accessed_dataset_with_token_data,
         {'limit': 10},
         'most-accessed-dataset-with-token.csv',
+    )
+
+
+@tracking_csv_blueprint.route('/most-accessed-resource-with-token.csv', methods=["GET"])
+def most_accessed_resource_with_token_csv():
+    """ Get most accessed (using a API token) resources """
+
+    return _csv_response(
+        'most_accessed_resource_with_token_csv',
+        most_accessed_resource_with_token_data,
+        {'limit': 10},
+        'most-accessed-resoure-with-token.csv',
     )
 
 
