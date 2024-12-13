@@ -39,9 +39,6 @@ class TrackingPlugin(plugins.SingletonPlugin):
         """
         return TrackingUsageMiddleware(app, config)
 
-    # IUsage
-    # Available to use dynamic functions like track_METHOD_TYPE
-
     # IAthFunctions
 
     def get_auth_functions(self):
@@ -70,3 +67,123 @@ class TrackingPlugin(plugins.SingletonPlugin):
             blueprints.tracking_csv_blueprint,
             blueprints.tracking_dashboard_blueprint,
         ]
+
+    # IUsage
+    # Available to use dynamic functions like track_METHOD_TYPE
+
+    def track_get_dataset(self, ckan_url):
+        """ Track a dataset/NAME page access """
+        return {
+            'tracking_type': 'ui',
+            'tracking_sub_type': 'show',
+            'object_type': 'dataset',
+            'object_id': ckan_url.get_url_part(-1),
+        }
+
+    def track_get_resource(self, ckan_url):
+        """ Track a dataset/NAME/resource/RES_ID page access """
+        return {
+            'tracking_type': 'ui',
+            'tracking_sub_type': 'show',
+            'object_type': 'resource',
+            'object_id': ckan_url.get_url_part(-1),
+        }
+
+    def track_get_resource_download(self, ckan_url):
+        """
+            Tracks:
+            - dataset/NAME/resource/RES_ID/download
+            - dataset/NAME/resource/RES_ID/download/FILENAME
+        """
+        return {
+            'tracking_type': 'ui',
+            'tracking_sub_type': 'download',
+            'object_type': 'resource',
+            'object_id': ckan_url.get_url_part(3),
+        }
+
+    def track_get_organization(self, ckan_url):
+        """ Track a dataset/NAME page access """
+        return {
+            'tracking_type': 'ui',
+            'tracking_sub_type': 'show',
+            'object_type': 'organization',
+            'object_id': ckan_url.get_url_part(-1),
+        }
+
+    def track_get_dataset_home(self, ckan_url):
+        """
+        Track a dataset (home) access
+        """
+        return {
+            'tracking_type': 'ui',
+            'tracking_sub_type': 'home',
+            'object_type': 'dataset'
+        }
+
+    def track_get_organization_home(self, ckan_url):
+        """
+        Track a organization (home) access
+        """
+        return {
+            'tracking_type': 'ui',
+            'tracking_sub_type': 'home',
+            'object_type': 'organization'
+        }
+
+    def _track_api_action(self, method, ckan_url):
+        api_version, action_name = ckan_url.get_api_action()
+        method = method.lower()
+        fn = getattr(self, f'track_{method}_api_action_{action_name}', None)
+        if fn:
+            return fn(ckan_url)
+        else:
+            log.error(f"Unable to track {method} API action '{action_name}'")
+
+    def track_get_api_action(self, ckan_url):
+        """
+        Generic for all API GET calls (api/[ver/]action/{action})
+        """
+        return self._track_api_action('get', ckan_url)
+
+    def track_post_api_action(self, ckan_url):
+        """
+        Generic for all API POST calls (api/[ver/]action/{action})
+        """
+        return self._track_api_action('post', ckan_url)
+
+    def track_get_api_action_package_show(self, ckan_url):
+        object_id = ckan_url.get_query_param('id')
+        return {
+            'tracking_type': 'api',
+            'tracking_sub_type': 'show',
+            'object_type': 'dataset',
+            'object_id': object_id,
+        }
+
+    def track_get_api_action_organization_show(self, ckan_url):
+        object_id = ckan_url.get_query_param('id')
+        return {
+            'tracking_type': 'api',
+            'tracking_sub_type': 'show',
+            'object_type': 'organization',
+            'object_id': object_id,
+        }
+
+    def track_get_api_action_resource_show(self, ckan_url):
+        object_id = ckan_url.get_query_param('id')
+        return {
+            'tracking_type': 'api',
+            'tracking_sub_type': 'show',
+            'object_type': 'resource',
+            'object_id': object_id,
+        }
+
+    def track_post_api_action_package_create(self, ckan_url):
+        object_id = ckan_url.get_query_param('id')
+        return {
+            'tracking_type': 'api',
+            'tracking_sub_type': 'edit',
+            'object_type': 'dataset',
+            'object_id': object_id,
+        }
