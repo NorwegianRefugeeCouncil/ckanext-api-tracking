@@ -10,7 +10,6 @@ def get_most_accessed_dataset_with_token(limit=10):
 
     """
     query = model.Session.query(
-        TrackingUsage.id,
         TrackingUsage.object_id,
         func.count(TrackingUsage.object_id).label('total')
     ).filter(
@@ -30,7 +29,6 @@ def get_most_accessed_token(limit=10):
     Returns a query result with the most accessed tokens
     """
     query = model.Session.query(
-        TrackingUsage.id,
         TrackingUsage.user_id,
         TrackingUsage.token_name,
         func.count(TrackingUsage.token_name).label('total')
