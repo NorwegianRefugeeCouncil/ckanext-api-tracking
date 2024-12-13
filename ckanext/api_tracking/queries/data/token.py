@@ -30,6 +30,7 @@ def most_accessed_token_data(limit=10):
             user_url = None
 
         rows.append({
+            'id': row['id'],
             'user_id': user_id,
             'user_fullname': user_title,
             'user_name': user_name,

@@ -28,6 +28,7 @@ def most_accessed_dataset_with_token_data(limit=10):
             object_url = None
 
         rows.append({
+            'id': row['id'],
             'dataset_id': object_id,
             'dataset_title': obj_title,
             'dataset_url': object_url,

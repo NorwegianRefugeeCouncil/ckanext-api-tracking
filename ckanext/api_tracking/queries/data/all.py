@@ -50,6 +50,7 @@ def all_token_usage_data(limit=1000):
                 object_url = toolkit.url_for('organization.read', id=obj.id)
 
         rows.append({
+            'id': row['id'],
             'timestamp': row['timestamp'],
             'user_id': user_id,
             'user_name': user_name,
