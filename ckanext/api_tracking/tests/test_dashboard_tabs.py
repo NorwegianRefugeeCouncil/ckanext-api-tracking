@@ -38,7 +38,7 @@ class TestDashboardTabs:
         view_name = f'tracking_dashboard.{fn}'
         url = url_for(view_name)
         try:
-            app.get(url, extra_environ=auth, status=status)
+            app.get(url, headers=auth, status=status)
         except Exception as e:
             raise AssertionError(
                 f"Error testing {view_name} for user {user['name']}: {e}\n\t"
