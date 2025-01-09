@@ -75,11 +75,13 @@ or clone the source and install it on the virtualenv
     pip install -e .
 	pip install -r requirements.txt
 
-3. Add `tracking` to the `ckan.plugins` setting in your CKAN
+Add `api_tracking` to the `ckan.plugins` setting in your CKAN
    config file (by default the config file is located at
    `/etc/ckan/default/ckan.ini`).
+From CKAN >= 2.11 it's also required to add the core extenstion `tracking` to the `ckan.plugins` setting.
 
-4. Restart CKAN.
+
+Restart CKAN.
 
 ## Config settings
 
