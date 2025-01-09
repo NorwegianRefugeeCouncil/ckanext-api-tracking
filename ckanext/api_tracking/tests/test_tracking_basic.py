@@ -65,7 +65,7 @@ class TestTrackingUsageBasic:
         """ Test user for dataset/NAME """
         user_with_token = factories.UserWithToken()
         dataset = factories.Dataset()
-        url = url_for("dataset.read", id=dataset["id"])
+        url = url_for("dataset.read", id=dataset["name"])
         auth = {"Authorization": user_with_token['token']}
         response = app.get(url, headers=auth)
         assert response.status_code == 200
@@ -136,7 +136,7 @@ class TestTrackingUsageBasic:
         """ Test user for organization/NAME """
         user_with_token = factories.UserWithToken()
         org = factories.Organization()
-        url = url_for("organization.read", id=org["id"])
+        url = url_for("organization.read", id=org["name"])
         auth = {"Authorization": user_with_token['token']}
         response = app.get(url, headers=auth)
         assert response.status_code == 200
