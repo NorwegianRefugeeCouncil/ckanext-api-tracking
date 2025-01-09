@@ -2,6 +2,6 @@ import pytest
 
 
 @pytest.fixture
-def api_tracking_migrate(migrate_db_for):
-    """ Apply the tracking migrations """
+def clean_db(reset_db, migrate_db_for):
+    reset_db()
     migrate_db_for('api_tracking')
