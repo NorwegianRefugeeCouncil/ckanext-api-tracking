@@ -1,4 +1,4 @@
-name: Tests
+name: Tests CKAN 2.11
 on: [push]
 jobs:
   test:
