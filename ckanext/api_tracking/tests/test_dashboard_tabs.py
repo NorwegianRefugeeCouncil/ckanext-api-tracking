@@ -30,7 +30,7 @@ def setup_data():
     return obj
 
 
-@pytest.mark.usefixtures('clean_db', 'clean_index', 'api_tracking_migrate')
+@pytest.mark.usefixtures('clean_db', 'clean_index')
 class TestDashboardTabs:
     """ Test dashboard tabks """
     def _test_dashboard_tab(self, app, user, fn, status):
@@ -38,7 +38,7 @@ class TestDashboardTabs:
         view_name = f'tracking_dashboard.{fn}'
         url = url_for(view_name)
         try:
-            app.get(url, extra_environ=auth, status=status)
+            app.get(url, headers=auth, status=status)
         except Exception as e:
             raise AssertionError(
                 f"Error testing {view_name} for user {user['name']}: {e}\n\t"

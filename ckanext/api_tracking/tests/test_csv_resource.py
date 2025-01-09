@@ -39,7 +39,7 @@ def base_data():
     return obj
 
 
-@pytest.mark.usefixtures('clean_db', 'api_tracking_migrate')
+@pytest.mark.usefixtures('clean_db')
 class TestTrackingCSVView:
     """ Test basic tracking from requests """
     def test_resource_with_token_csv_no_user(self, app):
@@ -53,13 +53,13 @@ class TestTrackingCSVView:
         url = url_for('tracking_csv.most_accessed_resource_with_token_csv')
         auth = {"Authorization": base_data.user1['token']}
         with pytest.raises(toolkit.NotAuthorized):
-            app.get(url, extra_environ=auth)
+            app.get(url, headers=auth)
 
     def test_resource_with_token_csv(self, app, base_data):
         url = url_for('tracking_csv.most_accessed_resource_with_token_csv')
         # download the CSV
         auth = {"Authorization": base_data.sysadmin['token']}
-        response = app.get(url, extra_environ=auth)
+        response = app.get(url, headers=auth)
         assert response.status_code == 200
         # save the response locally
         full_response = response.body
