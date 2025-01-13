@@ -14,6 +14,11 @@
     <h2 class="module-heading"><i class="fa fa-chart-bar"></i>{{ _('Statistics Menu') }}</h2>
     <nav data-module="stats-nav">
       <ul class="unstyled nav nav-simple">
+
+        {% block pre_links_menu %}
+        {% endblock %}
+
+        {% block links_menu %}
         <li class="nav-item {% if active == 'dataset-unique-views'%}active{% endif %}">
           <a href="{% url_for 'tracking_dashboard.dataset_unique_views' %}">
             {{ _('Most Viewed Datasets') }}
@@ -59,6 +64,11 @@
             {{ _('API token usage aggregated') }}
           </a>
         </li>
+        {% endblock %}
+
+        {% block post_links_menu %}
+        {% endblock %}
+
       </ul>
     </nav>
   </section>
