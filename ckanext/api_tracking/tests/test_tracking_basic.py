@@ -16,7 +16,7 @@ class TestTrackingUsageBasic:
         dataset = factories.Dataset()
         url = url_for("api.action", ver=3, logic_function="package_show", id=dataset["id"])
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, extra_environ=auth)
+        response = app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -33,7 +33,7 @@ class TestTrackingUsageBasic:
         org = factories.Organization()
         url = url_for("api.action", ver=3, logic_function="organization_show", id=org["id"])
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, extra_environ=auth)
+        response = app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -50,7 +50,7 @@ class TestTrackingUsageBasic:
         resource = factories.Resource()
         url = url_for("api.action", ver=3, logic_function="resource_show", id=resource["id"])
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, extra_environ=auth)
+        response = app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -65,9 +65,9 @@ class TestTrackingUsageBasic:
         """ Test user for dataset/NAME """
         user_with_token = factories.UserWithToken()
         dataset = factories.Dataset()
-        url = url_for("dataset.read", id=dataset["id"])
+        url = url_for("dataset.read", id=dataset["name"])
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, extra_environ=auth)
+        response = app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -85,7 +85,7 @@ class TestTrackingUsageBasic:
         dataset_id = resource["package_id"]
         url = url_for("dataset_resource.read", id=dataset_id, resource_id=resource["id"])
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, extra_environ=auth)
+        response = app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -105,7 +105,7 @@ class TestTrackingUsageBasic:
         url = url_for("dataset_resource.download", id=dataset_id, resource_id=resource["id"])
         url += sufix_url
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, extra_environ=auth, follow_redirects=False)
+        response = app.get(url, headers=auth, follow_redirects=False)
         # They are a redirection to the file
         assert response.status_code == 302
         # Assert we have a TrackingUsage record
@@ -122,7 +122,7 @@ class TestTrackingUsageBasic:
         user_with_token = factories.UserWithToken()
         url = url_for("dataset.search")
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, extra_environ=auth)
+        response = app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -136,9 +136,9 @@ class TestTrackingUsageBasic:
         """ Test user for organization/NAME """
         user_with_token = factories.UserWithToken()
         org = factories.Organization()
-        url = url_for("organization.read", id=org["id"])
+        url = url_for("organization.read", id=org["name"])
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, extra_environ=auth)
+        response = app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -154,7 +154,7 @@ class TestTrackingUsageBasic:
         user_with_token = factories.UserWithToken()
         url = url_for("organization.index")
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, extra_environ=auth)
+        response = app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()

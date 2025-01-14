@@ -18,18 +18,18 @@ def setup_data():
     return obj
 
 
-@pytest.mark.usefixtures('clean_db', 'clean_index', 'api_tracking_migrate')
+@pytest.mark.usefixtures('clean_db', 'clean_index')
 class TestDashboardTab:
     """ Test who can see the dashboard tab """
     def test_member_admin_cant_see(self, app, setup_data):
         auth = {"Authorization": setup_data.user_member_admin['token']}
         url = url_for('tracking_dashboard.index')
-        response = app.get(url, extra_environ=auth)
+        response = app.get(url, headers=auth)
         assert response.status_code == 403
 
     def test_sysadmin_can_see(self, app, setup_data):
         auth = {"Authorization": setup_data.sysadmin['token']}
         url = url_for('tracking_dashboard.index')
-        response = app.get(url, extra_environ=auth)
+        response = app.get(url, headers=auth)
         assert response.status_code == 200
         assert 'Most Viewed Datasets' in response.body

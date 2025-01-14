@@ -1,5 +1,5 @@
 import logging
-from ckan import plugins
+from ckan import model, plugins
 from ckan.plugins.interfaces import Interface
 from ckanext.api_tracking.models import TrackingUsage, CKANURL
 
@@ -31,7 +31,10 @@ class IUsage(Interface):
             # we can do something with the data after it has been tracked
             data = item.before_track_usage(data)
 
-        environ = data.pop('environ')
+        environ = data.pop('environ', None)
+        if not environ:
+            log.warning('No environment initialized for request. Unable to track')
+            return
         ckan_url = CKANURL(environ)
         method = ckan_url.method.lower()
         tracking_type = data['tracking_type']
@@ -79,11 +82,15 @@ class IUsage(Interface):
 
     def track_get_dataset(self, ckan_url):
         """ Track a dataset/NAME page access """
+        # Get the ID or name
+        object_ref = ckan_url.get_url_part(-1)
+        obj = model.Package.get(object_ref)
+        object_id = obj.id if obj else None
         return {
             'tracking_type': 'ui',
             'tracking_sub_type': 'show',
             'object_type': 'dataset',
-            'object_id': ckan_url.get_url_part(-1),
+            'object_id': object_id,
         }
 
     def track_get_resource(self, ckan_url):
@@ -110,11 +117,15 @@ class IUsage(Interface):
 
     def track_get_organization(self, ckan_url):
         """ Track a dataset/NAME page access """
+        # Get the ID or name
+        object_ref = ckan_url.get_url_part(-1)
+        obj = model.Group.get(object_ref)
+        object_id = obj.id if obj else None
         return {
             'tracking_type': 'ui',
             'tracking_sub_type': 'show',
             'object_type': 'organization',
-            'object_id': ckan_url.get_url_part(-1),
+            'object_id': object_id,
         }
 
     def track_get_dataset_home(self, ckan_url):

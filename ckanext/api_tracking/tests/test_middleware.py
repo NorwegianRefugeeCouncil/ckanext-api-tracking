@@ -16,7 +16,7 @@ class TestTrackingUsageMiddleware:
         ]
         auth = {"Authorization": user_with_token['token']}
         for url in urls:
-            response = app.get(url, extra_environ=auth)
+            response = app.get(url, headers=auth)
             assert response.status_code == 200
             assert dataset1['name'] in response
             assert dataset2['name'] in response

@@ -8,7 +8,7 @@ name = "ckanext-api-tracking"
 dynamic = ["version"]
 description = "CKAN extension to track users activity"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 
 authors = [
     { name = "Norwegian Refugee Council (NRC)", email = "nrc@nrc.no" },
@@ -24,6 +24,7 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
