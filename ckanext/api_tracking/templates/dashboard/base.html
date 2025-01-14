@@ -6,6 +6,12 @@
   <li class="active">{{ _("Dashboard") }}</li>
 {% endblock %}
 
+{% block content_primary_nav %}
+  {{ super() }}
+  {# Agregamos el ícono y el enlace para la extensión #}
+  {{ h.build_nav_icon('tracking_dashboard.index', _('Dashboard'), icon='fa-trophy') }}
+{% endblock %}
+
 {% block primary_content %}
 {% endblock %}
 
