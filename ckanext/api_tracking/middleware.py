@@ -28,6 +28,12 @@ class TrackingUsageMiddleware:
 
         self.valid_paths = paths
 
+    def after_request(self, response):
+        """
+        This method is called by CKAN after the request is processed.
+        """
+        return response
+
     def get_api_token(self, environ):
         """
         Based on CKAN ckan.views._get_user_for_apitoken
