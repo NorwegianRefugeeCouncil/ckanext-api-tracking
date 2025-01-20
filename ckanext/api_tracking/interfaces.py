@@ -79,6 +79,10 @@ class IUsage(Interface):
             object_type=object_type, object_id=object_id,
         )
         tu.save()
+        for item in plugins.PluginImplementations(IUsage):
+            # we can do something after saving the TrackingUsage
+            if hasattr(item, 'after_track_usage_save'):
+                item.after_track_usage_save(tu)
 
     def track_get_dataset(self, ckan_url):
         """ Track a dataset/NAME page access """
@@ -212,3 +216,7 @@ class IUsage(Interface):
     def before_track_usage_save(self, ret_data):
         ''' After tracking usage '''
         return ret_data
+
+    def after_track_usage_save(self, tracking_usage_obj: TrackingUsage):
+        ''' After tracking usage save to database '''
+        pass
