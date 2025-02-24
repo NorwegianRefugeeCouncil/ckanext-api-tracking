@@ -10,7 +10,7 @@ from ckanext.api_tracking.dashboard import query_results
 log = logging.getLogger(__name__)
 
 
-def get_unique_dataset_views(days_ago=365, limit=10):
+def get_unique_dataset_views(days_ago=365, limit=10, package_id=None):
     """ Get an ordered list of most viewed datasets """
 
     log.debug(f'Getting dataset views for the last {days_ago} days')
@@ -24,10 +24,13 @@ def get_unique_dataset_views(days_ago=365, limit=10):
 
     ret = []
     for row in results:
+        if package_id and package_id not in [row['package_name'], row['package_id']]:
+            continue
         ret.append({
             'name': row['package_name'],
             'views': row['total_views'],
             'title': row['package_title'],
+            'id': row['package_id'],
         })
     return ret
 
@@ -54,7 +57,7 @@ def get_dataset_views(days_ago=365, limit=10):
     return ret
 
 
-def get_resource_downloads(days_ago=365, limit=10):
+def get_resource_downloads(days_ago=365, limit=10, package_id=None):
     """ Get an ordered list of most downloaded resources """
 
     log.debug(f'Getting resource downloads for the last {days_ago} days')
@@ -78,6 +81,13 @@ def get_resource_downloads(days_ago=365, limit=10):
             continue
         resource_name = resource.name if resource else 'No name'
         package = model.Package.get(resource.package_id)
+        if not package:
+            log.error(f'Package {resource.package_id} not found for {resource_id}')
+            continue
+
+        if package_id and package_id not in [package.id, package.name]:
+            continue
+
         package_title = package.title if package.title else package.name
         name = f'{resource_name} - {package_title}'
         ret.append({
