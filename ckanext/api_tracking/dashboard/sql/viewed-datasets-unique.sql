@@ -22,6 +22,6 @@ WHERE
   tracking_type = 'page' and
   tr.url LIKE '/dataset/%'
 
-GROUP BY package_name, package_title
+GROUP BY package_name, package_title, package_id
 ORDER BY total_views DESC
 LIMIT :limit;
