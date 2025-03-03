@@ -8,6 +8,7 @@ from ckanext.api_tracking.middleware import TrackingUsageMiddleware
 from ckanext.api_tracking.auth import csv as auth_csv
 from ckanext.api_tracking.auth import queries as auth_queries
 from ckanext.api_tracking.actions import queries as action_queries
+from ckanext.api_tracking.utils import track_logged_in
 
 
 log = logging.getLogger(__name__)
@@ -19,6 +20,7 @@ class TrackingPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IBlueprint)
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IMiddleware, inherit=True)
+    plugins.implements(plugins.ISignal)
     plugins.implements(IUsage, inherit=True)
 
     # IConfigurer
@@ -70,3 +72,11 @@ class TrackingPlugin(plugins.SingletonPlugin):
             blueprints.tracking_csv_blueprint,
             blueprints.tracking_dashboard_blueprint,
         ]
+
+    # ISignal
+
+    def get_signal_subscriptions(self):
+
+        return {
+            toolkit.signals.logged_in: [track_logged_in]
+        }
