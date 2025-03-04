@@ -22,6 +22,8 @@ This extension also includes a series of dashboards with a summary of the availa
 
 All data from this extension is only accessible by sysadmins.
 
+See [tracking_type.md](/DOCS/imgs/tracking_type.md) for more information on the tracking fields.  
+
 ### Sample screenshots
 
 ![Token usage by name](/DOCS/imgs/token-usage-by-name.png)

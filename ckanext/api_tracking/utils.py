@@ -1,3 +1,9 @@
+import logging
+from ckanext.api_tracking.models import TrackingUsage
+
+
+log = logging.getLogger(__name__)
+
 
 def track_logged_in(sender, user):
     """ This function is executed everytime CKAN core
@@ -8,7 +14,22 @@ def track_logged_in(sender, user):
         User <User id=c3987980 ...> logged in
 
     """
-    pass
+    log.info(f'User {user.name} logged in')
+
+    # Create tracking record for login event
+    extras = {
+        'method': 'POST',
+    }
+
+    tu = TrackingUsage(
+        tracking_type='ui',
+        tracking_sub_type='login',
+        object_type='user',
+        object_id=user.id,
+        user_id=user.id,
+        extras=extras,
+    )
+    tu.save()
 
 
 def track_logged_out(sender, user):
@@ -16,4 +37,20 @@ def track_logged_out(sender, user):
         sends the logged_out signal.
         This signals comes from Flask-Login.
     """
-    pass
+    log.info(f'User {user.name} logged out')
+
+    # Create tracking record for logout event
+
+    extras = {
+        'method': 'POST',
+    }
+
+    tu = TrackingUsage(
+        tracking_type='ui',
+        tracking_sub_type='logout',
+        object_type='user',
+        object_id=user.id,
+        user_id=user.id,
+        extras=extras,
+    )
+    tu.save()
