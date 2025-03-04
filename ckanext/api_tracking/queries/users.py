@@ -3,7 +3,7 @@ from sqlalchemy import func, desc
 from ckanext.api_tracking.models import TrackingUsage
 
 
-def get_user_active_metrics(limit=30):
+def users_active_metrics(limit=30):
     """
     Get active users by day
     We count logged in users by day

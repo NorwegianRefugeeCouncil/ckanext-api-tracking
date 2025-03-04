@@ -12,3 +12,7 @@ def most_accessed_token_csv(context, data_dict):
 
 def all_token_usage_csv(context, data_dict):
     return {'success': False}
+
+
+def users_active_metrics_csv(context, data_dict):
+    return {'success': False}

@@ -4,6 +4,7 @@ from ckan.plugins.toolkit import render, h
 from ckanext.stats import stats as stats_lib
 from ckanext.api_tracking.dashboard.stats import get_dataset_views, get_unique_dataset_views, get_resource_downloads
 from ckanext.api_tracking.dashboard.stats_api import get_api_token_usage_aggregated, get_latest_api_token_usage
+from ckanext.api_tracking.dashboard.users import get_users_active_metrics
 from ckanext.api_tracking.decorators import require_sysadmin_user
 
 
@@ -131,3 +132,16 @@ def api_token_usage_aggregated():
         'links': usage['links'],
     }
     return render('dashboard/api-token-usage-aggregated.html', extra_vars)
+
+
+@tracking_dashboard_blueprint.route('/users-active-metrics')
+@require_sysadmin_user
+def users_active_metrics():
+    """ Show information about user active metrics """
+    users_active = get_users_active_metrics(limit=30)
+    extra_vars = {
+        'users_active': users_active['records'],
+        'active': 'users-active-metrics',
+        'links': users_active['links'],
+    }
+    return render('dashboard/users-active-metrics.html', extra_vars)

@@ -12,3 +12,7 @@ def most_accessed_token(context, data_dict):
 
 def all_token_usage(context, data_dict):
     return {'success': False}
+
+
+def users_active_metrics(context, data_dict):
+    return {'success': False}
