@@ -51,7 +51,7 @@ class TestUserActiveMetrics:
 
         assert len(metrics) == 1, "Should have one day of metrics"
         metric = metrics[0]
-        assert metric['day'].date() == datetime.now().date(), "Should have today's date"
+        assert metric['day'] == datetime.now().date(), "Should have today's date"
         assert metric['total'] == 1, "Should count one user"
 
     def test_single_user_multiple_logins_same_day(self):
@@ -70,7 +70,7 @@ class TestUserActiveMetrics:
 
         assert len(metrics) == 1, "Should have one day of metrics"
         metric = metrics[0]
-        assert metric['day'].date() == today.date(), "Should have the correct date"
+        assert metric['day'] == today.date(), "Should have the correct date"
         assert metric['total'] == 1, "Should count one user even with multiple logins"
 
     def test_multiple_users_same_day(self):
