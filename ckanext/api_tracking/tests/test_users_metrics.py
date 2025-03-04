@@ -21,7 +21,7 @@ class TestUserActiveMetrics:
     def _create_login_event(self, user_id, timestamp=None):
         """Helper to create a login tracking event with specific timestamp"""
         if timestamp is None:
-            timestamp = datetime.datetime.now()
+            timestamp = datetime.now()
 
         tu = TrackingUsageUILogin(
             user_id=user_id,
@@ -135,9 +135,9 @@ class TestUserActiveMetrics:
         user = factories.User()
 
         # Create login events for 5 different days
-        base_date = datetime.datetime.now()
+        base_date = datetime.now()
         for i in range(5):
-            date = base_date - datetime.timedelta(days=i)
+            date = base_date - timedelta(days=i)
             self._create_login_event(user['id'], date)
 
         # Get metrics with limit=3
