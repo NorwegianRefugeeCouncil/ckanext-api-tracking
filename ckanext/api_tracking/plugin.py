@@ -78,6 +78,6 @@ class TrackingPlugin(plugins.SingletonPlugin):
     def get_signal_subscriptions(self):
 
         return {
-            toolkit.signals.logged_in: [track_logged_in],
-            toolkit.signals.logged_out: [track_logged_out],
+            toolkit.signals.user_logged_in: [track_logged_in],
+            toolkit.signals.user_logged_out: [track_logged_out],
         }
