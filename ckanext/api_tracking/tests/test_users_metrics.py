@@ -4,7 +4,7 @@ from ckan import model
 from ckan.tests import factories
 
 from ckanext.api_tracking.models import TrackingUsage
-from ckanext.api_tracking.queries.users import get_users_active_metrics
+from ckanext.api_tracking.queries.users import users_active_metrics
 from ckanext.api_tracking.tests.factories import TrackingUsageUILogin
 
 
@@ -35,7 +35,7 @@ class TestUserActiveMetrics:
         """ Test with no login data """
 
         # Get metrics
-        metrics = get_users_active_metrics()
+        metrics = users_active_metrics()
         assert len(metrics) == 0, "Should return empty list when no login events exist"
 
     def test_single_user_single_day(self):
@@ -47,7 +47,7 @@ class TestUserActiveMetrics:
         self._create_login_event(user['id'])
 
         # Get metrics
-        metrics = get_users_active_metrics()
+        metrics = users_active_metrics()
 
         assert len(metrics) == 1, "Should have one day of metrics"
         metric = metrics[0]
@@ -66,7 +66,7 @@ class TestUserActiveMetrics:
         self._create_login_event(user['id'], today + timedelta(hours=2))
 
         # Get metrics
-        metrics = get_users_active_metrics()
+        metrics = users_active_metrics()
 
         assert len(metrics) == 1, "Should have one day of metrics"
         metric = metrics[0]
@@ -87,7 +87,7 @@ class TestUserActiveMetrics:
         self._create_login_event(user3['id'], today + timedelta(hours=2))
 
         # Get metrics
-        metrics = get_users_active_metrics()
+        metrics = users_active_metrics()
 
         assert len(metrics) == 1, "Should have one day of metrics"
         metric = metrics[0]
@@ -113,7 +113,7 @@ class TestUserActiveMetrics:
         self._create_login_event(user2['id'], day_before)
 
         # Get metrics
-        metrics = get_users_active_metrics()
+        metrics = users_active_metrics()
 
         assert len(metrics) == 3, "Should have three days of metrics"
 
@@ -141,6 +141,6 @@ class TestUserActiveMetrics:
             self._create_login_event(user['id'], date)
 
         # Get metrics with limit=3
-        metrics = get_users_active_metrics(limit=3)
+        metrics = users_active_metrics(limit=3)
 
         assert len(metrics) == 3, "Should only return 3 days due to limit parameter"
