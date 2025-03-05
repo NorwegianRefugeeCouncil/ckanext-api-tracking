@@ -1,5 +1,5 @@
 import logging
-from ckanext.api_tracking.models import TrackingUsage
+from ckan.plugins import toolkit
 
 
 log = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ def track_logged_in(sender, user):
         'method': 'POST',
     }
 
-    tu = TrackingUsage(
+    tu = toolkit.get_action('tracking_usage_create')(
         tracking_type='ui',
         tracking_sub_type='login',
         object_type='user',
@@ -29,7 +29,8 @@ def track_logged_in(sender, user):
         user_id=user.id,
         extras=extras,
     )
-    tu.save()
+
+    return tu
 
 
 def track_logged_out(sender, user):
@@ -45,7 +46,7 @@ def track_logged_out(sender, user):
         'method': 'POST',
     }
 
-    tu = TrackingUsage(
+    tu = toolkit.get_action('tracking_usage_create')(
         tracking_type='ui',
         tracking_sub_type='logout',
         object_type='user',
@@ -53,4 +54,5 @@ def track_logged_out(sender, user):
         user_id=user.id,
         extras=extras,
     )
-    tu.save()
+
+    return tu

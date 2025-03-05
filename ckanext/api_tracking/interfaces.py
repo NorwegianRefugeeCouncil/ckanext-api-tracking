@@ -1,7 +1,8 @@
 import logging
 from ckan import model, plugins
+from ckan.plugins import toolkit
 from ckan.plugins.interfaces import Interface
-from ckanext.api_tracking.models import TrackingUsage, CKANURL
+from ckanext.api_tracking.models import CKANURL
 
 
 log = logging.getLogger(__name__)
@@ -72,13 +73,13 @@ class IUsage(Interface):
         token_name = api_token.name if api_token else None
         object_id = ret_data.get('object_id')
         object_type = ret_data.get('object_type')
-        tu = TrackingUsage(
+        tu = toolkit.get_action('tracking_usage_create')(
             user_id=user_id, extras=extras,
             tracking_type=tracking_type, tracking_sub_type=tracking_sub_type,
             token_name=token_name,
             object_type=object_type, object_id=object_id,
         )
-        tu.save()
+
         for item in plugins.PluginImplementations(IUsage):
             # we can do something after saving the TrackingUsage
             if hasattr(item, 'after_track_usage_save'):
@@ -217,6 +218,6 @@ class IUsage(Interface):
         ''' After tracking usage '''
         return ret_data
 
-    def after_track_usage_save(self, tracking_usage_obj: TrackingUsage):
+    def after_track_usage_save(self, tracking_usage_dict: dict):
         ''' After tracking usage save to database '''
         pass
