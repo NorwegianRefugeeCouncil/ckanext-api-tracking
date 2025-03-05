@@ -3,7 +3,7 @@
 New features
 
  - Start tracking user login/logout [#28](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/28).
-   Requeres to be enabled in the configuration.
+   Requires to be enabled in the configuration.
 
 # 0.4.6
  - Allow extending base template
