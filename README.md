@@ -35,6 +35,7 @@ See [tracking_type.md](/DOCS/imgs/tracking_type.md) for more information on the 
  - all_token_usage: `/api/action/all_token_usage[?limit=10]` It returns all API requests with a user token. Sort by date.
  - most_accessed_dataset_with_token: `/api/action/most_accessed_dataset_with_token[?limit=10]` It returns the most accessed datasets with a user token. Sort by most requested dataset.
  - most_accessed_token: `/api/action/most_accessed_token[?limit=10]` It returns the most accessed user token. Sort by most used token.
+ - users_active_metrics: `/api/action/users_active_metrics[?limit=10]` It returns the most active users. Sort by most active user.
 
 ![Api calls](/DOCS/imgs/api-calls.png)
 
@@ -45,6 +46,7 @@ A more _human-readable_ way to access the same API data through CSV files. The f
  - `/tracking-csv/most-accessed-dataset-with-token.csv`
  - `/tracking-csv/most-accessed-token.csv`
  - `/tracking-csv/all-token-usage.csv`
+ - `/tracking-csv/users-active-metrics.csv`
 
 ### Questions / issues
 
@@ -87,7 +89,14 @@ Restart CKAN.
 
 ## Config settings
 
-None at present.
+CKAN has a philosophy where less data collected is better so you'll need to eanble the tracking in the configuration file.  
+Ensure tracking only what you need.  
+
+```
+ckanext.api_tracking.track_login = true  # default is false
+ckanext.api_tracking.track_logout = true # default is false
+```
+
 
 ## License
 
