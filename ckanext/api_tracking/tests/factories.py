@@ -13,7 +13,7 @@ class TrackingUsageF(factory.Factory):
     # ui | api
     tracking_type = factory.Iterator(['ui', 'api'])
     # show | edit | home | download
-    tracking_sub_type = factory.Iterator(['show', 'edit', 'home', 'download'])
+    tracking_sub_type = factory.Iterator(['show', 'edit', 'home', 'download', 'login', 'logout'])
     # get the token from the UserWithToken factory
     token_name = factory.Sequence(lambda n: "token-{0:05d}".format(n))
     # dataset | resource | organization
@@ -66,6 +66,19 @@ class TrackingUsageUIDatasetHome(TrackingUsageF):
     tracking_type = 'ui'
     tracking_sub_type = 'home'
     object_type = 'dataset'
+
+
+class TrackingUsageUILogin(TrackingUsageF):
+    token_name = None
+    tracking_type = 'ui'
+    tracking_sub_type = 'login'
+    object_type = 'user'
+    # object_id must be the same user_id of this object
+    object_id = factory.LazyAttribute(lambda obj: obj.user_id)
+
+
+class TrackingUsageUILogout(TrackingUsageUILogin):
+    tracking_sub_type = 'logout'
 
 
 class TrackingUsageUIResourceDownload(TrackingUsageF):

@@ -64,6 +64,11 @@
             {{ _('API token usage aggregated') }}
           </a>
         </li>
+        <li class="nav-item {% if active == 'users-active-metrics'%}active{% endif %}">
+          <a href="{% url_for 'tracking_dashboard.users_active_metrics' %}">
+            {{ _('Users active metrics') }}
+          </a>
+        </li>
         {% endblock %}
 
         {% block post_links_menu %}
