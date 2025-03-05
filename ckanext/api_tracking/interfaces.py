@@ -73,12 +73,14 @@ class IUsage(Interface):
         token_name = api_token.name if api_token else None
         object_id = ret_data.get('object_id')
         object_type = ret_data.get('object_type')
-        tu = toolkit.get_action('tracking_usage_create')(
+        ctx = {'ignore_auth': True}
+        data_dict = dict(
             user_id=user_id, extras=extras,
             tracking_type=tracking_type, tracking_sub_type=tracking_sub_type,
             token_name=token_name,
             object_type=object_type, object_id=object_id,
         )
+        tu = toolkit.get_action('tracking_usage_create')(ctx, data_dict)
 
         for item in plugins.PluginImplementations(IUsage):
             # we can do something after saving the TrackingUsage

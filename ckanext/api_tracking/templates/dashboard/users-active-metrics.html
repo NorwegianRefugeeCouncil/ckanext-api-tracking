@@ -5,6 +5,13 @@
 
     <section id="stats-most-create" class="module-content tab-content active">
       <h2>{{ _('Users active by day') }}</h2>
+      {% if not tracking_login_enabled %}
+        <div class="alert alert-warning">
+          {{ _('Login tracking is not enabled') }}
+          <br>
+          {{ _('We are not currently tracking login user activity for this site.') }}
+        </div>
+      {% endif %}
       <p>
         <a class="btn btn-primary" href="{{ links.download_csv }}">{{ _('Download as CSV') }}</a>
         <a class="btn btn-primary" href="{{ links.view_json }}" target="_blank">{{ _('View API') }}</a>

@@ -20,8 +20,8 @@ def track_logged_in(sender, user):
     extras = {
         'method': 'POST',
     }
-
-    tu = toolkit.get_action('tracking_usage_create')(
+    ctx = {'ignore_auth': True}
+    data_dict = dict(
         tracking_type='ui',
         tracking_sub_type='login',
         object_type='user',
@@ -29,6 +29,7 @@ def track_logged_in(sender, user):
         user_id=user.id,
         extras=extras,
     )
+    tu = toolkit.get_action('tracking_usage_create')(ctx, data_dict)
 
     return tu
 
@@ -45,8 +46,8 @@ def track_logged_out(sender, user):
     extras = {
         'method': 'POST',
     }
-
-    tu = toolkit.get_action('tracking_usage_create')(
+    ctx = {'ignore_auth': True}
+    data_dict = dict(
         tracking_type='ui',
         tracking_sub_type='logout',
         object_type='user',
@@ -54,5 +55,7 @@ def track_logged_out(sender, user):
         user_id=user.id,
         extras=extras,
     )
+
+    tu = toolkit.get_action('tracking_usage_create')(ctx, data_dict)
 
     return tu
