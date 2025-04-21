@@ -1,9 +1,10 @@
 import logging
 from flask import Blueprint
-from ckan.plugins.toolkit import render, h
+from ckan.plugins import toolkit
 from ckanext.stats import stats as stats_lib
 from ckanext.api_tracking.dashboard.stats import get_dataset_views, get_unique_dataset_views, get_resource_downloads
 from ckanext.api_tracking.dashboard.stats_api import get_api_token_usage_aggregated, get_latest_api_token_usage
+from ckanext.api_tracking.dashboard.users import get_users_active_metrics
 from ckanext.api_tracking.decorators import require_sysadmin_user
 
 
@@ -27,7 +28,7 @@ def dataset_unique_views():
         'dataset_views_7': get_unique_dataset_views(days_ago=7),
         'active': 'dataset-unique-views',
     }
-    return render('dashboard/dataset-unique-views.html', extra_vars)
+    return toolkit.render('dashboard/dataset-unique-views.html', extra_vars)
 
 
 @tracking_dashboard_blueprint.route('/dataset-views')
@@ -39,7 +40,7 @@ def dataset_views():
         'dataset_views_7': get_dataset_views(days_ago=7),
         'active': 'dataset-views',
     }
-    return render('dashboard/dataset-views.html', extra_vars)
+    return toolkit.render('dashboard/dataset-views.html', extra_vars)
 
 
 @tracking_dashboard_blueprint.route('/resource-downloads')
@@ -51,7 +52,7 @@ def resource_downloads():
         'resource_downloads_7': get_resource_downloads(days_ago=7),
         'active': 'resource-downloads',
     }
-    return render('dashboard/resource-downloads.html', extra_vars)
+    return toolkit.render('dashboard/resource-downloads.html', extra_vars)
 
 
 @tracking_dashboard_blueprint.route('/total-datasets')
@@ -66,10 +67,10 @@ def total_datasets():
     for week_date, num_packages, cumulative_num_packages\
             in stats.get_num_packages_by_week():
         extra_vars['raw_packages_by_week'].append(
-            {'date': h.date_str_to_datetime(week_date),
+            {'date': toolkit.h.date_str_to_datetime(week_date),
              'total_packages': cumulative_num_packages})
 
-    return render('dashboard/total-datasets.html', extra_vars)
+    return toolkit.render('dashboard/total-datasets.html', extra_vars)
 
 
 @tracking_dashboard_blueprint.route('/edited-datasets')
@@ -80,7 +81,7 @@ def edited_datasets():
         'most_edited_packages': stats.most_edited_packages(),
         'active': 'edited-datasets',
     }
-    return render('dashboard/edited-datasets.html', extra_vars)
+    return toolkit.render('dashboard/edited-datasets.html', extra_vars)
 
 
 @tracking_dashboard_blueprint.route('/largest-groups')
@@ -91,7 +92,7 @@ def largest_groups():
         'largest_groups': stats.largest_groups(),
         'active': 'largest-groups',
     }
-    return render('dashboard/largest-groups.html', extra_vars)
+    return toolkit.render('dashboard/largest-groups.html', extra_vars)
 
 
 @tracking_dashboard_blueprint.route('/most-create')
@@ -102,7 +103,7 @@ def most_create():
         'top_package_creators': stats.top_package_creators(),
         'active': 'most-create',
     }
-    return render('dashboard/most-create.html', extra_vars)
+    return toolkit.render('dashboard/most-create.html', extra_vars)
 
 
 @tracking_dashboard_blueprint.route('/latest-api-token-usage')
@@ -115,7 +116,7 @@ def latest_api_token_usage():
         'links': data['links'],
         'active': 'latest-api',
     }
-    return render('dashboard/latest-api-token-usage.html', extra_vars)
+    return toolkit.render('dashboard/latest-api-token-usage.html', extra_vars)
 
 
 @tracking_dashboard_blueprint.route('/api-token-usage-aggregated')
@@ -130,4 +131,20 @@ def api_token_usage_aggregated():
         'active': 'api-aggregated',
         'links': usage['links'],
     }
-    return render('dashboard/api-token-usage-aggregated.html', extra_vars)
+    return toolkit.render('dashboard/api-token-usage-aggregated.html', extra_vars)
+
+
+@tracking_dashboard_blueprint.route('/users-active-metrics')
+@require_sysadmin_user
+def users_active_metrics():
+    """ Show information about user active metrics """
+
+    tracking_login_enabled = toolkit.asbool(toolkit.config.get('ckanext.api_tracking.track_login', False))
+    users_active = get_users_active_metrics(limit=30)
+    extra_vars = {
+        'users_active': users_active['records'],
+        'active': 'users-active-metrics',
+        'links': users_active['links'],
+        'tracking_login_enabled': tracking_login_enabled,
+    }
+    return toolkit.render('dashboard/users-active-metrics.html', extra_vars)

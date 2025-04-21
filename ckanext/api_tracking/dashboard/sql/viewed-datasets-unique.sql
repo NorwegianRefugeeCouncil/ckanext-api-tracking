@@ -13,6 +13,7 @@ SELECT
         ELSE NULL 
     END AS package_name,
     p.title as package_title,
+    p.id as package_id,
     COUNT(DISTINCT user_key) AS total_views
 FROM tracking_raw as tr
 JOIN package as p ON p.name = substring(tr.url FROM '/dataset/([^/]+)')
@@ -21,6 +22,6 @@ WHERE
   tracking_type = 'page' and
   tr.url LIKE '/dataset/%'
 
-GROUP BY package_name, package_title
+GROUP BY package_name, package_title, package_id
 ORDER BY total_views DESC
 LIMIT :limit;

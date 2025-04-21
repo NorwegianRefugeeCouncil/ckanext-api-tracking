@@ -11,6 +11,7 @@ from ckanext.api_tracking.queries.data import (
     most_accessed_token_data,
     most_accessed_dataset_with_token_data,
     most_accessed_resource_with_token_data,
+    users_active_metrics_dict,
 )
 
 
@@ -85,4 +86,16 @@ def all_token_usage_csv():
         all_token_usage_data,
         {'limit': 1000},
         'all-token-usage.csv',
+    )
+
+
+@tracking_csv_blueprint.route('/users-active-metrics.csv', methods=["GET"])
+def users_active_metrics_csv():
+    """ Get users active metrics """
+
+    return _csv_response(
+        'users_active_metrics',
+        users_active_metrics_dict,
+        {'limit': 3650},
+        'users-active-metrics.csv',
     )

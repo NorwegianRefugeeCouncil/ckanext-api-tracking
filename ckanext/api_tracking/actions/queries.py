@@ -5,6 +5,7 @@ from ckanext.api_tracking.queries.api import (
     get_most_accessed_resource_with_token,
     get_most_accessed_token,
 )
+from ckanext.api_tracking.queries.users import users_active_metrics
 
 
 @toolkit.side_effect_free
@@ -60,6 +61,20 @@ def all_token_usage(context, data_dict):
     toolkit.check_access('all_token_usage', context, data_dict)
     data = get_all_token_usage(
         limit=data_dict.get('limit', 1000)
+    )
+
+    return data
+
+
+@toolkit.side_effect_free
+def get_users_active_metrics(context, data_dict):
+    """ Get users active metrics
+        Params in data_dict:
+            limit: int, default 30
+    """
+    toolkit.check_access('users_active_metrics', context, data_dict)
+    data = users_active_metrics(
+        limit=data_dict.get('limit', 30)
     )
 
     return data
