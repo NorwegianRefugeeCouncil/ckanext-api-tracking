@@ -1,6 +1,7 @@
 import logging
 from ckan import plugins
 from ckan.plugins import toolkit
+from ckan.lib.plugins import DefaultTranslation
 
 from ckanext.api_tracking import blueprints
 from ckanext.api_tracking.interfaces import IUsage
@@ -16,7 +17,7 @@ from ckanext.api_tracking.utils import track_logged_in, track_logged_out
 log = logging.getLogger(__name__)
 
 
-class TrackingPlugin(plugins.SingletonPlugin):
+class TrackingPlugin(plugins.SingletonPlugin, DefaultTranslation):
     plugins.implements(plugins.IActions)
     plugins.implements(plugins.IAuthFunctions)
     plugins.implements(plugins.IBlueprint)
@@ -24,6 +25,7 @@ class TrackingPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IMiddleware, inherit=True)
     plugins.implements(plugins.ISignal)
     plugins.implements(IUsage, inherit=True)
+    plugins.implements(plugins.ITranslation)
 
     # IConfigurer
 
@@ -31,6 +33,16 @@ class TrackingPlugin(plugins.SingletonPlugin):
         toolkit.add_template_directory(config_, "templates")
         toolkit.add_public_directory(config_, "public")
         toolkit.add_resource("assets", "tracking")
+
+    def i18n_locales(self):
+        """Lanaguages this plugin has translations for."""
+        # Return a list of languages that this plugin has translations for.
+        return ["es", "en"]
+
+    def i18n_domain(self):
+        """The domain for the translation files."""
+        # Return the domain for the translation files.
+        return "ckanext-api-tracking"
 
     # IMiddleware
 
