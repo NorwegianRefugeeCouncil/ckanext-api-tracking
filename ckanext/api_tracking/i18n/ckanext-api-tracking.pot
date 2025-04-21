@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ckanext-api-tracking 0.5.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-21 17:46+0000\n"
+"POT-Creation-Date: 2025-04-21 18:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -285,7 +285,7 @@ msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/users-active-metrics.html:7
 msgid "Users active by day"
-msgstr ""
+msgstr "Usuarios activos por día"
 
 #: ckanext/api_tracking/templates/dashboard/users-active-metrics.html:10
 msgid "Login tracking is not enabled"
