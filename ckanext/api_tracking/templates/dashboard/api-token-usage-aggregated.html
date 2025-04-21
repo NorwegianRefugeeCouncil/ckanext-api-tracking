@@ -25,7 +25,7 @@
                 {% if row.resource_title %}
                   <a href="{{ row.resource_url }}">{{ row.resource_title }}</a>
                 {% else %}
-                  <span title="Resource ID {{ row.resource_id }} (probably deleted)"><small>resource probably deleted</small></span>
+                  <span title="Resource ID {{ row.resource_id }} (probably deleted)"><small>{{ _("resource probably deleted") }}</small></span>
                 {% endif %}
               </th>
               <td>{{ row.total }}</td>
@@ -67,7 +67,7 @@
                 {% if row.dataset_title %}
                   <a href="{{ row.dataset_url }}">{{ row.dataset_title }}</a>
                 {% else %}
-                  <span title="Dataset ID {{ row.dataset_id }} (probably deleted)"><small>dataset probably deleted</small></span>
+                  <span title="Dataset ID {{ row.dataset_id }} (probably deleted)"><small>{{ _("dataset probably deleted") }}</small></span>
                 {% endif %}
               </th>
               <td>{{ row.total }}</td>
@@ -105,7 +105,7 @@
                 {% if row.user_name %}
                   <a href="{{ row.user_url }}">{{ row.user_name }}</a>
                 {% else %}
-                  <span title="User ID {{ row.user_id }} (probably deleted)"><small>user probably deleted</small></span>
+                  <span title="User ID {{ row.user_id }} (probably deleted)"><small>{{ _("user probably deleted") }}</small></span>
                 {% endif %}
               </th>
               <td>{{ row.total }}</td>
