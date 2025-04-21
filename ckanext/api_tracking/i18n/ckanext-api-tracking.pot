@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ckanext-api-tracking 0.5.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-21 17:03+0000\n"
+"POT-Creation-Date: 2025-04-21 17:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,8 +73,16 @@ msgstr ""
 msgid "Organization"
 msgstr ""
 
+#: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:28
+msgid "resource probably deleted"
+msgstr ""
+
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:50
 msgid "API token usage by dataset"
+msgstr ""
+
+#: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:70
+msgid "dataset probably deleted"
 msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:87
@@ -93,6 +101,10 @@ msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:97
 msgid "Total requests"
+msgstr ""
+
+#: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:108
+msgid "user probably deleted"
 msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/base.html:14
@@ -147,16 +159,70 @@ msgstr ""
 msgid "Users active metrics"
 msgstr ""
 
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:8
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:17
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:38
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:59
 msgid "Unique visits"
 msgstr ""
 
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:10
+msgid ""
+"This dashboard considers 'Unique visits' as the number of unique users that "
+"have visited a dataset"
+msgstr ""
+
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:11
+msgid "in the last year, month, or week."
+msgstr ""
+
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:12
+msgid ""
+"If a user visits a dataset page multiple times in a day, week, month, or "
+"year, it will be counted as one unique visit."
+msgstr ""
+
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:14
+#: ckanext/api_tracking/templates/dashboard/dataset-views.html:14
+#: ckanext/api_tracking/templates/dashboard/resource-downloads.html:9
+msgid "Last week"
+msgstr ""
+
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:35
+#: ckanext/api_tracking/templates/dashboard/dataset-views.html:35
+#: ckanext/api_tracking/templates/dashboard/resource-downloads.html:28
+msgid "Last month"
+msgstr ""
+
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:56
+#: ckanext/api_tracking/templates/dashboard/dataset-views.html:56
+#: ckanext/api_tracking/templates/dashboard/resource-downloads.html:47
+msgid "Last year"
+msgstr ""
+
+#: ckanext/api_tracking/templates/dashboard/dataset-views.html:8
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:17
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:38
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:59
 msgid "Daily unique visits"
+msgstr ""
+
+#: ckanext/api_tracking/templates/dashboard/dataset-views.html:10
+msgid ""
+"This dashboard consider 'Daily unique visits' as the number of users that "
+"have visited a dataset page every day."
+msgstr ""
+
+#: ckanext/api_tracking/templates/dashboard/dataset-views.html:11
+msgid ""
+"If a user visits a dataset page multiple times in a day, it will be counted "
+"as one visit."
+msgstr ""
+
+#: ckanext/api_tracking/templates/dashboard/dataset-views.html:12
+msgid ""
+"If the same user visits the dataset page tomorrow, it will be counted as "
+"another (the second) visit."
 msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/edited-datasets.html:13
@@ -177,6 +243,10 @@ msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/largest-groups.html:30
 msgid "No groups"
+msgstr ""
+
+#: ckanext/api_tracking/templates/dashboard/latest-api-token-usage.html:9
+msgid "This dashboard shows the latest API token usage."
 msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/latest-api-token-usage.html:18
