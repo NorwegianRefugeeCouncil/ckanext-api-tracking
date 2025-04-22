@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ckanext-api-tracking 0.5.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-21 18:38+0000\n"
-"PO-Revision-Date: 2025-04-21 17:07+0000\n"
+"POT-Creation-Date: 2025-04-22 15:54+0000\n"
+"PO-Revision-Date: 2025-04-22 15:59+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
 "Language-Team: es <LL@li.org>\n"
@@ -23,11 +23,11 @@ msgstr ""
 #: ckanext/api_tracking/templates/admin/base.html:5
 #: ckanext/api_tracking/templates/dashboard/base.html:6
 msgid "Dashboard"
-msgstr "Tablero"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:7
 msgid "API token usage by data file"
-msgstr "Uso de token API por archivo de datos"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:9
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:52
@@ -35,7 +35,7 @@ msgstr "Uso de token API por archivo de datos"
 #: ckanext/api_tracking/templates/dashboard/latest-api-token-usage.html:12
 #: ckanext/api_tracking/templates/dashboard/users-active-metrics.html:16
 msgid "Download as CSV"
-msgstr "Descargar como CSV"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:10
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:53
@@ -43,19 +43,19 @@ msgstr "Descargar como CSV"
 #: ckanext/api_tracking/templates/dashboard/latest-api-token-usage.html:13
 #: ckanext/api_tracking/templates/dashboard/users-active-metrics.html:17
 msgid "View API"
-msgstr "Ver API"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:15
 #: ckanext/api_tracking/templates/dashboard/resource-downloads.html:12
 #: ckanext/api_tracking/templates/dashboard/resource-downloads.html:31
 #: ckanext/api_tracking/templates/dashboard/resource-downloads.html:50
 msgid "Resource"
-msgstr "Recurso"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:16
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:59
 msgid "Total"
-msgstr "Total"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:17
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:58
@@ -67,254 +67,241 @@ msgstr "Total"
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:59
 #: ckanext/api_tracking/templates/dashboard/edited-datasets.html:12
 msgid "Dataset"
-msgstr "Conjunto de datos"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:18
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:60
 #: ckanext/api_tracking/templates/dashboard/latest-api-token-usage.html:23
 msgid "Organization"
-msgstr "Organización"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:28
 msgid "resource probably deleted"
-msgstr "recurso probablemente eliminado"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:50
 msgid "API token usage by dataset"
-msgstr "Uso de token API por conjunto de datos"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:70
 msgid "dataset probably deleted"
-msgstr "conjunto de datos probablemente eliminado"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:87
 msgid "API token usage by token name"
-msgstr "Uso de token API por nombre de token"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:95
 msgid "Token"
-msgstr "Token"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:96
 #: ckanext/api_tracking/templates/dashboard/latest-api-token-usage.html:19
 #: ckanext/api_tracking/templates/dashboard/most-create.html:11
 msgid "User"
-msgstr "Usuario"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:97
 msgid "Total requests"
-msgstr "Total de solicitudes"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:108
 msgid "user probably deleted"
-msgstr "usuario probablemente eliminado"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/base.html:14
 msgid "Statistics Menu"
-msgstr "Menú de estadísticas"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/base.html:24
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:7
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:7
 msgid "Most Viewed Datasets"
-msgstr "Conjuntos de datos más vistos"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/base.html:29
 msgid "Most viewed datasets (daily)"
-msgstr "Conjuntos de datos más vistos (diariamente)"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/base.html:34
 #: ckanext/api_tracking/templates/dashboard/resource-downloads.html:7
 msgid "Resource Downloads"
-msgstr "Descargas de recursos"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/base.html:39
 #: ckanext/api_tracking/templates/dashboard/largest-groups.html:7
 msgid "Largest Organizations"
-msgstr "Organizaciones más grandes"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/base.html:44
 #: ckanext/api_tracking/templates/dashboard/total-datasets.html:7
 msgid "Total Number of Datasets"
-msgstr "Número total de conjuntos de datos"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/base.html:49
 #: ckanext/api_tracking/templates/dashboard/edited-datasets.html:7
 msgid "Most Edited Datasets"
-msgstr "Conjuntos de datos más editados"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/base.html:54
 #: ckanext/api_tracking/templates/dashboard/most-create.html:7
 msgid "Users Creating Most Datasets"
-msgstr "Usuarios que crean más conjuntos de datos"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/base.html:59
 #: ckanext/api_tracking/templates/dashboard/latest-api-token-usage.html:7
 msgid "Latest API token usage"
-msgstr "Último uso de token API"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/base.html:64
 msgid "API token usage aggregated"
-msgstr "Uso agregado de token API"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/base.html:69
 msgid "Users active metrics"
-msgstr "Métricas de usuarios activos"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:8
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:17
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:38
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:59
 msgid "Unique visits"
-msgstr "Visitas únicas"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:10
 msgid ""
 "This dashboard considers 'Unique visits' as the number of unique users "
 "that have visited a dataset"
 msgstr ""
-"Este panel considera 'Visitas únicas' como el número de usuarios únicos "
-"que han visitado un conjunto de datos."
 
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:11
 msgid "in the last year, month, or week."
-msgstr "en el último año, mes o semana."
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:12
 msgid ""
 "If a user visits a dataset page multiple times in a day, week, month, or "
 "year, it will be counted as one unique visit."
 msgstr ""
-"Si un usuario visita una página de conjunto de datos varias veces en un "
-"día, semana, mes o año, se contará como una única visita."
 
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:14
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:14
 #: ckanext/api_tracking/templates/dashboard/resource-downloads.html:9
 msgid "Last week"
-msgstr "La semana pasada"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:35
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:35
 #: ckanext/api_tracking/templates/dashboard/resource-downloads.html:28
 msgid "Last month"
-msgstr "El mes pasado"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:56
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:56
 #: ckanext/api_tracking/templates/dashboard/resource-downloads.html:47
 msgid "Last year"
-msgstr "El año pasado"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:8
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:17
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:38
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:59
 msgid "Daily unique visits"
-msgstr "Visitas únicas diarias"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:10
 msgid ""
 "This dashboard consider 'Daily unique visits' as the number of users that"
 " have visited a dataset page every day."
 msgstr ""
-"Este panel considera 'Visitas únicas diarias' como el número de usuarios "
-"que han visitado una página de conjunto de datos cada día."
 
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:11
 msgid ""
 "If a user visits a dataset page multiple times in a day, it will be "
 "counted as one visit."
 msgstr ""
-"Si un usuario visita una página de conjunto de datos varias veces en un "
-"día, se contará como una sola visita."
 
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:12
 msgid ""
 "If the same user visits the dataset page tomorrow, it will be counted as "
 "another (the second) visit."
 msgstr ""
-"Si el mismo usuario visita la página del conjunto de datos mañana, se "
-"contará como otra visita (la segunda)."
 
 #: ckanext/api_tracking/templates/dashboard/edited-datasets.html:13
 msgid "Number of edits"
-msgstr "Número de ediciones"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/edited-datasets.html:30
 msgid "No edited datasets"
-msgstr "No hay conjuntos de datos editados"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/largest-groups.html:12
 msgid "Group"
-msgstr "Grupo"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/largest-groups.html:13
 msgid "Number of datasets"
-msgstr "Número de conjuntos de datos"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/largest-groups.html:30
 msgid "No groups"
-msgstr "No hay grupos"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/latest-api-token-usage.html:9
-#, fuzzy
 msgid "This dashboard shows the latest API token usage."
-msgstr "Último uso de token API"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/latest-api-token-usage.html:18
 msgid "Date API accessed"
-msgstr "Fecha de acceso a la API"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/latest-api-token-usage.html:20
 msgid "Token name"
-msgstr "Nombre del token"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/latest-api-token-usage.html:21
 msgid "Object type"
-msgstr "Tipo de objeto"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/latest-api-token-usage.html:22
 msgid "Object name"
-msgstr "Nombre del objeto"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/most-create.html:12
 msgid "Number of Datasets"
-msgstr "Número de conjuntos de datos"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/resource-downloads.html:12
 #: ckanext/api_tracking/templates/dashboard/resource-downloads.html:31
 #: ckanext/api_tracking/templates/dashboard/resource-downloads.html:50
 msgid "Downloads"
-msgstr "Descargas"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/total-datasets.html:14
 msgid "Date"
-msgstr "Fecha"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/total-datasets.html:15
 msgid "Total datasets"
-msgstr "Total de conjuntos de datos"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/users-active-metrics.html:7
 msgid "Users active by day"
-msgstr "Usuarios activos por día"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/users-active-metrics.html:10
 msgid "Login tracking is not enabled"
-msgstr "El seguimiento de inicio de sesión no está habilitado"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/users-active-metrics.html:12
 msgid "We are not currently tracking login user activity for this site."
 msgstr ""
-"Actualmente no estamos rastreando la actividad de inicio de sesión de los"
-" usuarios para este sitio."
 
 #: ckanext/api_tracking/templates/dashboard/users-active-metrics.html:22
 msgid "Day"
-msgstr "Día"
+msgstr ""
 
 #: ckanext/api_tracking/templates/dashboard/users-active-metrics.html:23
 msgid "Users"
-msgstr "Usuarios"
+msgstr ""
 
