@@ -125,13 +125,14 @@ msgstr "Conjuntos de datos más vistos (diariamente)"
 
 #: ckanext/api_tracking/templates/dashboard/base.html:34
 #: ckanext/api_tracking/templates/dashboard/resource-downloads.html:7
+#: ckanext/api_tracking/templates/dashboard/resource-downloads.html:8
 msgid "Resource Downloads"
 msgstr "Descargas de recursos"
 
 #: ckanext/api_tracking/templates/dashboard/base.html:39
 #: ckanext/api_tracking/templates/dashboard/largest-groups.html:7
 msgid "Largest Organizations"
-msgstr "Organizaciones más grandes"
+msgstr "Organizaciones con más conjuntos de datos."
 
 #: ckanext/api_tracking/templates/dashboard/base.html:44
 #: ckanext/api_tracking/templates/dashboard/total-datasets.html:7
@@ -251,7 +252,7 @@ msgstr "No hay grupos"
 
 #: ckanext/api_tracking/templates/dashboard/latest-api-token-usage.html:9
 msgid "This dashboard shows the latest API token usage."
-msgstr "Este tablero muestra el último uso de token API."
+msgstr "Este panel muestra el uso más reciente de tokens API"
 
 #: ckanext/api_tracking/templates/dashboard/latest-api-token-usage.html:18
 msgid "Date API accessed"
