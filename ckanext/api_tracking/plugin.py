@@ -35,8 +35,7 @@ class TrackingPlugin(plugins.SingletonPlugin, DefaultTranslation):
         toolkit.add_resource("assets", "tracking")
 
     def i18n_locales(self):
-        """Lanaguages this plugin has translations for."""
-        # Return a list of languages that this plugin has translations for.
+        """Languages this plugin has translations for."""
         return ["es", "en"]
 
     def i18n_domain(self):
