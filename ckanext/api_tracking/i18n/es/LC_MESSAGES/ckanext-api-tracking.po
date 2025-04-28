@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ckanext-api-tracking 0.5.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-22 15:54+0000\n"
+"POT-Creation-Date: 2025-04-28 18:16+0000\n"
 "PO-Revision-Date: 2025-04-22 15:59+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -59,9 +59,9 @@ msgstr "Total"
 
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:17
 #: ckanext/api_tracking/templates/dashboard/api-token-usage-aggregated.html:58
-#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:17
-#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:38
-#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:59
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:19
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:40
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:61
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:17
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:38
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:59
@@ -163,41 +163,34 @@ msgid "Users active metrics"
 msgstr "Métricas de usuarios activos"
 
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:8
-#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:17
-#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:38
-#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:59
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:19
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:40
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:61
 msgid "Unique visits"
 msgstr "Visitas únicas"
 
 #: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:10
 msgid ""
-"This dashboard considers 'Unique visits' as the number of unique users that have visited a dataset"
-msgstr ""
-"Este panel considera como 'visitas únicas' al número de usuarios distintos que han visitado un conjunto de datos"
-
-#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:11
-msgid "in the last year, month, or week."
-msgstr "en la última semana, mes o año."
-
-#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:12
-msgid ""
+"This dashboard considers 'Unique visits' as the number of unique users that have visited a dataset in the last year, month, or week. "
 "If a user visits a dataset page multiple times in a day, week, month, or year, it will be counted as one unique visit."
 msgstr ""
-"Si un mismo usuario accede varias veces al mismo conjunto de datos dentro del mismo período, solo se contará una única visita."
+"Este panel considera como “visitas únicas” al número de usuarios distintos que han visitado un conjunto de datos "
+"en la última semana, mes o año. Si un mismo usuario accede varias veces en un mismo día, semana, mes o año, "
+"solo se contará una única visita."
 
-#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:14
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:16
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:14
 #: ckanext/api_tracking/templates/dashboard/resource-downloads.html:9
 msgid "Last week"
 msgstr "Última semana"
 
-#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:35
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:37
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:35
 #: ckanext/api_tracking/templates/dashboard/resource-downloads.html:28
 msgid "Last month"
 msgstr "Último mes"
 
-#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:56
+#: ckanext/api_tracking/templates/dashboard/dataset-unique-views.html:58
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:56
 #: ckanext/api_tracking/templates/dashboard/resource-downloads.html:47
 msgid "Last year"
@@ -212,15 +205,19 @@ msgstr "Visitas únicas diarias"
 
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:10
 msgid ""
-"This dashboard consider 'Daily unique visits' as the number of users that have visited a dataset page every day."
+"This dashboard consider 'Daily unique visits' as the number of users that"
+" have visited a dataset page every day."
 msgstr ""
-"Este panel considera como “visitas únicas diarias” al número de usuarios que han visitado una página de conjunto de datos en un mismo día."
+"Este panel considera como “visitas únicas diarias” al número de usuarios "
+"que han visitado una página de conjunto de datos en un mismo día."
 
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:11
 msgid ""
-"If a user visits a dataset page multiple times in a day, it will be counted as one visit."
+"If a user visits a dataset page multiple times in a day, it will be "
+"counted as one visit."
 msgstr ""
-"Si un usuario accede varias veces en un día, se contará como una sola visita."
+"Si un usuario accede varias veces en un día, se contará como una sola "
+"visita."
 
 #: ckanext/api_tracking/templates/dashboard/dataset-views.html:12
 msgid ""
@@ -298,7 +295,9 @@ msgstr "El seguimiento de inicio de sesión no está habilitado"
 
 #: ckanext/api_tracking/templates/dashboard/users-active-metrics.html:12
 msgid "We are not currently tracking login user activity for this site."
-msgstr "Actualmente no estamos rastreando la actividad de inicio de sesión de usuarios para este sitio."
+msgstr ""
+"Actualmente no estamos rastreando la actividad de inicio de sesión de "
+"usuarios para este sitio."
 
 #: ckanext/api_tracking/templates/dashboard/users-active-metrics.html:22
 msgid "Day"
@@ -307,3 +306,4 @@ msgstr "Día"
 #: ckanext/api_tracking/templates/dashboard/users-active-metrics.html:23
 msgid "Users"
 msgstr "Usuarios"
+
