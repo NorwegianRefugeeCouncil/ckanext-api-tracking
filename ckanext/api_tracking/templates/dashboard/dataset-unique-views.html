@@ -7,9 +7,11 @@
       <h2>{{ _('Most Viewed Datasets') }}</h2>
       <p>{{ _("Unique visits") }}</p>
       <p>
-        {{ _("This dashboard considers 'Unique visits' as the number of unique users that have visited a dataset") }}
-        {{ _("in the last year, month, or week.") }}
-        {{ _("If a user visits a dataset page multiple times in a day, week, month, or year, it will be counted as one unique visit.") }}
+        {% trans %}
+          This dashboard considers 'Unique visits' as the number of unique users that have visited a dataset
+          in the last year, month, or week.
+          If a user visits a dataset page multiple times in a day, week, month, or year, it will be counted as one unique visit.
+        {% endtrans %}
       </p>
       <h3>{{  _("Last week")  }}</h3>
       <table class="table table-chunky table-bordered table-striped">
