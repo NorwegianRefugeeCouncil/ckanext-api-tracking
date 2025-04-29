@@ -1,6 +1,6 @@
 # 🈯 Internationalization in `ckanext-api-tracking`
 
-This document describes the steps required to extract translatable strings and generate `.po` files for translations in CKAN.
+This document describes the steps required to extract translatable strings and generate `.po` files for translations in the `ckanext-api-tracking` extension.
 
 ---
 
@@ -12,7 +12,7 @@ From the host:
 make bash
 ```
 
-This executes:
+This runs:
 
 ```bash
 docker compose exec ckan_base bash
@@ -32,10 +32,12 @@ cd src_extensions/ckanext-api-tracking/
 ## 🏗️ 3. Extract translatable messages
 
 ```bash
-python setup.py extract_messages
+pybabel extract -F babel.cfg \
+  -o ckanext/api_tracking/i18n/ckanext-api-tracking.pot \
+  ckanext/api_tracking
 ```
 
-📄 This generates the `.pot` file at:
+This creates the `.pot` file at:
 
 ```
 ckanext/api_tracking/i18n/ckanext-api-tracking.pot
@@ -46,10 +48,12 @@ ckanext/api_tracking/i18n/ckanext-api-tracking.pot
 ## 🌍 4. Initialize a `.po` file for a language (e.g., Spanish)
 
 ```bash
-python setup.py init_catalog -l es -i ckanext/api_tracking/i18n/ckanext-api-tracking.pot -d ckanext/api_tracking/i18n/
+pybabel init -i ckanext/api_tracking/i18n/ckanext-api-tracking.pot \
+  -d ckanext/api_tracking/i18n \
+  -l es
 ```
 
-📁 This creates:
+This generates:
 
 ```
 ckanext/api_tracking/i18n/es/LC_MESSAGES/ckanext-api-tracking.po
@@ -62,22 +66,36 @@ ckanext/api_tracking/i18n/es/LC_MESSAGES/ckanext-api-tracking.po
 You can use:
 
 - [Poedit](https://poedit.net/)
-- `gettext` plugin in VS Code
+- **gettext** plugin in VS Code
 - Or any plain text editor
 
-Translate each `msgid` by filling in the `msgstr`.
+Translate each `msgid` by filling in its `msgstr`.
 
 ---
 
-## ✅ 6. Compile the `.mo` file (optional)
+## 🔄 6. Update translations after changes
 
-Once the `.po` file is translated, compile it:
+If you modify strings or templates, re-run extract and then update:
 
 ```bash
-python setup.py compile_catalog -l es -d ckanext/api_tracking/i18n/
+pybabel extract -F babel.cfg \
+  -o ckanext/api_tracking/i18n/ckanext-api-tracking.pot \
+  ckanext/api_tracking
+
+pybabel update -i ckanext/api_tracking/i18n/ckanext-api-tracking.pot \
+  -d ckanext/api_tracking/i18n \
+  -l es
 ```
 
-This generates:
+---
+
+## ✅ 7. Compile the `.mo` file
+
+```bash
+pybabel compile -d ckanext/api_tracking/i18n
+```
+
+This creates:
 
 ```
 ckanext/api_tracking/i18n/es/LC_MESSAGES/ckanext-api-tracking.mo
@@ -85,25 +103,25 @@ ckanext/api_tracking/i18n/es/LC_MESSAGES/ckanext-api-tracking.mo
 
 ---
 
-## 📤 7. (Optional) Copy the files to your local machine
+## 📤 8. Copy files to your local machine (optional)
 
-From your machine, identify the container:
+Identify the container:
 
 ```bash
 docker ps
 ```
 
-Then copy the `.po` or `.pot` file:
+Then copy:
 
 ```bash
-docker cp <container_name>:/app/src_extensions/ckanext-api-tracking/ckanext/api_tracking/i18n/es/LC_MESSAGES/ckanext-api-tracking.po .
+docker cp <container>:/app/src_extensions/ckanext-api-tracking/ckanext/api_tracking/i18n/es/LC_MESSAGES/ckanext-api-tracking.po .
+docker cp <container>:/app/src_extensions/ckanext-api-tracking/ckanext/api_tracking/i18n/ckanext-api-tracking.pot .
 ```
 
 ---
 
 ## 🧾 Notes
 
-- The `-l` parameter is mandatory in `init_catalog`.
-- Make sure `babel` is installed in your virtual environment.
-
----
+- The `-l` flag is mandatory for both `init` and `update`.
+- Ensure `babel` and localization dependencies are installed in your virtual environment.
+- The `babel.cfg` file defines extractors and options (keywords, template paths).
