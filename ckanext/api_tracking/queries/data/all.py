@@ -21,6 +21,10 @@ def all_token_usage_data(limit=1000):
     rows = []
 
     for row in data:
+        token_name = row['token_name']
+        if not token_name:
+            # Skip rows without token_name
+            continue
         user_id = row['user_id']
         user = model.User.get(user_id)
         user_name = user.name if user else None
@@ -55,6 +59,14 @@ def all_token_usage_data(limit=1000):
                 obj_title = org['title']
                 org_type = helpers.default_group_type('organization')
                 object_url = toolkit.url_for(f'{org_type}.read', id=org['name'])
+            elif object_type == 'user':
+                obj = model.User.get(object_id)
+                if obj:
+                    obj_title = obj.fullname or obj.name
+                    object_url = toolkit.url_for('user.read', id=obj.name)
+                else:
+                    obj_title = f'User ID {object_id} (deleted)'
+                    object_url = None
 
         rows.append({
             'id': row['id'],
