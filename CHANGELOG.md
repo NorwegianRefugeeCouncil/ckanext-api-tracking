@@ -1,6 +1,12 @@
 # Next release
 
 New Features:
+
+Bug Fixes:
+
+# 0.5.2 2025-05-30
+
+New Features:
  - Add internationalization (ES) [#29](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/29)
 
 Bug Fixes:
