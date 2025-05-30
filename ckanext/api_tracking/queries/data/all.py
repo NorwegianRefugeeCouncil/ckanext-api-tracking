@@ -4,6 +4,7 @@ Post-preocessed data after the DB queries and before the CSV generation
 
 import logging
 from ckan import model
+from ckan.lib import helpers
 from ckan.plugins import toolkit
 
 from ckanext.api_tracking.queries.api import get_all_token_usage
@@ -33,13 +34,14 @@ def all_token_usage_data(limit=1000):
         object_url = None
         if object_id:
             if object_type == 'dataset':
-                obj = model.Package.get(object_id)
-                obj_title = obj.title
-                object_url = toolkit.url_for('dataset.read', id=obj.id)
-                pkg = toolkit.get_action('package_show')({'ignore_auth': True}, {'id': obj.id})
+                pkg = toolkit.get_action('package_show')({'ignore_auth': True}, {'id': object_id})
+                obj_title = pkg.get('title')
+                pkg_type = helpers.default_package_type()
+                object_url = toolkit.url_for(f'{pkg_type}.read', id=pkg['name'])
                 owner_org = pkg.get('organization', {})
                 organization_title = owner_org.get('title')
-                organization_url = toolkit.url_for('organization.read', id=owner_org.get('id'))
+                org_type = helpers.default_group_type('organization')
+                organization_url = toolkit.url_for(f'{org_type}.read', id=owner_org.get('name'))
             elif object_type == 'resource':
                 obj = model.Resource.get(object_id)
                 if obj:
@@ -49,9 +51,10 @@ def all_token_usage_data(limit=1000):
                     obj_title = f'Resource ID {object_id} (deleted)'
                     object_url = None
             elif object_type == 'organization':
-                obj = model.Organization.get(object_id)
-                obj_title = obj.title
-                object_url = toolkit.url_for('organization.read', id=obj.id)
+                org = toolkit.get_action('organization_show')({'ignore_auth': True}, {'id': object_id})
+                obj_title = org['title']
+                org_type = helpers.default_group_type('organization')
+                object_url = toolkit.url_for(f'{org_type}.read', id=org['name'])
 
         rows.append({
             'id': row['id'],

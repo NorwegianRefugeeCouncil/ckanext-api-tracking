@@ -1,3 +1,11 @@
+# Next release
+
+New Features:
+ - Add internationalization (ES) [#29](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/29)
+
+Bug Fixes:
+ - Use CKAN default object types [#30](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/30)
+
 # 0.5.1
 
 New features
