@@ -73,6 +73,29 @@ api_tracking = "ckanext.api_tracking.plugin:TrackingPlugin"
 [project.entry-points."babel.extractors"]
 ckan = "ckan.lib.extract:extract_ckan"
 
+[tool.babel]
+[tool.babel.extract_messages]
+keywords = ["translate", "isPlural"]
+add_comments = "TRANSLATORS:"
+output_file = "ckanext/api_tracking/i18n/ckanext-api-tracking.pot"
+width = 80
+
+[tool.babel.init_catalog]
+domain = "ckanext-api-tracking"
+input_file = "ckanext/api_tracking/i18n/ckanext-api-tracking.pot"
+output_dir = "ckanext/api_tracking/i18n"
+
+[tool.babel.update_catalog]
+domain = "ckanext-api-tracking"
+input_file = "ckanext/api_tracking/i18n/ckanext-api-tracking.pot"
+output_dir = "ckanext/api_tracking/i18n"
+previous = true
+
+[tool.babel.compile_catalog]
+domain = "ckanext-api-tracking"
+directory = "ckanext/api_tracking/i18n"
+statistics = true
+
 [tool.babel.extractors.ckanext]
 "**.py" = "python"
 "**.js" = "javascript"

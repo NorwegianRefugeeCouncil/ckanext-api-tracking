@@ -5,13 +5,15 @@
     
     <section id="stats-dataset-views" class="module-content tab-content active">
       <h2>{{ _('Most Viewed Datasets') }}</h2>
-      <p>Unique visits</p>
+      <p>{{ _("Unique visits") }}</p>
       <p>
-        This dashboard consider "Unique visits" as the number of unique users that have visited a dataset
-        in the last year, month, or week.
-        If a user visits a dataset page multiple times in a day, week, month or year, it will be counted as one unique visit.
+        {% trans %}
+          This dashboard considers 'Unique visits' as the number of unique users that have visited a dataset
+          in the last year, month, or week.
+          If a user visits a dataset page multiple times in a day, week, month, or year, it will be counted as one unique visit.
+        {% endtrans %}
       </p>
-      <h3>Last week</h3>
+      <h3>{{  _("Last week")  }}</h3>
       <table class="table table-chunky table-bordered table-striped">
         <thead>
           <tr><th>{{ _("Dataset") }}</th><th>{{ _("Unique visits") }}</th></tr>
@@ -32,7 +34,7 @@
         </tbody>
       </table>
 
-      <h3>Last month</h3>
+      <h3>{{ _("Last month") }}</h3>
       <table class="table table-chunky table-bordered table-striped">
         <thead>
           <tr><th>{{ _("Dataset") }}</th><th>{{ _("Unique visits") }}</th></tr>
@@ -53,7 +55,7 @@
         </tbody>
       </table>
 
-      <h3>Last year</h3>
+      <h3>{{ _("Last year") }}</h3>
       <table class="table table-chunky table-bordered table-striped">
         <thead>
           <tr><th>{{ _("Dataset") }}</th><th>{{ _("Unique visits") }}</th></tr>
