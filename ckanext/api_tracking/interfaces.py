@@ -212,6 +212,15 @@ class IUsage(Interface):
             'object_id': object_id,
         }
 
+    def track_post_api_action_package_show(self, ckan_url):
+        return self.track_get_api_action_package_show(ckan_url)
+
+    def track_post_api_action_organization_show(self, ckan_url):
+        return self.track_get_api_action_organization_show(ckan_url)
+
+    def track_post_api_action_resource_show(self, ckan_url):
+        return self.track_get_api_action_resource_show(ckan_url)
+
     def before_track_usage(self, data):
         ''' Before tracking usage '''
         return data
