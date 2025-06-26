@@ -1,4 +1,5 @@
 import pytest
+import json
 from ckan import model
 from ckan.lib.helpers import url_for
 from ckan.tests import factories
@@ -163,3 +164,60 @@ class TestTrackingUsageBasic:
         assert tu.object_type == "organization"
         assert tu.tracking_type == "ui"
         assert tu.tracking_sub_type == "home"
+
+    def test_api_post_package_show(self, app):
+        user_with_token = factories.UserWithToken()
+        dataset = factories.Dataset()
+        url = url_for("api.action", ver=3, logic_function="package_show")
+        auth = {"Authorization": user_with_token["token"]}
+        response = app.post(
+            url,
+            params=json.dumps({"id": dataset["id"]}),
+            headers={**auth, "Content-Type": "application/json"}
+        )
+        assert response.status_code == 200
+        tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
+        assert tu
+        assert tu.user_id == user_with_token["id"]
+        assert tu.tracking_type == "api"
+        assert tu.tracking_sub_type == "show"
+        assert tu.object_type == "dataset"
+        assert tu.object_id == dataset["id"]
+
+    def test_api_post_organization_show(self, app):
+        user_with_token = factories.UserWithToken()
+        org = factories.Organization()
+        url = url_for("api.action", ver=3, logic_function="organization_show")
+        auth = {"Authorization": user_with_token["token"]}
+        response = app.post(
+            url,
+            params=json.dumps({"id": org["id"]}),
+            headers={**auth, "Content-Type": "application/json"}
+        )
+        assert response.status_code == 200
+        tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
+        assert tu
+        assert tu.tracking_type == "api"
+        assert tu.tracking_sub_type == "show"
+        assert tu.object_type == "organization"
+        assert tu.object_id == org["id"]
+        assert tu.user_id == user_with_token["id"]
+
+    def test_api_post_resource_show(self, app):
+        user_with_token = factories.UserWithToken()
+        resource = factories.Resource()
+        url = url_for("api.action", ver=3, logic_function="resource_show")
+        auth = {"Authorization": user_with_token["token"]}
+        response = app.post(
+            url,
+            params=json.dumps({"id": resource["id"]}),
+            headers={**auth, "Content-Type": "application/json"}
+        )
+        assert response.status_code == 200
+        tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
+        assert tu
+        assert tu.user_id == user_with_token["id"]
+        assert tu.tracking_type == "api"
+        assert tu.tracking_sub_type == "show"
+        assert tu.object_type == "resource"
+        assert tu.object_id == resource["id"]
