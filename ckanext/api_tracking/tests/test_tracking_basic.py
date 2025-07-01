@@ -186,6 +186,42 @@ class TestTrackingUsageBasic:
         assert tu.object_type == "dataset"
         assert tu.object_id == dataset["id"]
 
+    def test_api_post_package_show_params(self, app):
+        user_with_token = factories.UserWithToken()
+        dataset = factories.Dataset()
+        url = url_for("api.action", ver=3, logic_function="package_show")
+        auth = {"Authorization": user_with_token["token"]}
+        data = {"id": dataset["id"]}
+        response = app.post(
+            url,
+            params=json.dumps(data),
+            headers={**auth, "Content-Type": "application/json"}
+        )
+        assert response.status_code == 200
+        tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
+        assert tu
+        assert tu.user_id == user_with_token["id"]
+        assert tu.tracking_type == "api"
+        assert tu.tracking_sub_type == "show"
+        assert tu.object_type == "dataset"
+        assert tu.object_id == dataset["id"]
+
+    def test_api_get_package_show_raw_url(self, app):
+        user_with_token = factories.UserWithToken()
+        dataset = factories.Dataset()
+        url = url_for("api.action", ver=3, logic_function="package_show")
+        url = url + "?id=" + dataset["id"]
+        auth = {"Authorization": user_with_token["token"]}
+        response = app.get(url, headers=auth)
+        assert response.status_code == 200
+        tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
+        assert tu
+        assert tu.user_id == user_with_token["id"]
+        assert tu.tracking_type == "api"
+        assert tu.tracking_sub_type == "show"
+        assert tu.object_type == "dataset"
+        assert tu.object_id == dataset["id"]
+
     def test_api_post_organization_show(self, app):
         user_with_token = factories.UserWithToken()
         org = factories.Organization()
