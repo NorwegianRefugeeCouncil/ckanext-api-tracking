@@ -171,9 +171,10 @@ class TestTrackingUsageBasic:
         dataset = factories.Dataset()
         url = url_for("api.action", ver=3, logic_function="package_show")
         auth = {"Authorization": user_with_token["token"]}
+        data = {"id": dataset["id"]}
         response = app.post(
             url,
-            params=json.dumps({"id": dataset["id"]}),
+            data=data,
             headers={**auth, "Content-Type": "application/json"}
         )
         assert response.status_code == 200
@@ -192,7 +193,7 @@ class TestTrackingUsageBasic:
         auth = {"Authorization": user_with_token["token"]}
         response = app.post(
             url,
-            params=json.dumps({"id": org["id"]}),
+            data={"id": org["id"]},
             headers={**auth, "Content-Type": "application/json"}
         )
         assert response.status_code == 200
@@ -211,7 +212,7 @@ class TestTrackingUsageBasic:
         auth = {"Authorization": user_with_token["token"]}
         response = app.post(
             url,
-            params=json.dumps({"id": resource["id"]}),
+            data={"id": resource["id"]},
             headers={**auth, "Content-Type": "application/json"}
         )
         assert response.status_code == 200
@@ -231,10 +232,10 @@ class TestTrackingUsageBasic:
         # Test with POST request containing JSON data
         url = url_for("api.action", ver=3, logic_function="package_show")
         auth = {"Authorization": user_with_token["token"]}
-
+        data = {"id": dataset["id"], "include_extras": True}
         response = app.post(
             url,
-            params=json.dumps({"id": dataset["id"], "include_extras": True}),
+            data=data,
             headers={**auth, "Content-Type": "application/json"}
         )
         assert response.status_code == 200
@@ -281,7 +282,11 @@ class TestTrackingUsageBasic:
         )
 
         # API might not accept form data, but middleware should handle it
-        assert response.status_code in 200
+        assert response.status_code == 200
+        tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
+        assert tu
+        assert tu.user_id == user_with_token["id"]
+        assert tu.object_id == dataset["id"]
 
     def test_concurrent_requests_tracking(self, app):
         """Test that tracking works correctly with multiple concurrent-like requests."""
