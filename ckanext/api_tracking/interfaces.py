@@ -1,6 +1,4 @@
 import logging
-import json
-from io import BytesIO
 from ckan import model, plugins
 from ckan.plugins import toolkit
 from ckan.plugins.interfaces import Interface
@@ -178,19 +176,6 @@ class IUsage(Interface):
         """
         return self._track_api_action('post', ckan_url)
 
-    def _extract_id_from_json(self, ckan_url):
-        """
-        Extracts the 'id' from the JSON body of a POST request.
-        Returns None if the body is not valid JSON or does not contain 'id'.
-        """
-        try:
-            body = ckan_url.environ['wsgi.input'].read()
-            ckan_url.environ['wsgi.input'] = BytesIO(body)
-            return json.loads(body.decode('utf-8')).get('id')
-        except Exception as e:
-            log.error(f"Error reading JSON body in POST: {e}")
-            return None
-
     def track_get_api_action_package_show(self, ckan_url):
         object_id = ckan_url.get_query_param('id')
         return {
@@ -228,7 +213,8 @@ class IUsage(Interface):
         }
 
     def track_post_api_action_package_show(self, ckan_url):
-        object_id = self._extract_id_from_json(ckan_url)
+        data = ckan_url.get_data()
+        object_id = data.get('id')
         return {
             'tracking_type': 'api',
             'tracking_sub_type': 'show',
@@ -237,7 +223,8 @@ class IUsage(Interface):
         }
 
     def track_post_api_action_organization_show(self, ckan_url):
-        object_id = self._extract_id_from_json(ckan_url)
+        data = ckan_url.get_data()
+        object_id = data.get('id')
         return {
             'tracking_type': 'api',
             'tracking_sub_type': 'show',
@@ -246,7 +233,8 @@ class IUsage(Interface):
         }
 
     def track_post_api_action_resource_show(self, ckan_url):
-        object_id = self._extract_id_from_json(ckan_url)
+        data = ckan_url.get_data()
+        object_id = data.get('id')
         return {
             'tracking_type': 'api',
             'tracking_sub_type': 'show',

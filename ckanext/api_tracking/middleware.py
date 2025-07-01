@@ -1,5 +1,8 @@
+import json
 import logging
 import re
+from io import BytesIO
+from urllib.parse import parse_qs
 
 from ckan import plugins
 from ckan.common import CKANConfig, config
@@ -56,6 +59,40 @@ class TrackingUsageMiddleware:
         if not token_obj:
             return None
         return token_obj
+
+    def _get_envrion_input(self, environ):
+        """ Read the input from the WSGI environ and return it as bytes. """
+        content_length = int(environ.get('CONTENT_LENGTH', 0))
+        if content_length <= 0:
+            return {}
+        post_data = environ['wsgi.input'].read(content_length)
+        # return the data to the environ, so it can be used later for the following request processing
+        environ['wsgi.input'] = BytesIO(post_data)
+        return post_data
+
+    def get_data(self, environ):
+        """
+        Get POST or form params from the request environ
+        """
+        content_type = environ.get('CONTENT_TYPE', '')
+        post_data = self._get_envrion_input(environ)
+
+        if 'application/json' in content_type:
+            try:
+                data = json.loads(post_data.decode('utf-8'))
+            except json.JSONDecodeError as e:
+                return {'error': f"Invalid JSON POST data: {e}"}
+        elif 'application/x-www-form-urlencoded' in content_type:
+            try:
+                data = parse_qs(post_data.decode('utf-8'))
+            except ValueError as e:
+                return {'error': f"Invalid form data: {e}"}
+            # Convert lists to single values for easier access
+            data = {k: v[0] if len(v) == 1 else v for k, v in data.items()}
+        else:
+            # For other content types, return raw data
+            return {'raw_data': post_data}
+        return data
 
     def __call__(self, environ, start_response):
         """ Ensure this never blocks the request """
