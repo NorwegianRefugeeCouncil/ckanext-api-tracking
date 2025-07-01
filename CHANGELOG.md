@@ -8,6 +8,7 @@ Bug Fixes:
 
 New Features:
  - Add internationalization (ES) [#29](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/29)
+ - For the token view, display only with token[#32](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/32)
 
 Bug Fixes:
  - Use CKAN default object types [#30](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/30)
