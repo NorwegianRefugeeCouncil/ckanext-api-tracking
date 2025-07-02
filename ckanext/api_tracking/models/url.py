@@ -1,7 +1,4 @@
-import json
 import logging
-from io import BytesIO
-from urllib.parse import parse_qs
 
 
 log = logging.getLogger(__name__)
