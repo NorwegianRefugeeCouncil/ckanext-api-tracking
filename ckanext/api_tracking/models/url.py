@@ -1,4 +1,7 @@
+import json
 import logging
+from io import BytesIO
+from urllib.parse import parse_qs
 
 
 log = logging.getLogger(__name__)
@@ -11,6 +14,7 @@ class CKANURL:
 
     def __init__(self, environ):
         self.environ = environ
+        # Get the wsgi.input data and ensure it is available for the next request
         self.url = environ.get("PATH_INFO", "").strip('/')
         self.method = environ.get("REQUEST_METHOD", "GET")
 
@@ -95,3 +99,26 @@ class CKANURL:
         """ Split the URL in parts by "/" """
         parts = self.url.split('/')
         return parts[index]
+
+    def get_data(self):
+        """
+        Get POST or form params from the request environ
+        """
+        environ = self.environ
+        log.info(f"full environ: {environ}")  # Log the full environ for debugging
+        request = environ.get('werkzeug.request')
+        if not request:
+            log.error("No werkzeug.request found in environ")
+            return {}
+        if request.is_json:
+            log.debug("Request is JSON")
+            data = request.get_json()
+        else:
+            log.debug("Request is form data")
+            data = request.form.to_dict()
+            # clean lists
+            for key, value in data.items():
+                if isinstance(value, list) and len(value) == 1:
+                    data[key] = value[0]
+        log.info(f"Extracted data: {data}")  # Log the extracted data for
+        return data

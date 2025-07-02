@@ -1,8 +1,5 @@
-import json
 import logging
 import re
-from io import BytesIO
-from urllib.parse import parse_qs
 
 from ckan import plugins
 from ckan.common import CKANConfig, config
@@ -40,59 +37,33 @@ class TrackingUsageMiddleware:
         apitoken_header_name = config.get("apikey_header_name")
 
         apitoken: str = environ.get(apitoken_header_name)
+        if apitoken:
+            log.debug(f"apitoken from {apitoken_header_name}: {apitoken[:5]}")
         if not apitoken:
             apitoken = environ.get(u'HTTP_AUTHORIZATION')
+            log.debug(f"apitoken from HTTP_AUTHORIZATION: {apitoken[:5]}")
         if not apitoken:
             apitoken = environ.get(u'HTTP_X_CKAN_API_KEY')
+            log.debug(f"apitoken from HTTP_X_CKAN_API_KEY: {apitoken[:5]}")
         if not apitoken:
             apitoken = environ.get(u'Authorization', '')
             # Forget HTTP Auth credentials (they have spaces).
             if ' ' in apitoken:
                 apitoken = ''
         if not apitoken:
+            log.debug("No API token found in request headers")
             return None
 
         data = api_token.decode(apitoken)
         if not data or 'jti' not in data:
+            log.warning("Invalid API token or missing 'jti' in token data")
             return None
         token_obj = ApiToken.get(data['jti'])
         if not token_obj:
+            log.warning("API token with jti not found in database")
             return None
+        log.debug(f"API token found: {token_obj.id}")
         return token_obj
-
-    def _get_envrion_input(self, environ):
-        """ Read the input from the WSGI environ and return it as bytes. """
-        content_length = int(environ.get('CONTENT_LENGTH', 0))
-        if content_length <= 0:
-            return {}
-        post_data = environ['wsgi.input'].read(content_length)
-        # return the data to the environ, so it can be used later for the following request processing
-        environ['wsgi.input'] = BytesIO(post_data)
-        return post_data
-
-    def get_data(self, environ):
-        """
-        Get POST or form params from the request environ
-        """
-        content_type = environ.get('CONTENT_TYPE', '')
-        post_data = self._get_envrion_input(environ)
-
-        if 'application/json' in content_type:
-            try:
-                data = json.loads(post_data.decode('utf-8'))
-            except json.JSONDecodeError as e:
-                return {'error': f"Invalid JSON POST data: {e}"}
-        elif 'application/x-www-form-urlencoded' in content_type:
-            try:
-                data = parse_qs(post_data.decode('utf-8'))
-            except ValueError as e:
-                return {'error': f"Invalid form data: {e}"}
-            # Convert lists to single values for easier access
-            data = {k: v[0] if len(v) == 1 else v for k, v in data.items()}
-        else:
-            # For other content types, return raw data
-            return {'raw_data': post_data}
-        return data
 
     def __call__(self, environ, start_response):
         """ Ensure this never blocks the request """
