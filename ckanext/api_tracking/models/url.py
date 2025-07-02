@@ -53,7 +53,9 @@ class CKANURL:
         return base_paths
 
     def get_query_string(self):
-        query_args = self.environ.get('QUERY_STRING', {})
+        query_args = self.environ.get('QUERY_STRING')
+        if not query_args:
+            return {}
         params = query_args.split('&')
         ret = {}
         for param in params:
@@ -99,20 +101,25 @@ class CKANURL:
 
     def get_data(self):
         """
-        Get POST or form params from the request environ
+        Get POST or form or args params from the request environ
         """
+        log.debug("Extracting data from request")
         environ = self.environ
-        log.info(f"full environ: {environ}")  # Log the full environ for debugging
+        data = self.get_query_string()
         request = environ.get('werkzeug.request')
         if not request:
             log.error("No werkzeug.request found in environ")
-            return {}
+            return data
         if request.is_json:
             log.debug("Request is JSON")
-            data = request.get_json()
+            post_data = request.get_json()
+            if post_data:
+                data.update(post_data)
         else:
             log.debug("Request is form data")
-            data = request.form.to_dict()
+            form_data = request.form.to_dict()
+            if form_data:
+                data.update(form_data)
             # clean lists
             for key, value in data.items():
                 if isinstance(value, list) and len(value) == 1:

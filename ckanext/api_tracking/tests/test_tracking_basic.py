@@ -175,7 +175,7 @@ class TestTrackingUsageBasic:
         response = app.post(
             url,
             data=data,
-            headers={**auth, "Content-Type": "application/json"}
+            headers=auth,
         )
         assert response.status_code == 200
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -195,7 +195,7 @@ class TestTrackingUsageBasic:
         response = app.post(
             url,
             params=json.dumps(data),
-            headers={**auth, "Content-Type": "application/json"}
+            headers=auth,
         )
         assert response.status_code == 200
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -230,7 +230,7 @@ class TestTrackingUsageBasic:
         response = app.post(
             url,
             data={"id": org["id"]},
-            headers={**auth, "Content-Type": "application/json"}
+            headers=auth,
         )
         assert response.status_code == 200
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -249,7 +249,7 @@ class TestTrackingUsageBasic:
         response = app.post(
             url,
             data={"id": resource["id"]},
-            headers={**auth, "Content-Type": "application/json"}
+            headers=auth,
         )
         assert response.status_code == 200
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -272,7 +272,7 @@ class TestTrackingUsageBasic:
         response = app.post(
             url,
             data=data,
-            headers={**auth, "Content-Type": "application/json"}
+            headers=auth,
         )
         assert response.status_code == 200
 
@@ -293,7 +293,7 @@ class TestTrackingUsageBasic:
         response = app.post(
             url,
             params='{"malformed": json data}',
-            headers={**auth, "Content-Type": "application/json"},
+            headers=auth,
             expect_errors=True
         )
 
@@ -313,7 +313,7 @@ class TestTrackingUsageBasic:
         response = app.post(
             url,
             params=form_data,
-            headers={**auth, "Content-Type": "application/x-www-form-urlencoded"},
+            headers=auth,
             expect_errors=True
         )
 
