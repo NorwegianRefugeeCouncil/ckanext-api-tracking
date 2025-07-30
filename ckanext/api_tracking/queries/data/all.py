@@ -34,12 +34,18 @@ def all_token_usage_data(limit=1000):
         if object_id:
             if object_type == 'dataset':
                 obj = model.Package.get(object_id)
-                obj_title = obj.title
-                object_url = toolkit.url_for('dataset.read', id=obj.id)
-                pkg = toolkit.get_action('package_show')({'ignore_auth': True}, {'id': obj.id})
-                owner_org = pkg.get('organization', {})
-                organization_title = owner_org.get('title')
-                organization_url = toolkit.url_for('organization.read', id=owner_org.get('id'))
+                if obj:
+                    obj_title = obj.title
+                    object_url = toolkit.url_for('dataset.read', id=obj.id)
+                    pkg = toolkit.get_action('package_show')({'ignore_auth': True}, {'id': obj.id})
+                    owner_org = pkg.get('organization', {})
+                    organization_title = owner_org.get('title')
+                    organization_url = toolkit.url_for('organization.read', id=owner_org.get('id'))
+                else:
+                    obj_title = f'Dataset ID {object_id} (deleted)'
+                    object_url = None
+                    organization_title = None
+                    organization_url = None
             elif object_type == 'resource':
                 obj = model.Resource.get(object_id)
                 if obj:
@@ -49,9 +55,17 @@ def all_token_usage_data(limit=1000):
                     obj_title = f'Resource ID {object_id} (deleted)'
                     object_url = None
             elif object_type == 'organization':
-                obj = model.Organization.get(object_id)
-                obj_title = obj.title
-                object_url = toolkit.url_for('organization.read', id=obj.id)
+                try:
+                    obj = toolkit.get_action('organization_show')({'ignore_auth': True}, {'id': object_id})
+                except toolkit.ObjectNotFound:
+                    obj = None
+
+                if obj:
+                    obj_title = obj.get('title')
+                    object_url = toolkit.url_for('organization.read', id=obj['id'])
+                else:
+                    obj_title = f'Organization ID {object_id} (deleted)'
+                    object_url = None
 
         rows.append({
             'id': row['id'],
