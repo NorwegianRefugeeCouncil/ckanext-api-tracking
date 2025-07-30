@@ -41,10 +41,10 @@ class TrackingUsageMiddleware:
             log.debug(f"apitoken from {apitoken_header_name}: {apitoken[:5]}")
         if not apitoken:
             apitoken = environ.get(u'HTTP_AUTHORIZATION')
-            log.debug(f"apitoken from HTTP_AUTHORIZATION: {apitoken[:5]}")
+            log.debug(f"apitoken from HTTP_AUTHORIZATION: {apitoken}")
         if not apitoken:
             apitoken = environ.get(u'HTTP_X_CKAN_API_KEY')
-            log.debug(f"apitoken from HTTP_X_CKAN_API_KEY: {apitoken[:5]}")
+            log.debug(f"apitoken from HTTP_X_CKAN_API_KEY: {apitoken}")
         if not apitoken:
             apitoken = environ.get(u'Authorization', '')
             # Forget HTTP Auth credentials (they have spaces).
