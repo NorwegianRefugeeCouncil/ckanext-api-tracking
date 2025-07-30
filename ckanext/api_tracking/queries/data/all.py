@@ -55,17 +55,16 @@ def all_token_usage_data(limit=1000):
                     obj_title = f'Resource ID {object_id} (deleted)'
                     object_url = None
             elif object_type == 'organization':
-                org = toolkit.get_action('organization_show')({'ignore_auth': True}, {'id': object_id})
-                obj_title = org['title']
-                org_type = helpers.default_group_type('organization')
-                object_url = toolkit.url_for(f'{org_type}.read', id=org['name'])
-            elif object_type == 'user':
-                obj = model.User.get(object_id)
+                try:
+                    obj = toolkit.get_action('organization_show')({'ignore_auth': True}, {'id': object_id})
+                except toolkit.ObjectNotFound:
+                    obj = None
+
                 if obj:
-                    obj_title = obj.fullname or obj.name
-                    object_url = toolkit.url_for('user.read', id=obj.name)
+                    obj_title = obj.get('title')
+                    object_url = toolkit.url_for('organization.read', id=obj['id'])
                 else:
-                    obj_title = f'User ID {object_id} (deleted)'
+                    obj_title = f'Organization ID {object_id} (deleted)'
                     object_url = None
 
         rows.append({
