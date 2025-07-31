@@ -28,6 +28,17 @@ class TestTrackingUsageBasic:
         assert tu.object_type == "dataset"
         assert tu.object_id == dataset["id"]
 
+    def test_api_get_package_show_anon(self, app):
+        """ Test user for api package_show anon
+            We do not track anon calls """
+        dataset = factories.Dataset()
+        url = url_for("api.action", ver=3, logic_function="package_show", id=dataset["id"])
+        response = app.get(url)
+        assert response.status_code == 200
+        # Assert we have a TrackingUsage record
+        tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
+        assert tu is None  # No tracking for anon calls
+
     def test_api_get_organization_show(self, app):
         """ Test user for api organization_show """
         user_with_token = factories.UserWithToken()

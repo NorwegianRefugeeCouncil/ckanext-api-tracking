@@ -1,5 +1,6 @@
 import json
 import logging
+from urllib.parse import unquote_plus
 
 
 log = logging.getLogger(__name__)
@@ -64,6 +65,7 @@ class CKANURL:
             parts = param.split('=')
             if len(parts) == 2:
                 key, value = param.split('=')
+                value = unquote_plus(value)
             elif len(parts) == 1:
                 key = parts[0]
                 value = None
