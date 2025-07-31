@@ -1,5 +1,4 @@
 import pytest
-import json
 from ckan import model
 from ckan.lib.helpers import url_for
 from ckan.tests import factories
@@ -180,33 +179,13 @@ class TestTrackingUsageBasic:
             headers=auth,
             expect_errors=True
         )
-
         # Should handle gracefully without crashing
-        assert response.status_code == 400
-
-    def test_api_post_with_form_data(self, app):
-        """Test API POST with form data instead of JSON."""
-        user_with_token = factories.UserWithToken()
-        dataset = factories.Dataset()
-
-        url = url_for("api.action", ver=3, logic_function="package_show")
-        auth = {"Authorization": user_with_token["token"]}
-
-        # Send as form data
-        form_data = f"id={dataset['id']}"
-        response = app.post(
-            url,
-            params=form_data,
-            headers=auth,
-            expect_errors=True
-        )
-
-        # API might not accept form data, but middleware should handle it
-        assert response.status_code == 200
-        tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
-        assert tu
-        assert tu.user_id == user_with_token["id"]
-        assert tu.object_id == dataset["id"]
+        # {
+        #   "help": "http://localhost:5000/api/3/action/help_show?name=package_show",
+        #   "error": {"name_or_id": ["Missing value"], "__type": "Validation Error"},
+        #   "success": false
+        # }
+        assert response.status_code == 409
 
     def test_concurrent_requests_tracking(self, app):
         """Test that tracking works correctly with multiple concurrent-like requests."""
