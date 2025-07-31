@@ -202,7 +202,6 @@ class TestCKANURLIntegration:
             response = app.get(url, headers=auth)
             assert response.status_code == 200
 
-        # Test that all TrackingUsage records were created
+        # Test that all TrackingUsage records were created #TODO
         tracking_records = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp).all()
-        #TODO track this
         assert len(tracking_records) == 0
