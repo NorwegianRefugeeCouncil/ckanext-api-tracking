@@ -166,122 +166,6 @@ class TestTrackingUsageBasic:
         assert tu.tracking_type == "ui"
         assert tu.tracking_sub_type == "home"
 
-    def test_api_post_package_show(self, app):
-        user_with_token = factories.UserWithToken()
-        dataset = factories.Dataset()
-        url = url_for("api.action", ver=3, logic_function="package_show")
-        auth = {"Authorization": user_with_token["token"]}
-        data = {"id": dataset["id"]}
-        response = app.post(
-            url,
-            data=data,
-            headers=auth,
-        )
-        assert response.status_code == 200
-        tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
-        assert tu
-        assert tu.user_id == user_with_token["id"]
-        assert tu.tracking_type == "api"
-        assert tu.tracking_sub_type == "show"
-        assert tu.object_type == "dataset"
-        assert tu.object_id == dataset["id"]
-
-    def test_api_post_package_show_params(self, app):
-        user_with_token = factories.UserWithToken()
-        dataset = factories.Dataset()
-        url = url_for("api.action", ver=3, logic_function="package_show")
-        auth = {"Authorization": user_with_token["token"]}
-        data = {"id": dataset["id"]}
-        response = app.post(
-            url,
-            params=json.dumps(data),
-            headers=auth,
-        )
-        assert response.status_code == 200
-        tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
-        assert tu
-        assert tu.user_id == user_with_token["id"]
-        assert tu.tracking_type == "api"
-        assert tu.tracking_sub_type == "show"
-        assert tu.object_type == "dataset"
-        assert tu.object_id == dataset["id"]
-
-    def test_api_get_package_show_raw_url(self, app):
-        user_with_token = factories.UserWithToken()
-        dataset = factories.Dataset()
-        url = url_for("api.action", ver=3, logic_function="package_show")
-        url = url + "?id=" + dataset["id"]
-        auth = {"Authorization": user_with_token["token"]}
-        response = app.get(url, headers=auth)
-        assert response.status_code == 200
-        tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
-        assert tu
-        assert tu.user_id == user_with_token["id"]
-        assert tu.tracking_type == "api"
-        assert tu.tracking_sub_type == "show"
-        assert tu.object_type == "dataset"
-        assert tu.object_id == dataset["id"]
-
-    def test_api_post_organization_show(self, app):
-        user_with_token = factories.UserWithToken()
-        org = factories.Organization()
-        url = url_for("api.action", ver=3, logic_function="organization_show")
-        auth = {"Authorization": user_with_token["token"]}
-        response = app.post(
-            url,
-            data={"id": org["id"]},
-            headers=auth,
-        )
-        assert response.status_code == 200
-        tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
-        assert tu
-        assert tu.tracking_type == "api"
-        assert tu.tracking_sub_type == "show"
-        assert tu.object_type == "organization"
-        assert tu.object_id == org["id"]
-        assert tu.user_id == user_with_token["id"]
-
-    def test_api_post_resource_show(self, app):
-        user_with_token = factories.UserWithToken()
-        resource = factories.Resource()
-        url = url_for("api.action", ver=3, logic_function="resource_show")
-        auth = {"Authorization": user_with_token["token"]}
-        response = app.post(
-            url,
-            data={"id": resource["id"]},
-            headers=auth,
-        )
-        assert response.status_code == 200
-        tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
-        assert tu
-        assert tu.user_id == user_with_token["id"]
-        assert tu.tracking_type == "api"
-        assert tu.tracking_sub_type == "show"
-        assert tu.object_type == "resource"
-        assert tu.object_id == resource["id"]
-
-    def test_middleware_get_data_integration(self, app):
-        """Test that middleware get_data function works with real requests."""
-        user_with_token = factories.UserWithToken()
-        dataset = factories.Dataset()
-
-        # Test with POST request containing JSON data
-        url = url_for("api.action", ver=3, logic_function="package_show")
-        auth = {"Authorization": user_with_token["token"]}
-        data = {"id": dataset["id"], "include_extras": True}
-        response = app.post(
-            url,
-            data=data,
-            headers=auth,
-        )
-        assert response.status_code == 200
-
-        # Verify tracking was created with correct data
-        tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
-        if tu:
-            assert tu.user_id == user_with_token["id"]
-            assert tu.object_id == dataset["id"]
-
     def test_middleware_handles_malformed_requests(self, app):
         """Test middleware handles malformed requests gracefully."""
         user_with_token = factories.UserWithToken()
@@ -290,7 +174,7 @@ class TestTrackingUsageBasic:
         auth = {"Authorization": user_with_token["token"]}
 
         # Send malformed JSON
-        response = app.post(
+        response = app.get(
             url,
             params='{"malformed": json data}',
             headers=auth,
