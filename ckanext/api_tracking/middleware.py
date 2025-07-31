@@ -37,24 +37,32 @@ class TrackingUsageMiddleware:
         apitoken_header_name = config.get("apikey_header_name")
 
         apitoken: str = environ.get(apitoken_header_name)
+        if apitoken:
+            log.debug(f"apitoken from {apitoken_header_name}: {apitoken[:5]}")
         if not apitoken:
             apitoken = environ.get(u'HTTP_AUTHORIZATION')
+            log.debug(f"apitoken from HTTP_AUTHORIZATION: {apitoken}")
         if not apitoken:
             apitoken = environ.get(u'HTTP_X_CKAN_API_KEY')
+            log.debug(f"apitoken from HTTP_X_CKAN_API_KEY: {apitoken}")
         if not apitoken:
             apitoken = environ.get(u'Authorization', '')
             # Forget HTTP Auth credentials (they have spaces).
             if ' ' in apitoken:
                 apitoken = ''
         if not apitoken:
+            log.debug("No API token found in request headers")
             return None
 
         data = api_token.decode(apitoken)
         if not data or 'jti' not in data:
+            log.warning("Invalid API token or missing 'jti' in token data")
             return None
         token_obj = ApiToken.get(data['jti'])
         if not token_obj:
+            log.warning("API token with jti not found in database")
             return None
+        log.debug(f"API token found: {token_obj.id}")
         return token_obj
 
     def __call__(self, environ, start_response):
