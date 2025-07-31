@@ -38,14 +38,18 @@ def all_token_usage_data(limit=1000):
         object_url = None
         if object_id:
             if object_type == 'dataset':
-                pkg = toolkit.get_action('package_show')({'ignore_auth': True}, {'id': object_id})
-                obj_title = pkg.get('title')
-                pkg_type = helpers.default_package_type()
-                object_url = toolkit.url_for(f'{pkg_type}.read', id=pkg['name'])
-                owner_org = pkg.get('organization', {})
-                organization_title = owner_org.get('title')
-                org_type = helpers.default_group_type('organization')
-                organization_url = toolkit.url_for(f'{org_type}.read', id=owner_org.get('name'))
+                try:
+                    pkg = toolkit.get_action('package_show')({'ignore_auth': True}, {'id': object_id})
+                except toolkit.ObjectNotFound:
+                    pkg = None
+                if pkg:
+                    obj_title = pkg.get('title')
+                    pkg_type = helpers.default_package_type()
+                    object_url = toolkit.url_for(f'{pkg_type}.read', id=pkg['name'])
+                    owner_org = pkg.get('organization', {})
+                    organization_title = owner_org.get('title')
+                    org_type = helpers.default_group_type('organization')
+                    organization_url = toolkit.url_for(f'{org_type}.read', id=owner_org.get('name'))
             elif object_type == 'resource':
                 obj = model.Resource.get(object_id)
                 if obj:
