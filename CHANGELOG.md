@@ -4,6 +4,11 @@ New Features:
 
 Bug Fixes:
 
+# 0.5.3 2025-07-31
+
+Bug Fixes:
+- Redefine requests and add more tests [#35](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/35)
+
 # 0.5.2 2025-05-30
 
 New Features:
