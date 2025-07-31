@@ -1,3 +1,4 @@
+import json
 import logging
 
 
@@ -14,6 +15,7 @@ class CKANURL:
         # Get the wsgi.input data and ensure it is available for the next request
         self.url = environ.get("PATH_INFO", "").strip('/')
         self.method = environ.get("REQUEST_METHOD", "GET")
+        self.request = None
 
     def __str__(self):
         return f'{self.method} :: {self.url}'
@@ -87,6 +89,10 @@ class CKANURL:
             action_name = url_parts[2]
         elif len(url_parts) == 4:
             api_version = url_parts[1]
+            # If the version is not numeric, this is a bad URL
+            if not api_version.isdigit():
+                log.error(f"Invalid API version in URL: {self.url}")
+                return None, None
             action_name = url_parts[3]
         else:
             # Unable to identify the API action
@@ -99,30 +105,97 @@ class CKANURL:
         parts = self.url.split('/')
         return parts[index]
 
+    def _extract_query_data(self):
+        """Extract and return query string data"""
+        try:
+            return self.get_query_string()
+        except Exception as e:
+            log.error(f"API tracking: Error extracting query string: {e}")
+            return {}
+
+    def _extract_json_data(self, request):
+        """Extract JSON data from request"""
+        try:
+            return request.get_json(cache=True) or {}
+        except Exception as e:
+            error = f"Error parsing JSON data: {e}"
+            log.error(error)
+            return {}
+
+    def _extract_form_data(self, request):
+        """Extract form data from request"""
+        if not request.form:
+            log.debug("No form data found in request")
+            return {}
+        try:
+            return request.form.to_dict()
+        except Exception as e:
+            error = f"Error extracting form data: {e}"
+            log.error(error)
+            return {}
+
+    def _clean_list_values(self, data):
+        """Clean single-item lists in data dictionary"""
+        for key, value in data.items():
+            if isinstance(value, list) and len(value) == 1:
+                data[key] = value[0]
+        return data
+
     def get_data(self):
         """
         Get POST or form or args params from the request environ
         """
         log.debug("Extracting data from request")
-        environ = self.environ
-        data = self.get_query_string()
-        request = environ.get('werkzeug.request')
-        if not request:
-            log.error("No werkzeug.request found in environ")
+
+        # Start with query string data
+        data = self._extract_query_data()
+
+        # Only check body for POST/PUT/PATCH methods
+        if self.method not in ('POST', 'PUT', 'PATCH', 'DELETE'):
+            return self._clean_list_values(data)
+
+        # Get werkzeug request object
+        self.request = self.environ.get('werkzeug.request')
+        if not self.request:
+            error = "API-Tracking No werkzeug.request found in environ"
+            log.error(error)
             return data
-        if request.is_json:
-            log.debug("Request is JSON")
-            post_data = request.get_json()
-            if post_data:
-                data.update(post_data)
-        else:
-            log.debug("Request is form data")
-            form_data = request.form.to_dict()
-            if form_data:
-                data.update(form_data)
-            # clean lists
-            for key, value in data.items():
-                if isinstance(value, list) and len(value) == 1:
-                    data[key] = value[0]
-        log.info(f"Extracted data: {data}")  # Log the extracted data for
+
+        # Extract request body data based on content type
+        extra_data = None
+        if self.is_json_request():
+            extra_data = self._extract_json_data(self.request)
+        elif self.request.form:
+            extra_data = self._extract_form_data(self.request)
+
+        # Merge extracted data
+        if extra_data:
+            data.update(extra_data)
+
+        # Clean up single-item lists
+        data = self._clean_list_values(data)
+
+        log.debug(f"Extracted data: {data}")
         return data
+
+    def is_json_request(self):
+        # werkzug is bad to detect JSON but if it's true, is good
+        if self.request.is_json:
+            return True
+        # Case 2: Peek at first byte without consuming stream
+        try:
+            first_byte = self.request.stream.peek(1)[:1]  # Safe peek
+            if first_byte not in (b'{', b'['):
+                return False
+        except Exception:
+            return False
+
+        # Case 3: Verify JSON validity WITHOUT consuming stream
+        try:
+            # Use cached data if available (Flask's request.get_data(cache=True))
+            body = self.request.get_data(cache=True)
+            json.loads(body)  # Test parse (body remains untouched)
+            return True
+        except json.JSONDecodeError:
+            log.error("Invalid JSON in request body")
+            return False

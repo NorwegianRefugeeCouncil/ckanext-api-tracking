@@ -123,6 +123,7 @@ class TestCKANURL:
         mock_request.form = MultiDict()
 
         environ = {
+            'REQUEST_METHOD': 'POST',
             'QUERY_STRING': 'api_key=test123',
             'werkzeug.request': mock_request
         }
@@ -148,6 +149,7 @@ class TestCKANURL:
         ])
 
         environ = {
+            'REQUEST_METHOD': 'POST',
             'QUERY_STRING': 'debug=true',
             'werkzeug.request': mock_request
         }
@@ -173,6 +175,7 @@ class TestCKANURL:
         mock_request.form = mock_form
 
         environ = {
+            'REQUEST_METHOD': 'POST',
             'QUERY_STRING': '',
             'werkzeug.request': mock_request
         }
@@ -195,6 +198,7 @@ class TestCKANURL:
         mock_request.form = MultiDict()
 
         environ = {
+            'REQUEST_METHOD': 'POST',
             'QUERY_STRING': 'api_key=test123&override_param=query_value',
             'werkzeug.request': mock_request
         }
