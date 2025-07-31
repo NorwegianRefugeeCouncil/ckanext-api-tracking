@@ -212,36 +212,6 @@ class IUsage(Interface):
             'object_id': object_id,
         }
 
-    def track_post_api_action_package_show(self, ckan_url):
-        data = ckan_url.get_data()
-        object_id = data.get('id')
-        return {
-            'tracking_type': 'api',
-            'tracking_sub_type': 'show',
-            'object_type': 'dataset',
-            'object_id': object_id,
-        }
-
-    def track_post_api_action_organization_show(self, ckan_url):
-        data = ckan_url.get_data()
-        object_id = data.get('id')
-        return {
-            'tracking_type': 'api',
-            'tracking_sub_type': 'show',
-            'object_type': 'organization',
-            'object_id': object_id,
-        }
-
-    def track_post_api_action_resource_show(self, ckan_url):
-        data = ckan_url.get_data()
-        object_id = data.get('id')
-        return {
-            'tracking_type': 'api',
-            'tracking_sub_type': 'show',
-            'object_type': 'resource',
-            'object_id': object_id,
-        }
-
     def before_track_usage(self, data):
         ''' Before tracking usage '''
         return data

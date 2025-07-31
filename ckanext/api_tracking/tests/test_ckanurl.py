@@ -76,7 +76,7 @@ class TestCKANURL:
         url = CKANURL(environ)
         result = url.get_query_string()
         expected = {
-            'q': 'test+search',
+            'q': 'test search',  # we expect it decoded!
             'rows': '10',
             'start': '0',
             'facet': 'true'
