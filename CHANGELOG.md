@@ -3,7 +3,8 @@
 New Features:
 
 Bug Fixes:
-- Fix inconsistency between API and dashboard for empty token filtering [#37](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/37)
+- Fix inconsistency between API and dashboard for empty token filtering
+  [#37](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/37)
 
 # 0.5.3 2025-07-31
 
