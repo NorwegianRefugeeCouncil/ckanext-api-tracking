@@ -19,9 +19,6 @@ def all_token_usage_data(limit=1000):
     rows = []
 
     for row in data:
-        if not row['token_name']:
-            continue
-
         user_id = row['user_id']
         user = model.User.get(user_id)
         user_name = user.name if user else None
