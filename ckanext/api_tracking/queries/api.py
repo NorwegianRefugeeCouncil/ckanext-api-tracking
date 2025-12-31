@@ -63,8 +63,8 @@ def get_most_accessed_token(limit=10):
 
 def get_all_token_usage(limit=1000):
     """
-    Get most accessed tokens
-    Returns a query result with the most accessed tokens
+    Get all token usage records
+    Returns a query result with all token usage (excluding empty tokens)
     """
     query = model.Session.query(
         TrackingUsage.id,
@@ -75,6 +75,8 @@ def get_all_token_usage(limit=1000):
         TrackingUsage.token_name,
         TrackingUsage.object_type,
         TrackingUsage.object_id,
+    ).filter(
+        TrackingUsage.token_name.isnot(None)
     ).order_by(
         desc(TrackingUsage.timestamp)
     ).limit(limit)
