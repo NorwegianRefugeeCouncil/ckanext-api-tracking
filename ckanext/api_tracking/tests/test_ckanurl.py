@@ -1,4 +1,5 @@
-from unittest.mock import Mock
+import pytest
+from unittest.mock import Mock, MagicMock
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
 from ckanext.api_tracking.models.url import CKANURL
@@ -314,3 +315,183 @@ class TestCKANURL:
         # Test API action patterns
         assert re.match(regexs['api_action'][0], 'api/action/package_search')
         assert re.match(regexs['api_action'][1], 'api/3/action/package_search')
+
+
+class TestCKANURLFromRequest:
+    """Test CKANURL initialization from CKAN/Flask request objects."""
+
+    def _create_mock_request(
+        self, path="/dataset/test", method="GET", args=None,
+        is_json=False, json_data=None, form_data=None
+    ):
+        """Helper to create a mock CKAN/Flask request object."""
+        mock_request = MagicMock()
+        mock_request.path = path
+        mock_request.method = method
+        mock_request.environ = {
+            'PATH_INFO': path,
+            'REQUEST_METHOD': method,
+        }
+        mock_request.args = ImmutableMultiDict(args or {})
+        mock_request.is_json = is_json
+        mock_request.get_json = MagicMock(return_value=json_data)
+        mock_request.form = ImmutableMultiDict(form_data or {})
+        return mock_request
+
+    def test_from_request_basic(self):
+        """Test from_request class method."""
+        mock_request = self._create_mock_request(
+            path="/dataset/my-dataset",
+            method="GET"
+        )
+
+        url = CKANURL.from_request(mock_request)
+
+        assert url.url == "dataset/my-dataset"
+        assert url.method == "GET"
+        assert url._ckan_request is mock_request
+
+    def test_from_request_with_leading_slash(self):
+        """Test from_request strips leading slashes."""
+        mock_request = self._create_mock_request(path="///api/action/test///")
+
+        url = CKANURL.from_request(mock_request)
+
+        assert url.url == "api/action/test"
+
+    def test_from_request_post_method(self):
+        """Test from_request with POST method."""
+        mock_request = self._create_mock_request(
+            path="/api/action/package_create",
+            method="POST"
+        )
+
+        url = CKANURL.from_request(mock_request)
+
+        assert url.method == "POST"
+        assert url.url == "api/action/package_create"
+
+    def test_from_request_query_string(self):
+        """Test from_request uses Flask's parsed args."""
+        mock_request = self._create_mock_request(
+            path="/api/action/package_show",
+            args={"id": "test-dataset", "include_extras": "true"}
+        )
+
+        url = CKANURL.from_request(mock_request)
+        result = url.get_query_string()
+
+        assert result == {"id": "test-dataset", "include_extras": "true"}
+
+    def test_from_request_query_param(self):
+        """Test get_query_param with request object."""
+        mock_request = self._create_mock_request(
+            path="/api/action/package_show",
+            args={"id": "my-dataset", "limit": "10"}
+        )
+
+        url = CKANURL.from_request(mock_request)
+
+        assert url.get_query_param("id") == "my-dataset"
+        assert url.get_query_param("limit") == "10"
+        assert url.get_query_param("nonexistent") is None
+
+    def test_from_request_json_data(self):
+        """Test get_data with JSON request."""
+        json_payload = {"name": "new-dataset", "title": "New Dataset"}
+        mock_request = self._create_mock_request(
+            path="/api/action/package_create",
+            method="POST",
+            is_json=True,
+            json_data=json_payload
+        )
+
+        url = CKANURL.from_request(mock_request)
+        result = url.get_data()
+
+        assert result["name"] == "new-dataset"
+        assert result["title"] == "New Dataset"
+
+    def test_from_request_form_data(self):
+        """Test get_data with form data."""
+        mock_request = self._create_mock_request(
+            path="/dataset/new",
+            method="POST",
+            is_json=False,
+            form_data=[("name", "form-dataset"), ("title", "Form Dataset")]
+        )
+
+        url = CKANURL.from_request(mock_request)
+        result = url.get_data()
+
+        assert result["name"] == "form-dataset"
+        assert result["title"] == "Form Dataset"
+
+    def test_from_request_is_json(self):
+        """Test is_json_request with request object."""
+        json_request = self._create_mock_request(is_json=True)
+        url = CKANURL.from_request(json_request)
+        assert url.is_json_request() is True
+
+        non_json_request = self._create_mock_request(is_json=False)
+        url2 = CKANURL.from_request(non_json_request)
+        assert url2.is_json_request() is False
+
+    def test_from_request_get_api_action(self):
+        """Test get_api_action with request object."""
+        mock_request = self._create_mock_request(path="/api/3/action/package_show")
+
+        url = CKANURL.from_request(mock_request)
+        version, action = url.get_api_action()
+
+        assert version == "3"
+        assert action == "package_show"
+
+    def test_from_request_get_url_part(self):
+        """Test get_url_part with request object."""
+        mock_request = self._create_mock_request(
+            path="/dataset/my-dataset/resource/abc123"
+        )
+
+        url = CKANURL.from_request(mock_request)
+
+        assert url.get_url_part(0) == "dataset"
+        assert url.get_url_part(1) == "my-dataset"
+        assert url.get_url_part(2) == "resource"
+        assert url.get_url_part(3) == "abc123"
+
+    def test_init_with_ckan_request_param(self):
+        """Test initialization with ckan_request parameter."""
+        mock_request = self._create_mock_request(
+            path="/organization/my-org",
+            method="GET"
+        )
+
+        url = CKANURL(ckan_request=mock_request)
+
+        assert url.url == "organization/my-org"
+        assert url.method == "GET"
+        assert url._ckan_request is mock_request
+
+    def test_init_prefers_ckan_request_over_flask_request(self):
+        """Test that ckan_request takes precedence over flask_request."""
+        ckan_req = self._create_mock_request(path="/ckan-path")
+        flask_req = self._create_mock_request(path="/flask-path")
+
+        url = CKANURL(ckan_request=ckan_req, flask_request=flask_req)
+
+        assert url.url == "ckan-path"
+
+    def test_init_raises_without_params(self):
+        """Test that initialization raises error without required params."""
+        with pytest.raises(ValueError, match="Either environ or ckan_request"):
+            CKANURL()
+
+    def test_from_flask_request_deprecated_alias(self):
+        """Test from_flask_request still works (deprecated alias)."""
+        mock_request = self._create_mock_request(path="/dataset/test")
+
+        url = CKANURL.from_flask_request(mock_request)
+
+        assert url.url == "dataset/test"
+        assert url._ckan_request is mock_request
