@@ -19,27 +19,33 @@ class IUsage(Interface):
         paths.update(base_paths)
         return paths
 
-    def track_usage(self, data, api_token):
+    def track_usage(self, data, api_token, user):
         '''
         Track usage based on params once we have a valid method+path to track
-        data: dict
-            tracking_type: keys from METHOD->TYPE defined in define_paths
-            environ: Full request environ
-        api_token: ApiToken object or None
+
+        Args:
+            data: dict containing:
+                - tracking_type: keys from METHOD->TYPE defined in define_paths
+                - request: CKAN request object (from ckan.common.request)
+                - user: User object (from token or session)
+                - token: ApiToken object or None
+            api_token: ApiToken object or None
+            user: User object (from token or session) or None
         '''
 
         for item in plugins.PluginImplementations(IUsage):
-            # we can do something with the data after it has been tracked
             data = item.before_track_usage(data)
 
-        environ = data.pop('environ', None)
-        if not environ:
-            log.warning('No environment initialized for request. Unable to track')
+        ckan_request = data.get('request')
+        if not ckan_request:
+            log.warning('No CKAN request in data. Unable to track')
             return
-        ckan_url = CKANURL(environ)
+
+        ckan_url = CKANURL.from_request(ckan_request)
         method = ckan_url.method.lower()
         tracking_type = data['tracking_type']
         log.debug(f"Track: {method} :: {tracking_type}")
+
         fn_name = f'track_{method}_{tracking_type}'
         fn = getattr(self, fn_name, None)
         if fn:
@@ -52,8 +58,9 @@ class IUsage(Interface):
             log.error(f"plugin.'{fn_name}' returned no data. Unable to track")
             return
 
-        if api_token:
-            user_id = api_token.owner.id
+        # Get user_id from the user object passed in
+        if user:
+            user_id = user.id
         else:
             user_id = ret_data.get('user_id')
 
@@ -65,7 +72,6 @@ class IUsage(Interface):
         extras.update(new_extras)
 
         for item in plugins.PluginImplementations(IUsage):
-            # we can do something before saving the TrackingUsage
             ret_data = item.before_track_usage_save(ret_data)
 
         tracking_type = ret_data.get('tracking_type')
@@ -73,6 +79,7 @@ class IUsage(Interface):
         token_name = api_token.name if api_token else None
         object_id = ret_data.get('object_id')
         object_type = ret_data.get('object_type')
+
         ctx = {'ignore_auth': True}
         data_dict = dict(
             user_id=user_id, extras=extras,
@@ -83,7 +90,6 @@ class IUsage(Interface):
         tu = toolkit.get_action('tracking_usage_create')(ctx, data_dict)
 
         for item in plugins.PluginImplementations(IUsage):
-            # we can do something after saving the TrackingUsage
             if hasattr(item, 'after_track_usage_save'):
                 item.after_track_usage_save(tu)
 

@@ -176,8 +176,8 @@ class TestTrackingUsageBasic:
         assert tu.tracking_type == "ui"
         assert tu.tracking_sub_type == "home"
 
-    def test_middleware_handles_malformed_requests(self, app):
-        """Test middleware handles malformed requests gracefully."""
+    def test_tracking_handles_malformed_requests(self, app):
+        """Test tracking handles malformed requests gracefully."""
         user_with_token = factories.UserWithToken()
 
         url = url_for("api.action", ver=3, logic_function="package_show")
