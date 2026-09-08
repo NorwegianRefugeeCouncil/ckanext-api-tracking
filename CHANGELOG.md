@@ -1,6 +1,8 @@
 # Next release
 
 New Features:
+- CKAN 2.12 / SQLAlchemy 2 support: `Engine.execute()` was removed, the dashboard
+  queries now run on a connection
 
 Bug Fixes:
 - Fix inconsistency between API and dashboard for empty token filtering

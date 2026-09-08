@@ -1,4 +1,4 @@
-[![Tests CKAN 2.10](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/workflows/Tests%20CKAN%202.10/badge.svg)](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/actions)
+[![Tests CKAN 2.12](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/workflows/Tests%20CKAN%202.12/badge.svg)](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/actions)
 [![Tests CKAN 2.11](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/workflows/Tests%20CKAN%202.11/badge.svg)](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/actions)
 This repository contains a CKAN open-source extension that can be added to any CKAN 2.10+ instance. It was developed by Norwegian Refugee Council (NRC) and Open Knowledge Foundation (OKFN).  
 
@@ -59,8 +59,9 @@ Compatibility with core CKAN versions:
 
 | CKAN version    | Compatible?   |
 | --------------- | ------------- |
-| 2.10            | Yes           |
+| 2.10            | Until 0.5.3   |
 | 2.11            | Yes           |
+| 2.12            | Yes           |
 
 
 ## Installation

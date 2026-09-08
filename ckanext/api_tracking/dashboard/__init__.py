@@ -17,4 +17,6 @@ def query_results(sql_file, params={}):
     f.close()
     log.debug(f'Executing SQL: {sql} :: {params}')
     text_sql = text(sql)
-    return engine.execute(text_sql, **params).fetchall()
+    # SQLAlchemy 2 (CKAN 2.12): Engine.execute() is gone, use a connection
+    with engine.connect() as conn:
+        return conn.execute(text_sql, params).fetchall()
