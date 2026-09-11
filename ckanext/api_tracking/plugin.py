@@ -93,13 +93,7 @@ class TrackingPlugin(plugins.SingletonPlugin, DefaultTranslation):
     # ISignal
 
     def get_signal_subscriptions(self):
-        signals = {}
-
-        if toolkit.check_ckan_version(min_version="2.11"):
-            # Some signals are not available for CKAN 2.10
-            signals = {
-                toolkit.signals.user_logged_in: [track_logged_in],
-                toolkit.signals.user_logged_out: [track_logged_out],
-            }
-
-        return signals
+        return {
+            toolkit.signals.user_logged_in: [track_logged_in],
+            toolkit.signals.user_logged_out: [track_logged_out],
+        }

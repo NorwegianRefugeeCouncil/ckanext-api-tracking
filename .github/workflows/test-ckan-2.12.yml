@@ -1,4 +1,4 @@
-name: Tests CKAN 2.10
+name: Tests CKAN 2.12
 on: [push]
 jobs:
   test:
@@ -7,19 +7,20 @@ jobs:
       # The CKAN version tag of the Solr and Postgres containers should match
       # the one of the container the tests run on.
       # You can switch this base image with a custom image tailored to your project
-      image: ckan/ckan-dev:2.10
+      image: ckan/ckan-dev:2.12
+      options: --user root
     services:
       solr:
-        image: ckan/ckan-solr:2.10-solr9
+        image: ckan/ckan-solr:2.12-solr9
       postgres:
-        image: ckan/ckan-postgres-dev:2.10
+        image: ckan/ckan-postgres-dev:2.12
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       redis:
-          image: redis:3
+          image: redis:7
 
     env:
       CKAN_SQLALCHEMY_URL: postgresql://ckan_default:pass@postgres/ckan_test
@@ -54,9 +55,7 @@ jobs:
         # Replace default path to CKAN core config file with the one on the container
         sed -i -e 's/use = config:.*/use = config:\/srv\/app\/src\/ckan\/test-core.ini/' test.ini
 
-        ckan -c test.ini db init
-        ckan -c test.ini db upgrade -p api_tracking
+        ckan -c test.ini db upgrade
 
     - name: Run tests
       run: pytest --ckan-ini=test.ini -v --disable-warnings ckanext/api_tracking
-

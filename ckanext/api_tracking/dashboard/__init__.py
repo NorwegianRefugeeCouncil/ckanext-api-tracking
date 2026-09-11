@@ -17,4 +17,8 @@ def query_results(sql_file, params={}):
     f.close()
     log.debug(f'Executing SQL: {sql} :: {params}')
     text_sql = text(sql)
-    return engine.execute(text_sql, **params).fetchall()
+    # SQLAlchemy 2 (CKAN 2.12): Engine.execute() is gone and Row objects no
+    # longer accept string keys, so run on a connection and return plain dicts
+    # (row['column'] keeps working for every caller). Also fine on SQLAlchemy 1.4.
+    with engine.connect() as conn:
+        return [dict(row._mapping) for row in conn.execute(text_sql, params)]

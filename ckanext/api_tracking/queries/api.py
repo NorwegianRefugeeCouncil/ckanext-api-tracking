@@ -1,6 +1,7 @@
 from ckan import model
 from sqlalchemy import func, desc
 from ckanext.api_tracking.models import TrackingUsage
+from ckanext.api_tracking.queries import rows_as_dicts
 
 
 def get_most_accessed_resource_with_token(limit=10):
@@ -20,7 +21,7 @@ def get_most_accessed_resource_with_token(limit=10):
         desc('total')
     ).limit(limit)
 
-    return query.all()
+    return rows_as_dicts(query)
 
 
 def get_most_accessed_dataset_with_token(limit=10):
@@ -40,7 +41,7 @@ def get_most_accessed_dataset_with_token(limit=10):
         desc('total')
     ).limit(limit)
 
-    return query.all()
+    return rows_as_dicts(query)
 
 
 def get_most_accessed_token(limit=10):
@@ -58,7 +59,7 @@ def get_most_accessed_token(limit=10):
         desc('total')
     ).limit(limit)
 
-    return query.all()
+    return rows_as_dicts(query)
 
 
 def get_all_token_usage(limit=1000):
@@ -81,4 +82,4 @@ def get_all_token_usage(limit=1000):
         desc(TrackingUsage.timestamp)
     ).limit(limit)
 
-    return query.all()
+    return rows_as_dicts(query)

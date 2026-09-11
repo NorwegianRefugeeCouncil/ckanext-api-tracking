@@ -11,13 +11,13 @@ class TestTrackingUsageBasic:
     """ Test basic tracking from requests
     """
 
-    def test_api_get_package_show(self, app):
+    def test_api_get_package_show(self, middleware_app):
         """ Test user for api package_show """
         user_with_token = factories.UserWithToken()
         dataset = factories.Dataset()
         url = url_for("api.action", ver=3, logic_function="package_show", id=dataset["id"])
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, headers=auth)
+        response = middleware_app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -28,24 +28,24 @@ class TestTrackingUsageBasic:
         assert tu.object_type == "dataset"
         assert tu.object_id == dataset["id"]
 
-    def test_api_get_package_show_anon(self, app):
+    def test_api_get_package_show_anon(self, middleware_app):
         """ Test user for api package_show anon
             We do not track anon calls """
         dataset = factories.Dataset()
         url = url_for("api.action", ver=3, logic_function="package_show", id=dataset["id"])
-        response = app.get(url)
+        response = middleware_app.get(url)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
         assert tu is None  # No tracking for anon calls
 
-    def test_api_get_organization_show(self, app):
+    def test_api_get_organization_show(self, middleware_app):
         """ Test user for api organization_show """
         user_with_token = factories.UserWithToken()
         org = factories.Organization()
         url = url_for("api.action", ver=3, logic_function="organization_show", id=org["id"])
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, headers=auth)
+        response = middleware_app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -56,13 +56,13 @@ class TestTrackingUsageBasic:
         assert tu.object_id == org["id"]
         assert tu.user_id == user_with_token["id"]
 
-    def test_api_get_resource_show(self, app):
+    def test_api_get_resource_show(self, middleware_app):
         """ Test user for api package_show """
         user_with_token = factories.UserWithToken()
         resource = factories.Resource()
         url = url_for("api.action", ver=3, logic_function="resource_show", id=resource["id"])
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, headers=auth)
+        response = middleware_app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -73,13 +73,13 @@ class TestTrackingUsageBasic:
         assert tu.object_type == "resource"
         assert tu.object_id == resource["id"]
 
-    def test_ui_get_dataset_show(self, app):
+    def test_ui_get_dataset_show(self, middleware_app):
         """ Test user for dataset/NAME """
         user_with_token = factories.UserWithToken()
         dataset = factories.Dataset()
         url = url_for("dataset.read", id=dataset["name"])
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, headers=auth)
+        response = middleware_app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -90,14 +90,14 @@ class TestTrackingUsageBasic:
         assert tu.object_type == "dataset"
         assert tu.object_id == dataset["id"]
 
-    def test_ui_get_resource_show(self, app):
+    def test_ui_get_resource_show(self, middleware_app):
         """ Test user for dataset/NAME/resource/ID """
         user_with_token = factories.UserWithToken()
         resource = factories.Resource()
         dataset_id = resource["package_id"]
         url = url_for("dataset_resource.read", id=dataset_id, resource_id=resource["id"])
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, headers=auth)
+        response = middleware_app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -109,7 +109,7 @@ class TestTrackingUsageBasic:
         assert tu.object_id == resource["id"]
 
     @pytest.mark.parametrize("sufix_url", ["", "/filename.csv"])
-    def test_ui_get_resource_download(self, app, sufix_url):
+    def test_ui_get_resource_download(self, middleware_app, sufix_url):
         """ Test user for dataset/NAME/resource/ID/download """
         user_with_token = factories.UserWithToken()
         resource = factories.Resource()
@@ -117,7 +117,7 @@ class TestTrackingUsageBasic:
         url = url_for("dataset_resource.download", id=dataset_id, resource_id=resource["id"])
         url += sufix_url
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, headers=auth, follow_redirects=False)
+        response = middleware_app.get(url, headers=auth, follow_redirects=False)
         # They are a redirection to the file
         assert response.status_code == 302
         # Assert we have a TrackingUsage record
@@ -129,12 +129,12 @@ class TestTrackingUsageBasic:
         assert tu.object_type == "resource"
         assert tu.object_id == resource["id"]
 
-    def test_ui_get_dataset_home(self, app):
+    def test_ui_get_dataset_home(self, middleware_app):
         """ Test user for dataset/NAME """
         user_with_token = factories.UserWithToken()
         url = url_for("dataset.search")
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, headers=auth)
+        response = middleware_app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -144,13 +144,13 @@ class TestTrackingUsageBasic:
         assert tu.tracking_type == "ui"
         assert tu.tracking_sub_type == "home"
 
-    def test_ui_get_organization_show(self, app):
+    def test_ui_get_organization_show(self, middleware_app):
         """ Test user for organization/NAME """
         user_with_token = factories.UserWithToken()
         org = factories.Organization()
         url = url_for("organization.read", id=org["name"])
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, headers=auth)
+        response = middleware_app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -161,12 +161,12 @@ class TestTrackingUsageBasic:
         assert tu.object_type == "organization"
         assert tu.object_id == org["id"]
 
-    def test_ui_get_organization_home(self, app):
+    def test_ui_get_organization_home(self, middleware_app):
         """ Test user for organization/NAME """
         user_with_token = factories.UserWithToken()
         url = url_for("organization.index")
         auth = {"Authorization": user_with_token['token']}
-        response = app.get(url, headers=auth)
+        response = middleware_app.get(url, headers=auth)
         assert response.status_code == 200
         # Assert we have a TrackingUsage record
         tu = model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp.desc()).first()
@@ -176,7 +176,7 @@ class TestTrackingUsageBasic:
         assert tu.tracking_type == "ui"
         assert tu.tracking_sub_type == "home"
 
-    def test_middleware_handles_malformed_requests(self, app):
+    def test_middleware_handles_malformed_requests(self, middleware_app):
         """Test middleware handles malformed requests gracefully."""
         user_with_token = factories.UserWithToken()
 
@@ -184,7 +184,7 @@ class TestTrackingUsageBasic:
         auth = {"Authorization": user_with_token["token"]}
 
         # Send malformed JSON
-        response = app.get(
+        response = middleware_app.get(
             url,
             params='{"malformed": json data}',
             headers=auth,
@@ -198,7 +198,7 @@ class TestTrackingUsageBasic:
         # }
         assert response.status_code == 409
 
-    def test_concurrent_requests_tracking(self, app):
+    def test_concurrent_requests_tracking(self, middleware_app):
         """Test that tracking works correctly with multiple concurrent-like requests."""
         user1 = factories.UserWithToken()
         user2 = factories.UserWithToken()
@@ -216,8 +216,8 @@ class TestTrackingUsageBasic:
         auth1 = {"Authorization": user1['token']}
         auth2 = {"Authorization": user2['token']}
 
-        response1 = app.get(url1, headers=auth1)
-        response2 = app.get(url2, headers=auth2)
+        response1 = middleware_app.get(url1, headers=auth1)
+        response2 = middleware_app.get(url2, headers=auth2)
 
         assert response1.status_code == 200
         assert response2.status_code == 200

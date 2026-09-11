@@ -11,13 +11,13 @@ from ckanext.api_tracking.models.tracking import TrackingUsage
 class TestCKANURLIntegration:
     """Integration tests for API tracking using real CKAN app requests"""
 
-    def test_get_request_with_query_params_tracking(self, app):
+    def test_get_request_with_query_params_tracking(self, middleware_app):
         """Test tracking for GET request containing query parameters"""
         user_with_token = factories.UserWithToken()
 
         auth = {"Authorization": user_with_token['token']}
         url = url_for('api.action', logic_function='package_search', ver=3)
-        response = app.get(url, query_string='q=test&rows=5&start=10', headers=auth)
+        response = middleware_app.get(url, query_string='q=test&rows=5&start=10', headers=auth)
         assert response.status_code == 200
 
         # Test TrackingUsage record was NOT created
@@ -25,7 +25,7 @@ class TestCKANURLIntegration:
         tracking_records = model.Session.query(TrackingUsage).all()
         assert len(tracking_records) == 0
 
-    def test_post_json_request_tracking(self, app):
+    def test_post_json_request_tracking(self, middleware_app):
         """Test tracking for POST request containing JSON data"""
         user_with_token = factories.UserWithToken()
 
@@ -38,7 +38,7 @@ class TestCKANURLIntegration:
 
         auth = {"Authorization": user_with_token['token']}
         url = url_for('api.action', logic_function='package_create', ver=3)
-        response = app.post(
+        response = middleware_app.post(
             url,
             data=json.dumps(dataset_data),
             content_type='application/json',
@@ -57,7 +57,7 @@ class TestCKANURLIntegration:
         assert 'method' in extras
         assert extras['method'] == 'POST'
 
-    def test_post_form_request_tracking(self, app):
+    def test_post_form_request_tracking(self, middleware_app):
         """Test tracking for POST request containing form data"""
         user_with_token = factories.UserWithToken()
 
@@ -70,7 +70,7 @@ class TestCKANURLIntegration:
 
         auth = {"Authorization": user_with_token['token']}
         url = url_for('api.action', logic_function='package_create', ver=3)
-        response = app.post(url, data=form_data, headers=auth)
+        response = middleware_app.post(url, data=form_data, headers=auth)
         assert response.status_code == 200
 
         # Test TrackingUsage record was created
@@ -85,7 +85,7 @@ class TestCKANURLIntegration:
         assert 'method' in extras
         assert extras['method'] == 'POST'
 
-    def test_mixed_query_and_json_tracking(self, app):
+    def test_mixed_query_and_json_tracking(self, middleware_app):
         """Test tracking for request with both query parameters and JSON data"""
         user_with_token = factories.UserWithToken()
 
@@ -97,7 +97,7 @@ class TestCKANURLIntegration:
 
         auth = {"Authorization": user_with_token['token']}
         url = url_for('api.action', logic_function='package_create', ver=3)
-        response = app.post(
+        response = middleware_app.post(
             url,
             data=json.dumps(dataset_data),
             content_type='application/json',
@@ -118,7 +118,7 @@ class TestCKANURLIntegration:
         assert 'method' in extras
         assert extras['method'] == 'POST'
 
-    def test_package_search_complex_query_tracking(self, app):
+    def test_package_search_complex_query_tracking(self, middleware_app):
         """Test tracking for complex package search parameters"""
         user_with_token = factories.UserWithToken()
 
@@ -135,7 +135,7 @@ class TestCKANURLIntegration:
 
         auth = {"Authorization": user_with_token['token']}
         url = url_for('api.action', logic_function='package_search', ver=3)
-        response = app.get(url, query_string=query_params, headers=auth)
+        response = middleware_app.get(url, query_string=query_params, headers=auth)
         assert response.status_code == 200
 
         # Test TrackingUsage record was NOT created
@@ -143,7 +143,7 @@ class TestCKANURLIntegration:
         tracking_records = model.Session.query(TrackingUsage).all()
         assert len(tracking_records) == 0
 
-    def test_resource_create_tracking(self, app):
+    def test_resource_create_tracking(self, middleware_app):
         """Test tracking for resource creation"""
         user_with_token = factories.UserWithToken()
         dataset = factories.Dataset(user=user_with_token)
@@ -158,7 +158,7 @@ class TestCKANURLIntegration:
 
         auth = {"Authorization": user_with_token['token']}
         url = url_for('api.action', logic_function='resource_create', ver=3)
-        response = app.post(
+        response = middleware_app.post(
             url,
             data=json.dumps(resource_data),
             content_type='application/json',
@@ -171,13 +171,13 @@ class TestCKANURLIntegration:
         tracking_records = model.Session.query(TrackingUsage).all()
         assert len(tracking_records) == 0
 
-    def test_empty_request_tracking(self, app):
+    def test_empty_request_tracking(self, middleware_app):
         """Test tracking for request containing no data"""
         user_with_token = factories.UserWithToken()
 
         auth = {"Authorization": user_with_token['token']}
         url = url_for('api.action', logic_function='package_list', ver=3)
-        response = app.get(url, headers=auth)
+        response = middleware_app.get(url, headers=auth)
         assert response.status_code == 200
 
         # Test TrackingUsage record was NOT created
@@ -185,7 +185,7 @@ class TestCKANURLIntegration:
         tracking_records = model.Session.query(TrackingUsage).all()
         assert len(tracking_records) == 0
 
-    def test_multiple_api_actions_tracking(self, app):
+    def test_multiple_api_actions_tracking(self, middleware_app):
         """Test tracking for different API actions"""
         user_with_token = factories.UserWithToken()
 
@@ -199,7 +199,7 @@ class TestCKANURLIntegration:
 
         for action_name, expected_sub_type, expected_object_type in test_cases:
             url = url_for('api.action', logic_function=action_name, ver=3)
-            response = app.get(url, headers=auth)
+            response = middleware_app.get(url, headers=auth)
             assert response.status_code == 200
 
         # Test that all TrackingUsage records were created #TODO

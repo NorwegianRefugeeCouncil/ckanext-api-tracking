@@ -5,7 +5,7 @@ class TestTrackingUsageMiddleware:
     """ Test our middleware is working
     """
 
-    def test_middleware_api_with_user(self, app):
+    def test_middleware_api_with_user(self, middleware_app):
         """ Test a logged in user running regular API calls """
         user_with_token = factories.UserWithToken()
         dataset1 = factories.Dataset()
@@ -16,12 +16,12 @@ class TestTrackingUsageMiddleware:
         ]
         auth = {"Authorization": user_with_token['token']}
         for url in urls:
-            response = app.get(url, headers=auth)
+            response = middleware_app.get(url, headers=auth)
             assert response.status_code == 200
             assert dataset1['name'] in response
             assert dataset2['name'] in response
 
-    def test_middleware_api_anon(self, app):
+    def test_middleware_api_anon(self, middleware_app):
         """ Test a logged in user running regular API calls """
         dataset1 = factories.Dataset()
         dataset2 = factories.Dataset()
@@ -30,7 +30,7 @@ class TestTrackingUsageMiddleware:
             '/api/action/package_list',
         ]
         for url in urls:
-            response = app.get(url)
+            response = middleware_app.get(url)
             assert response.status_code == 200
             assert dataset1['name'] in response
             assert dataset2['name'] in response
