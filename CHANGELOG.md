@@ -1,6 +1,12 @@
 # Next release
 
 New Features:
+
+Bug Fixes:
+
+# 0.5.4 2025-09-11
+
+New Features:
 - CKAN 2.12 upgrade [#40](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/40)
 
 Bug Fixes:
