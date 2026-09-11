@@ -118,7 +118,7 @@ class TestUserActiveMetrics:
         assert len(metrics) == 3, "Should have three days of metrics"
 
         # Sort metrics by day to make testing easier
-        metrics_by_day = {metric[0]: metric[1] for metric in metrics}
+        metrics_by_day = {metric['day']: metric['total'] for metric in metrics}
 
         # Extract the date parts for comparison
         today_date = today.date()

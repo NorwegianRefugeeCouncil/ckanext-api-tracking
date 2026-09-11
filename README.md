@@ -1,6 +1,6 @@
 [![Tests CKAN 2.12](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/workflows/Tests%20CKAN%202.12/badge.svg)](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/actions)
 [![Tests CKAN 2.11](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/workflows/Tests%20CKAN%202.11/badge.svg)](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/actions)
-This repository contains a CKAN open-source extension that can be added to any CKAN 2.10+ instance. It was developed by Norwegian Refugee Council (NRC) and Open Knowledge Foundation (OKFN).  
+This repository contains a CKAN open-source extension that can be added to any CKAN 2.11+ instance. It was developed by Norwegian Refugee Council (NRC) and Open Knowledge Foundation (OKFN).  
 
 # CKAN API tracking extension
 
@@ -83,7 +83,7 @@ or clone the source and install it on the virtualenv
 Add `api_tracking` to the `ckan.plugins` setting in your CKAN
    config file (by default the config file is located at
    `/etc/ckan/default/ckan.ini`).
-From CKAN >= 2.11 it's also required to add the core extenstion `tracking` to the `ckan.plugins` setting.
+It's also required to add the core extenstion `tracking` to the `ckan.plugins` setting.
 
 
 Restart CKAN.

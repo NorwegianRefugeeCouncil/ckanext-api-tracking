@@ -1,6 +1,7 @@
 from ckan import model
 from sqlalchemy import func, desc
 from ckanext.api_tracking.models import TrackingUsage
+from ckanext.api_tracking.queries import rows_as_dicts
 
 
 def users_active_metrics(limit=30):
@@ -24,4 +25,4 @@ def users_active_metrics(limit=30):
         desc('day')
     ).limit(limit)
 
-    return query.all()
+    return rows_as_dicts(query)
