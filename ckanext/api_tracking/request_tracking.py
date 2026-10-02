@@ -10,13 +10,14 @@ so current_user is already set (session cookie or API token).
 import logging
 import re
 
-from flask import Blueprint
+from flask import Blueprint, current_app
 from ckan import plugins
 from ckan.common import config, current_user, request
 from ckan.lib import api_token as api_token_lib
 from ckan.model import ApiToken
 
 from ckanext.api_tracking.interfaces import IUsage
+from ckanext.api_tracking.models import CKANURL
 
 
 log = logging.getLogger(__name__)
@@ -24,19 +25,73 @@ log = logging.getLogger(__name__)
 tracking_capture_blueprint = Blueprint('tracking_capture', __name__)
 
 
-def get_valid_paths():
-    """ Allow extensions to provide their own URLs to analyze """
+# CKAN view function -> tracking type.
+# We match the view function, not the endpoint name, so custom dataset and
+# group types (e.g. /my-type/<id>, endpoint "my-type.read") are tracked too.
+# Tracking types are the keys used by IUsage.track_METHOD_TYPE
+VIEW_TRACKING_TYPES = {
+    'ckan.views.dataset.read': 'dataset',
+    'ckan.views.dataset.search': 'dataset_home',
+    'ckan.views.resource.read': 'resource',
+    'ckan.views.resource.download': 'resource_download',
+    'ckan.views.api.action': 'api_action',
+}
+# Groups and organizations share the same views. We track organizations only
+ORGANIZATION_VIEW_TRACKING_TYPES = {
+    'ckan.views.group.read': 'organization',
+    'ckan.views.group.index': 'organization_home',
+}
+
+
+def get_view_name():
+    """ Full name of the view function CKAN used for this request """
+    view = current_app.view_functions.get(request.endpoint or '')
+    if not view:
+        return None
+    return f'{view.__module__}.{view.__name__}'
+
+
+def get_tracking_type():
+    """ Get the tracking type for this request, None if we don't track it """
+    view_name = get_view_name()
+    if view_name in VIEW_TRACKING_TYPES:
+        return VIEW_TRACKING_TYPES[view_name]
+    if view_name in ORGANIZATION_VIEW_TRACKING_TYPES:
+        view_args = request.view_args or {}
+        if view_args.get('is_organization'):
+            return ORGANIZATION_VIEW_TRACKING_TYPES[view_name]
+        return None
+
+    url_path = request.environ.get('PATH_INFO', '').strip('/')
+    return get_custom_path_tracking_type(url_path)
+
+
+def get_custom_paths():
+    """ URL regexes added by other extensions with IUsage.define_paths.
+        Deprecated: the base CKAN URLs are now matched by view function.
+    """
+    base_paths = CKANURL.get_url_regexs()
     paths = {}
     for item in plugins.PluginImplementations(IUsage):
         paths = item.define_paths(paths)
-    return paths
+    return {k: v for k, v in paths.items() if base_paths.get(k) != v}
 
 
-def get_tracking_type(url_path):
-    """ Get the tracking type for a URL path, None if we don't track it """
-    for tracking_type, regexs in get_valid_paths().items():
+# Log the deprecation once per tracking type, not on every request
+_deprecation_logged = set()
+
+
+def get_custom_path_tracking_type(url_path):
+    """ Deprecated fallback for extensions using IUsage.define_paths """
+    for tracking_type, regexs in get_custom_paths().items():
         for regex in regexs:
             if re.match(regex, url_path):
+                if tracking_type not in _deprecation_logged:
+                    _deprecation_logged.add(tracking_type)
+                    log.warning(
+                        'API tracking: IUsage.define_paths is deprecated and will be removed. '
+                        f'Tracking type "{tracking_type}" matched by URL regex'
+                    )
                 return tracking_type
     return None
 
@@ -77,8 +132,7 @@ def _track_request(response):
     if response.status_code >= 400:
         return
 
-    url_path = request.environ.get('PATH_INFO', '').strip('/')
-    tracking_type = get_tracking_type(url_path)
+    tracking_type = get_tracking_type()
     if not tracking_type:
         return
 
@@ -89,7 +143,7 @@ def _track_request(response):
         return
 
     method = request.environ.get('REQUEST_METHOD')
-    log.debug(f"Tracking: {url_path} -> {tracking_type} :: {method}")
+    log.debug(f"Tracking: {request.path} -> {tracking_type} :: {method}")
     for item in plugins.PluginImplementations(IUsage):
         # Allow multiple plugins to track the same data
         # Each plugin gets its own dict, track_usage pops some keys

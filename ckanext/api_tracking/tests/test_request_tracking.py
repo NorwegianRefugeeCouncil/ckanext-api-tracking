@@ -1,5 +1,5 @@
 import pytest
-from ckan import model
+from ckan import model, plugins
 from ckan.common import config
 from ckan.common import current_user
 from ckan.lib.helpers import url_for
@@ -114,7 +114,7 @@ class TestRequestTracking:
 
     def test_tracking_failure_does_not_break_response(self, app, monkeypatch):
         """ If tracking fails the user still gets the response """
-        def boom(url_path):
+        def boom():
             raise RuntimeError('boom')
 
         monkeypatch.setattr(request_tracking, 'get_tracking_type', boom)
@@ -124,3 +124,63 @@ class TestRequestTracking:
         auth = {"Authorization": user_with_token['token']}
         app.get(url, headers=auth, status=200)
         assert model.Session.query(TrackingUsage).count() == 0
+
+
+@pytest.mark.usefixtures('clean_db', 'clean_index')
+class TestViewMatching:
+    """ We match CKAN view functions, not URL regexes """
+
+    def test_dataset_new_not_tracked(self, app):
+        """ /dataset/new looked like a dataset page for the old regex
+            (and was tracked as a dataset with no object_id)
+        """
+        sysadmin = factories.SysadminWithToken()
+        auth = {"Authorization": sysadmin['token']}
+        app.get(url_for("dataset.new"), headers=auth, status=200)
+        assert model.Session.query(TrackingUsage).count() == 0
+
+    def test_group_not_tracked(self, app):
+        """ Groups share the views with organizations, we only track organizations """
+        user_with_token = factories.UserWithToken()
+        group = factories.Group()
+        auth = {"Authorization": user_with_token['token']}
+        app.get(url_for("group.read", id=group["name"]), headers=auth, status=200)
+        assert model.Session.query(TrackingUsage).count() == 0
+
+    def test_view_names_exist(self, app):
+        """ All the views we match exist in this CKAN version """
+        view_names = {
+            f'{view.__module__}.{view.__name__}'
+            for view in app.flask_app.view_functions.values()
+        }
+        expected = set(request_tracking.VIEW_TRACKING_TYPES)
+        expected |= set(request_tracking.ORGANIZATION_VIEW_TRACKING_TYPES)
+        assert expected <= view_names
+
+    def test_define_paths_still_works(self, app, monkeypatch):
+        """ Deprecated: other extensions can still add URL regexes """
+        plugin_class = type(plugins.get_plugin('api_tracking'))
+        original_define_paths = plugin_class.define_paths
+
+        def define_paths(self, paths):
+            paths = original_define_paths(self, paths)
+            paths['about_page'] = ['^about$']
+            return paths
+
+        def track_get_about_page(self, ckan_url):
+            return {
+                'tracking_type': 'ui',
+                'tracking_sub_type': 'show',
+                'object_type': 'page',
+            }
+
+        monkeypatch.setattr(plugin_class, 'define_paths', define_paths)
+        monkeypatch.setattr(plugin_class, 'track_get_about_page', track_get_about_page, raising=False)
+
+        user_with_token = factories.UserWithToken()
+        auth = {"Authorization": user_with_token['token']}
+        app.get(url_for("home.about"), headers=auth, status=200)
+
+        tu = model.Session.query(TrackingUsage).one()
+        assert tu.user_id == user_with_token["id"]
+        assert tu.object_type == 'page'
