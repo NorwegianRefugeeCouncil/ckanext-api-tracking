@@ -5,7 +5,7 @@ from ckan.lib.plugins import DefaultTranslation
 
 from ckanext.api_tracking import blueprints
 from ckanext.api_tracking.interfaces import IUsage
-from ckanext.api_tracking.middleware import TrackingUsageMiddleware
+from ckanext.api_tracking.request_tracking import tracking_capture_blueprint
 from ckanext.api_tracking.auth import base as auth_base
 from ckanext.api_tracking.auth import csv as auth_csv
 from ckanext.api_tracking.auth import queries as auth_queries
@@ -22,7 +22,6 @@ class TrackingPlugin(plugins.SingletonPlugin, DefaultTranslation):
     plugins.implements(plugins.IAuthFunctions)
     plugins.implements(plugins.IBlueprint)
     plugins.implements(plugins.IConfigurer)
-    plugins.implements(plugins.IMiddleware, inherit=True)
     plugins.implements(plugins.ISignal)
     plugins.implements(IUsage, inherit=True)
     plugins.implements(plugins.ITranslation)
@@ -42,14 +41,6 @@ class TrackingPlugin(plugins.SingletonPlugin, DefaultTranslation):
         """The domain for the translation files."""
         # Return the domain for the translation files.
         return "ckanext-api-tracking"
-
-    # IMiddleware
-
-    def make_middleware(self, app, config):
-        """
-        This method is called by CKAN to get the middleware to add to the pipeline.
-        """
-        return TrackingUsageMiddleware(app, config)
 
     # IUsage
     # Available to use dynamic functions like track_METHOD_TYPE
@@ -88,6 +79,8 @@ class TrackingPlugin(plugins.SingletonPlugin, DefaultTranslation):
         return [
             blueprints.tracking_csv_blueprint,
             blueprints.tracking_dashboard_blueprint,
+            # Captures usage (after_app_request hook, no routes)
+            tracking_capture_blueprint,
         ]
 
     # ISignal
