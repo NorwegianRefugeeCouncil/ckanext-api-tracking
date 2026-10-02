@@ -1,6 +1,8 @@
 # Next release
 
 New Features:
+- Capture usage in `after_app_request` hook instead of a WSGI middleware
+  [#41](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/41)
 
 Bug Fixes:
 
