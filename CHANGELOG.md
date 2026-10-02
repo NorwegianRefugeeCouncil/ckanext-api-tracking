@@ -3,8 +3,11 @@
 New Features:
 - Capture usage in `after_app_request` hook instead of a WSGI middleware
   [#41](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/41)
+- Detect what to track by CKAN view function instead of URL regexes
+  [#42](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/42)
 
 Bug Fixes:
+- Do not track pages that only looked like a dataset page (e.g. `/dataset/new`)
 
 # 0.5.4 2025-09-11
 
