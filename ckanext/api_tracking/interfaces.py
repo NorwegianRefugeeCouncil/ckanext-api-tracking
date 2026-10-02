@@ -14,7 +14,11 @@ class IUsage(Interface):
     '''
 
     def define_paths(self, paths):
-        ''' Add base URL paths to analize '''
+        ''' Add URL regexes to analyze.
+            Deprecated: CKAN URLs are now matched by view function
+            (see request_tracking.VIEW_TRACKING_TYPES). Regexes added here by
+            other extensions still work for now, but will be removed.
+        '''
         base_paths = CKANURL.get_url_regexs()
         paths.update(base_paths)
         return paths
