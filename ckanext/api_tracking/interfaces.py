@@ -25,6 +25,7 @@ class IUsage(Interface):
         data: dict
             tracking_type: keys from METHOD->TYPE defined in define_paths
             environ: Full request environ
+            user_id: ID of the user CKAN identified for this request (or None)
         api_token: ApiToken object or None
         '''
 
@@ -52,9 +53,10 @@ class IUsage(Interface):
             log.error(f"plugin.'{fn_name}' returned no data. Unable to track")
             return
 
-        if api_token:
+        user_id = data.get('user_id')
+        if not user_id and api_token:
             user_id = api_token.owner.id
-        else:
+        if not user_id:
             user_id = ret_data.get('user_id')
 
         # Define our base extras

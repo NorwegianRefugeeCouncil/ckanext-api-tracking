@@ -10,7 +10,8 @@ class MiddlewareTestApp:
     Like the ``app`` fixture, but requests go through the whole WSGI stack,
     IMiddleware wrappers included.
     Since CKAN 2.12 ``CKANTestApp`` builds its client on the bare Flask app,
-    so ``TrackingUsageMiddleware`` never runs for requests made with ``app``.
+    so IMiddleware wrappers never run for requests made with ``app``.
+    Our tracking hook (after_app_request) runs with both clients.
     """
 
     def __init__(self, wsgi_app):
