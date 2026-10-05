@@ -1,6 +1,5 @@
 import pytest
 from types import SimpleNamespace
-from ckan.plugins import toolkit
 from ckan.lib.helpers import url_for
 from ckan.tests import factories
 
@@ -30,15 +29,13 @@ class TestTrackingCSVView:
     def test_dataset_with_token_csv_no_user(self, app):
         """ Test the endpoint is closed for anonymous users """
         url = url_for('tracking_csv.most_accessed_dataset_with_token_csv')
-        with pytest.raises(toolkit.NotAuthorized):
-            app.get(url)
+        app.get(url, status=403)
 
     def test_dataset_with_token_csv_no_auth(self, app, base_data):
         """ Test the endpoint is closed for regular users """
         url = url_for('tracking_csv.most_accessed_dataset_with_token_csv')
         auth = {"Authorization": base_data.user1['token']}
-        with pytest.raises(toolkit.NotAuthorized):
-            app.get(url, headers=auth)
+        app.get(url, headers=auth, status=403)
 
     def test_dataset_with_token_csv(self, app, base_data):
         url = url_for('tracking_csv.most_accessed_dataset_with_token_csv')
