@@ -10,6 +10,7 @@ New Features:
   period selector, CSV (`/tracking-csv/usage-by-user.csv`) and API action `usage_by_user`
   [#43](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/43)
 - Charts for dashboards [#44](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/44)
+- Chart for "Latest API token usage" [#45](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/45)
 
 Bug Fixes:
 - Do not track pages that only looked like a dataset page (e.g. `/dataset/new`)
