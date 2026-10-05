@@ -1,3 +1,5 @@
+from datetime import date, datetime, time, timedelta
+
 from ckan import model
 from sqlalchemy import func, desc
 from ckanext.api_tracking.models import TrackingUsage
@@ -83,3 +85,21 @@ def get_all_token_usage(limit=1000):
     ).limit(limit)
 
     return rows_as_dicts(query)
+
+
+def get_token_requests_per_day(days=30):
+    """
+    API token requests per day for the last `days` days (today included)
+    Returns a dict {date: total}. Days without requests are not included
+    """
+    since = datetime.combine(date.today() - timedelta(days=days - 1), time.min)
+    day = func.date(TrackingUsage.timestamp)
+    query = model.Session.query(
+        day.label('day'),
+        func.count(TrackingUsage.id).label('total')
+    ).filter(
+        TrackingUsage.token_name.isnot(None),
+        TrackingUsage.timestamp >= since,
+    ).group_by(day)
+
+    return {row['day']: row['total'] for row in rows_as_dicts(query)}
