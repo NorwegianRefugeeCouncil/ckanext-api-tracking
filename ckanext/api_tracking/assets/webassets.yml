@@ -1,14 +1,22 @@
-# tracking-js:
-#   filter: rjsmin
-#   output: ckanext-tracking/%(version)s-tracking.js
-#   contents:
-#     - js/tracking.js
-#   extra:
-#     preload:
-#       - base/main
+# Chart.js 4.4.4 (MIT), served locally, no CDN
+chartjs:
+  output: ckanext-api-tracking/%(version)s-chart.js
+  contents:
+    - vendor/chart.umd.min.js
 
-# tracking-css:
-#   filter: cssrewrite
-#   output: ckanext-tracking/%(version)s-tracking.css
-#   contents:
-#     - css/tracking.css
+# Small CKAN JS module that draws a chart from JSON data
+tracking-chart:
+  filter: rjsmin
+  output: ckanext-api-tracking/%(version)s-tracking-chart.js
+  contents:
+    - js/tracking-chart.js
+  extra:
+    preload:
+      - base/main
+      - api_tracking/chartjs
+
+tracking-css:
+  filter: cssrewrite
+  output: ckanext-api-tracking/%(version)s-tracking.css
+  contents:
+    - style.css

@@ -1,5 +1,32 @@
-/*
-body {
-  border-radius: 0;
+/* KPI tiles in the tracking dashboard */
+.tracking-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
 }
-*/
+
+.tracking-tile {
+  flex: 1 1 140px;
+  padding: 12px 14px;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+}
+
+.tracking-tile .tile-value {
+  display: block;
+  font-size: 1.8em;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.tracking-tile .tile-label {
+  color: #555555;
+}
+
+/* Chart.js needs a sized container when maintainAspectRatio is false */
+.tracking-chart {
+  position: relative;
+  height: 260px;
+  margin-bottom: 20px;
+}
