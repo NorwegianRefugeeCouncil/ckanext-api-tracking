@@ -5,7 +5,9 @@
 
     <section id="stats-most-edited" class="module-content tab-content active">
       <h2>{{ _('Most Edited Datasets') }}</h2>
-      {% if most_edited_packages %}
+      {% if not most_edited_available %}
+        <div class="alert alert-info">{{ _('Edits come from the activity stream. Enable the "activity" plugin to see this report.') }}</div>
+      {% elif most_edited_datasets %}
         <table class="table table-chunky table-bordered table-striped">
           <thead>
             <tr>
@@ -14,14 +16,14 @@
             </tr>
           </thead>
           <tbody>
-            {% for package, edits in most_edited_packages %}
-              <tr py:for="package, edits in most_edited_packages">
+            {% for row in most_edited_datasets %}
+              <tr>
                 <td>
-                  <a href="{{ h.url_for('dataset.read', id=package.name) }}">
-                    {{package.title or package.name}}
+                  <a href="{{ h.url_for('dataset.read', id=row.name) }}">
+                    {{ row.title or row.name }}
                   </a>
                 </td>
-                <td class="metric">{{ edits }}</td>
+                <td class="metric">{{ row.total }}</td>
               </tr>
             {% endfor %}
           </tbody>

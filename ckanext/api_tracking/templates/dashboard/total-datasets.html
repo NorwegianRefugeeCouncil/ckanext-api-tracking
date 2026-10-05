@@ -18,10 +18,10 @@
           </tr>
         </thead>
         <tbody>
-          {% for row in raw_packages_by_week %}
+          {% for row in weeks %}
             <tr>
-              <th data-type="date" data-value="{{ row.date.strftime("%s") }}"><time datetime="{{ row.date.isoformat() }}">{{ h.render_datetime(row.date) }}</time></th>
-              <td>{{ row.total_packages }}</td>
+              <th><time datetime="{{ row.week.isoformat() }}">{{ h.render_datetime(row.week) }}</time></th>
+              <td>{{ row.total }}</td>
             </tr>
           {% endfor %}
         </tbody>

@@ -1,7 +1,13 @@
 import logging
 from flask import Blueprint, request
 from ckan.plugins import toolkit
-from ckanext.stats import stats as stats_lib
+from ckanext.api_tracking.dashboard.catalog import (
+    get_largest_organizations,
+    get_most_edited_datasets,
+    get_top_dataset_creators,
+    get_total_datasets_by_week,
+    most_edited_available,
+)
 from ckanext.api_tracking.dashboard.charts import daily_line_chart, line_chart
 from ckanext.api_tracking.dashboard.stats import get_dataset_views, get_unique_dataset_views, get_resource_downloads
 from ckanext.api_tracking.queries.api import get_token_requests_per_day
@@ -65,33 +71,25 @@ def resource_downloads():
 @tracking_dashboard_blueprint.route('/total-datasets')
 @require_sysadmin_user
 def total_datasets():
-    stats = stats_lib.Stats()
-
+    weeks = get_total_datasets_by_week()
     extra_vars = {
-        'raw_packages_by_week': [],
+        'weeks': weeks,
+        'chart': line_chart(
+            [row['week'].date().isoformat() for row in weeks],
+            [row['total'] for row in weeks],
+            toolkit._('Total datasets'),
+        ),
         'active': 'total-datasets',
     }
-    for week_date, num_packages, cumulative_num_packages\
-            in stats.get_num_packages_by_week():
-        extra_vars['raw_packages_by_week'].append(
-            {'date': toolkit.h.date_str_to_datetime(week_date),
-             'total_packages': cumulative_num_packages})
-
-    weeks = extra_vars['raw_packages_by_week']
-    extra_vars['chart'] = line_chart(
-        [row['date'].date().isoformat() for row in weeks],
-        [row['total_packages'] for row in weeks],
-        toolkit._('Total datasets'),
-    )
     return toolkit.render('dashboard/total-datasets.html', extra_vars)
 
 
 @tracking_dashboard_blueprint.route('/edited-datasets')
 @require_sysadmin_user
 def edited_datasets():
-    stats = stats_lib.Stats()
     extra_vars = {
-        'most_edited_packages': stats.most_edited_packages(),
+        'most_edited_datasets': get_most_edited_datasets(),
+        'most_edited_available': most_edited_available(),
         'active': 'edited-datasets',
     }
     return toolkit.render('dashboard/edited-datasets.html', extra_vars)
@@ -100,9 +98,8 @@ def edited_datasets():
 @tracking_dashboard_blueprint.route('/largest-groups')
 @require_sysadmin_user
 def largest_groups():
-    stats = stats_lib.Stats()
     extra_vars = {
-        'largest_groups': stats.largest_groups(),
+        'largest_organizations': get_largest_organizations(),
         'active': 'largest-groups',
     }
     return toolkit.render('dashboard/largest-groups.html', extra_vars)
@@ -111,9 +108,8 @@ def largest_groups():
 @tracking_dashboard_blueprint.route('/most-create')
 @require_sysadmin_user
 def most_create():
-    stats = stats_lib.Stats()
     extra_vars = {
-        'top_package_creators': stats.top_package_creators(),
+        'top_dataset_creators': get_top_dataset_creators(),
         'active': 'most-create',
     }
     return toolkit.render('dashboard/most-create.html', extra_vars)
