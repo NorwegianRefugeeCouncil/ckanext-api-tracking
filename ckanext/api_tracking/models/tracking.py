@@ -47,6 +47,9 @@ class TrackingUsage(Base):
     object_id = Column(UnicodeText, nullable=True)
     # More information about the usage
     extras = Column(MutableDict.as_mutable(JSONB), nullable=True)
+    # Web visits: salted hash of IP + browser, changes every day (migration 003)
+    # Counts unique visitors without storing who they are
+    visitor_key = Column(UnicodeText, nullable=True)
 
     def dictize(self):
         dct = {k: v for k, v in self.__dict__.items() if not k.startswith("_")}

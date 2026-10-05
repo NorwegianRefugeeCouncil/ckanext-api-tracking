@@ -34,6 +34,7 @@ def tracking_usage_create(context, data_dict):
             token_name=data_dict.get('token_name'),
             object_type=data_dict.get('object_type'),
             object_id=data_dict.get('object_id'),
+            visitor_key=data_dict.get('visitor_key'),
         )
     tu.save()
 

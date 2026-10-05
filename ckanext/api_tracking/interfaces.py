@@ -30,6 +30,7 @@ class IUsage(Interface):
             tracking_type: keys from METHOD->TYPE defined in define_paths
             environ: Full request environ
             user_id: ID of the user CKAN identified for this request (or None)
+            visitor_key: anonymous daily key for web visits (or None)
         api_token: ApiToken object or None
         '''
 
@@ -85,6 +86,7 @@ class IUsage(Interface):
             tracking_type=tracking_type, tracking_sub_type=tracking_sub_type,
             token_name=token_name,
             object_type=object_type, object_id=object_id,
+            visitor_key=data.get('visitor_key'),
         )
         tu = toolkit.get_action('tracking_usage_create')(ctx, data_dict)
 

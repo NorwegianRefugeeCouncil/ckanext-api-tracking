@@ -7,12 +7,15 @@ logged in user was never available there.
 An after_app_request hook runs after ckan_before_request() -> identify_user(),
 so current_user is already set (session cookie or API token).
 """
+import hashlib
 import logging
 import re
+from datetime import date
 
 from flask import Blueprint, current_app
 from ckan import plugins
-from ckan.common import config, current_user, request
+from ckan.plugins import toolkit
+from ckan.common import config, current_user, g, request
 from ckan.lib import api_token as api_token_lib
 from ckan.model import ApiToken
 
@@ -117,6 +120,56 @@ def get_api_token():
     return token_obj
 
 
+# Web visits from these user agents are not tracked (regex, case insensitive)
+DEFAULT_IGNORE_USER_AGENTS = r'bot|crawl|spider|slurp|preview|monitor|curl|wget|python-requests|httpx|go-http-client|java/'
+
+
+def track_ui_users_enabled():
+    """ Web visits of logged in users are tracked unless disabled in the config """
+    return toolkit.asbool(toolkit.config.get('ckanext.api_tracking.track_ui_users', True))
+
+
+def track_ui_anonymous_enabled():
+    """ Web visits of anonymous users are tracked unless disabled in the config """
+    return toolkit.asbool(toolkit.config.get('ckanext.api_tracking.track_ui_anonymous', True))
+
+
+def is_bot():
+    """ Bots don't run JS, so CKAN core tracking never saw them. We do: filter them """
+    user_agent = request.headers.get('User-Agent', '')
+    if not user_agent:
+        return True
+    pattern = toolkit.config.get('ckanext.api_tracking.ignore_user_agents') or DEFAULT_IGNORE_USER_AGENTS
+    return re.search(pattern, user_agent, re.IGNORECASE) is not None
+
+
+def should_track_ui_session(tracking_type):
+    """ Track this request made with a web session (no API token)? """
+    # API calls with the session cookie come from CKAN's own JS in the browser,
+    # they are not API usage
+    if tracking_type == 'api_action':
+        return False
+    if current_user.is_authenticated:
+        return track_ui_users_enabled()
+    return track_ui_anonymous_enabled() and not is_bot()
+
+
+def get_visitor_key():
+    """ Anonymous key for a web visitor: the same IP + browser gets the same key
+        during one day, so we can count unique visitors.
+        Salted with the app secret and the date: the IP is never stored and
+        keys can't be linked between days.
+    """
+    parts = [
+        current_app.config.get('SECRET_KEY') or '',
+        date.today().isoformat(),
+        getattr(g, 'remote_addr', '') or request.remote_addr or '',
+        request.headers.get('User-Agent', ''),
+        request.headers.get('Accept-Language', ''),
+    ]
+    return hashlib.sha256('|'.join(parts).encode()).hexdigest()
+
+
 @tracking_capture_blueprint.after_app_request
 def track_request(response):
     """ Ensure this never breaks the response """
@@ -137,11 +190,11 @@ def _track_request(response):
         return
 
     api_token = get_api_token()
-    # We only track requests using an API token (for now).
-    # current_user is also available here for UI sessions (not tracked yet)
-    if not api_token:
+    if not api_token and not should_track_ui_session(tracking_type):
         return
 
+    # Web visits get an anonymous daily key to count unique visitors
+    visitor_key = None if api_token else get_visitor_key()
     method = request.environ.get('REQUEST_METHOD')
     log.debug(f"Tracking: {request.path} -> {tracking_type} :: {method}")
     for item in plugins.PluginImplementations(IUsage):
@@ -150,6 +203,8 @@ def _track_request(response):
         data = {
             'tracking_type': tracking_type,
             'environ': request.environ,
-            'user_id': current_user.id,
+            # Anonymous users have id ""
+            'user_id': current_user.id or None,
+            'visitor_key': visitor_key,
         }
         item.track_usage(data, api_token)
