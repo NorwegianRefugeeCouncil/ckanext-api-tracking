@@ -1,7 +1,6 @@
 """
 Relevant queries to tracking data
 """
-import csv
 
 
 def rows_as_dicts(query):
@@ -11,15 +10,3 @@ def rows_as_dicts(query):
     dicts keep row['column'] working (also on SQLAlchemy 1.4 / CKAN 2.11).
     """
     return [dict(row._mapping) for row in query]
-
-
-def download_query_results_as_csv(query_results, filename):
-    """
-    Download query results as CSV
-    """
-    f = open(filename, 'w')
-    writer = csv.writer(f)
-    # include headers
-    writer.writerow(query_results[0].keys())
-    writer.writerows(query_results)
-    f.close()

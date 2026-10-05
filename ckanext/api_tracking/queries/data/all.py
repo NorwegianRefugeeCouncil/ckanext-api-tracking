@@ -17,16 +17,22 @@ def all_token_usage_data(limit=1000):
     """ Get all tokens usage """
     data = get_all_token_usage(limit=limit)
     rows = []
+    # The same users and objects repeat a lot: look up each one only once
+    users = {}
+    objects = {}
 
     for row in data:
         user_id = row['user_id']
-        user = model.User.get(user_id)
+        if user_id not in users:
+            users[user_id] = model.User.get(user_id)
+        user = users[user_id]
         user_name = user.name if user else None
         user_fullname = user.fullname if user else None
 
-        obj_title, object_url, organization_url, organization_title = _process_object(
-            row['object_id'], row['object_type']
-        )
+        object_key = (row['object_id'], row['object_type'])
+        if object_key not in objects:
+            objects[object_key] = _process_object(*object_key)
+        obj_title, object_url, organization_url, organization_title = objects[object_key]
 
         rows.append({
             'id': row['id'],
@@ -62,7 +68,11 @@ def _process_dataset(object_id):
     pkg_type = helpers.default_package_type()
     object_url = toolkit.url_for(f'{pkg_type}.read', id=pkg['name'])
 
-    owner_org = pkg.get('organization', {})
+    # Datasets without organization have 'organization': None
+    owner_org = pkg.get('organization') or {}
+    if not owner_org:
+        return obj_title, object_url, None, None
+
     organization_title = owner_org.get('title')
     org_type = helpers.default_group_type('organization')
     organization_url = toolkit.url_for(f'{org_type}.read', id=owner_org.get('name'))

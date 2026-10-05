@@ -28,23 +28,22 @@ def most_accessed_resource_with_token_data(limit=10):
         org_title = None
         org_url = None
         org_id = None
+        package_id = None
 
         obj = model.Resource.get(object_id)
         if obj:
             obj_title = obj.name if obj.name else f'Resource ID {obj.id}'
             package_id = obj.package_id
-            if package_id in known_packages:
-                package = known_packages[package_id]
-            else:
-                package = model.Package.get(package_id)
+            if package_id not in known_packages:
+                known_packages[package_id] = model.Package.get(package_id)
+            package = known_packages[package_id]
             package_name = package.name
             object_url = toolkit.url_for('dataset_resource.read', id=package_name, resource_id=object_id, qualified=True)
             package_title = package.title or package.name
             package_url = toolkit.url_for('dataset.read', id=package_name, qualified=True)
-            if package.owner_org in know_orgs:
-                org = know_orgs[package.owner_org]
-            else:
-                org = model.Group.get(package.owner_org)
+            if package.owner_org not in know_orgs:
+                know_orgs[package.owner_org] = model.Group.get(package.owner_org)
+            org = know_orgs[package.owner_org]
             if org:
                 org_id = org.id
                 org_title = org.title

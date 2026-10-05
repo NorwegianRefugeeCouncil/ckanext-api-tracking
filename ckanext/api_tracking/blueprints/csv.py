@@ -25,7 +25,10 @@ def _csv_response(auth_fn, data_fn, kwargs, filename):
     """ general CSV response from data_fn(**kwargs) checking access with auth_fn """
     current_user_name = current_user.name if current_user else None
     context = {'user': current_user_name}
-    toolkit.check_access(auth_fn, context)
+    try:
+        toolkit.check_access(auth_fn, context)
+    except toolkit.NotAuthorized:
+        return toolkit.abort(403, toolkit._('Sysadmin user required'))
     data = data_fn(**kwargs)
     # If no rows, return empty 204 CSV
     if len(data) == 0:

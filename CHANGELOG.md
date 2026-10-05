@@ -12,10 +12,17 @@ New Features:
 - Charts for dashboards [#44](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/44)
 - Chart for "Latest API token usage" [#45](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/45)
 - Stop using the CKAN core `stats` plugin [#46](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/46)
+- Indexes on `tracking_usage` for the dashboard queries [#47](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/47)
 
 Bug Fixes:
 - "Users creating most datasets" was empty when `ckan.auth.public_user_details` was false
 - Do not track pages that only looked like a dataset page (e.g. `/dataset/new`)
+- Multiple fixes PR [#48](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/48)
+  - CSV endpoints return 403 for non-sysadmins instead of an unhandled error
+  - Resources CSV no longer crashes when a tracked resource does not exist anymore
+  - Latest API token usage no longer crashes for datasets without organization
+  - Latest API token usage looks up each user and object once (it was once per row)
+  - Remove unused SQL files and helpers
 
 # 0.5.4 2025-09-11
 

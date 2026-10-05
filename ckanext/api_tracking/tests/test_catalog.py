@@ -90,7 +90,7 @@ class TestMostEditedWithActivity:
 
 
 def test_no_core_stats_plugin_usage():
-    """ Guard: we don't depend on the CKAN core stats plugin (see PLAN.md R2) """
+    """ Guard: we don't depend on the CKAN core stats plugin """
     root = Path(__file__).parent.parent
     offenders = []
     for path in root.rglob('*'):

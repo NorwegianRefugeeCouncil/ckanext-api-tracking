@@ -235,11 +235,9 @@ class TestUsageByUserViews:
         assert user['name'] in response.body
 
     def test_csv_not_sysadmin(self, app):
-        """ Same behavior as the other CSV endpoints (see PLAN.md B8) """
         user = factories.UserWithToken()
         auth = {"Authorization": user['token']}
-        with pytest.raises(toolkit.NotAuthorized):
-            app.get(url_for('tracking_csv.usage_by_user_csv'), headers=auth)
+        app.get(url_for('tracking_csv.usage_by_user_csv'), headers=auth, status=403)
 
 
 @pytest.mark.parametrize('args, expected', [
