@@ -6,9 +6,9 @@ from ckan.lib.helpers import url_for
 from ckan.plugins import toolkit
 from ckan.tests import factories, helpers
 
-from ckanext.api_tracking.dashboard.users import get_period_days
+from ckanext.api_tracking.dashboard.users import get_period_days, get_top_users_chart
 from ckanext.api_tracking.models import TrackingUsage
-from ckanext.api_tracking.queries.users import usage_by_user
+from ckanext.api_tracking.queries.users import usage_by_user, usage_by_user_daily, usage_by_user_summary
 
 
 def add_usage(user_id, days_ago=0, token_name=None, tracking_type='api', tracking_sub_type='show'):
@@ -132,6 +132,57 @@ class TestUsageByUserQuery:
 
 
 @pytest.mark.usefixtures('clean_db')
+class TestUsageByUserSummary:
+
+    def test_summary(self):
+        api_user = factories.User()
+        web_user = factories.User()
+        old_user = factories.User()
+        add_usage(api_user['id'], token_name='token-1')
+        set_last_active(web_user['id'], days_ago=1)
+        set_last_active(old_user['id'], days_ago=200)
+
+        summary = usage_by_user_summary(days=30)
+
+        assert summary['active_users'] == 2
+        assert summary['api_users'] == 1
+        # All created today
+        assert summary['new_users'] == 3
+        # old_user only (api_user has tracked usage, web_user was seen)
+        assert summary['dormant_users'] == 1
+        assert summary['total_users'] == 3
+
+    def test_daily(self):
+        user_a = factories.User()
+        user_b = factories.User()
+        add_usage(user_a['id'], token_name='token-1')
+        add_usage(user_a['id'], token_name='token-1')
+        add_login(user_b['id'])
+        add_login(user_b['id'], days_ago=3)
+
+        rows = usage_by_user_daily(days=7)
+
+        # One row per day, including empty days
+        assert len(rows) == 8
+        assert rows[-1]['users'] == 2
+        assert rows[-4]['users'] == 1
+        assert sum(row['users'] for row in rows) == 3
+
+
+def test_top_users_chart():
+    records = [
+        {'user_name': 'quiet', 'user_fullname': '', 'token_requests': 0, 'logins': 0},
+        {'user_name': 'low', 'user_fullname': 'Low User', 'token_requests': 1, 'logins': 0},
+        {'user_name': 'high', 'user_fullname': '', 'token_requests': 5, 'logins': 2},
+    ]
+    chart = get_top_users_chart(records)
+    # Users without tracked activity are not in the chart, most active first
+    assert chart['labels'] == ['high', 'Low User']
+    assert chart['datasets'][0]['data'] == [5, 1]
+    assert chart['datasets'][1]['data'] == [2, 0]
+
+
+@pytest.mark.usefixtures('clean_db')
 class TestUsageByUserAction:
 
     def test_sysadmin_only(self):
@@ -169,6 +220,8 @@ class TestUsageByUserViews:
         auth = {"Authorization": sysadmin['token']}
         response = app.get(url_for('tracking_dashboard.users_usage', days=7), headers=auth, status=200)
         assert 'Usage Tester' in response.body
+        assert 'tracking-tile' in response.body
+        assert response.body.count('data-module="api-tracking-chart"') == 2
 
     def test_csv(self, app):
         sysadmin = factories.SysadminWithToken()

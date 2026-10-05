@@ -6,9 +6,11 @@
     <section id="stats-total-datasets" class="module-content tab-content active">
       <h2>{{ _('Total Number of Datasets') }}</h2>
 
-      {% set xaxis = {'mode': 'time', 'timeformat': '%y-%b'} %}
-      {% set yaxis = {'min': 0} %}
-      <table class="table table-chunky table-bordered table-striped" data-module="plot" data-module-xaxis="{{ h.dump_json(xaxis) }}" data-module-yaxis="{{ h.dump_json(yaxis) }}">
+      <div class="tracking-chart" data-module="api-tracking-chart" data-module-chart="{{ h.dump_json(chart) }}">
+        <canvas role="img" aria-label="{{ _('Total number of datasets by week') }}"></canvas>
+      </div>
+
+      <table class="table table-chunky table-bordered table-striped">
         <thead>
           <tr>
             <th>{{ _("Date") }}</th>

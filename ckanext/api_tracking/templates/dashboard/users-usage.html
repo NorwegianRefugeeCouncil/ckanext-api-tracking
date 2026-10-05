@@ -28,6 +28,43 @@
         <a class="btn btn-primary" href="{{ links.view_json }}" target="_blank">{{ _('View API') }}</a>
       </p>
 
+      <div class="tracking-tiles">
+        <div class="tracking-tile">
+          <span class="tile-value">{{ summary.active_users }}</span>
+          <span class="tile-label">{{ _('Active users') }}</span>
+        </div>
+        <div class="tracking-tile">
+          <span class="tile-value">{{ summary.api_users }}</span>
+          <span class="tile-label">{{ _('Users with API activity') }}</span>
+        </div>
+        <div class="tracking-tile">
+          <span class="tile-value">{{ summary.new_users }}</span>
+          <span class="tile-label">{{ _('New users') }}</span>
+        </div>
+        <div class="tracking-tile">
+          <span class="tile-value">{{ summary.dormant_users }}</span>
+          <span class="tile-label">{{ _('Not seen in {days} days').format(days=dormant_days) }}</span>
+        </div>
+        <div class="tracking-tile">
+          <span class="tile-value">{{ summary.total_users }}</span>
+          <span class="tile-label">{{ _('Total users') }}</span>
+        </div>
+      </div>
+
+      <h3>{{ _('Active users per day') }}</h3>
+      <p class="text-muted">{{ _('Users with API token requests or logins each day. Web visits are not included yet.') }}</p>
+      <div class="tracking-chart" data-module="api-tracking-chart" data-module-chart="{{ h.dump_json(daily_chart) }}">
+        <canvas role="img" aria-label="{{ _('Active users per day') }}"></canvas>
+      </div>
+
+      {% if top_chart.labels %}
+      <h3>{{ _('Top users') }}</h3>
+      <div class="tracking-chart" data-module="api-tracking-chart" data-module-chart="{{ h.dump_json(top_chart) }}">
+        <canvas role="img" aria-label="{{ _('Top users by API token requests and logins') }}"></canvas>
+      </div>
+      {% endif %}
+
+      <h3>{{ _('All users') }}</h3>
       {% if users_usage %}
       <table class="table table-chunky table-bordered table-striped">
         <thead>

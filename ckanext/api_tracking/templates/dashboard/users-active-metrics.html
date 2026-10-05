@@ -16,6 +16,11 @@
         <a class="btn btn-primary" href="{{ links.download_csv }}">{{ _('Download as CSV') }}</a>
         <a class="btn btn-primary" href="{{ links.view_json }}" target="_blank">{{ _('View API') }}</a>
       </p>
+      <h3>{{ _('Last 30 days') }}</h3>
+      <div class="tracking-chart" data-module="api-tracking-chart" data-module-chart="{{ h.dump_json(chart) }}">
+        <canvas role="img" aria-label="{{ _('Users who logged in per day, last 30 days') }}"></canvas>
+      </div>
+
       <table class="table table-chunky table-bordered table-striped">
         <thead>
           <tr>

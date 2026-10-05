@@ -2,6 +2,7 @@ import logging
 from flask import Blueprint, request
 from ckan.plugins import toolkit
 from ckanext.stats import stats as stats_lib
+from ckanext.api_tracking.dashboard.charts import daily_line_chart, line_chart
 from ckanext.api_tracking.dashboard.stats import get_dataset_views, get_unique_dataset_views, get_resource_downloads
 from ckanext.api_tracking.dashboard.stats_api import get_api_token_usage_aggregated, get_latest_api_token_usage
 from ckanext.api_tracking.dashboard.users import (
@@ -75,6 +76,12 @@ def total_datasets():
             {'date': toolkit.h.date_str_to_datetime(week_date),
              'total_packages': cumulative_num_packages})
 
+    weeks = extra_vars['raw_packages_by_week']
+    extra_vars['chart'] = line_chart(
+        [row['date'].date().isoformat() for row in weeks],
+        [row['total_packages'] for row in weeks],
+        toolkit._('Total datasets'),
+    )
     return toolkit.render('dashboard/total-datasets.html', extra_vars)
 
 
@@ -151,6 +158,12 @@ def users_active_metrics():
         'active': 'users-active-metrics',
         'links': users_active['links'],
         'tracking_login_enabled': tracking_login_enabled,
+        # Last 30 calendar days, days without logins are 0
+        'chart': daily_line_chart(
+            {row['day']: row['total'] for row in users_active['records']},
+            days=30,
+            label=toolkit._('Users who logged in'),
+        ),
     }
     return toolkit.render('dashboard/users-active-metrics.html', extra_vars)
 
@@ -164,6 +177,10 @@ def users_usage():
     extra_vars = {
         'users_usage': usage['records'],
         'links': usage['links'],
+        'summary': usage['summary'],
+        'dormant_days': usage['dormant_days'],
+        'daily_chart': usage['daily_chart'],
+        'top_chart': usage['top_chart'],
         'days': days,
         'period_choices': PERIOD_CHOICES,
         'active': 'users-usage',
