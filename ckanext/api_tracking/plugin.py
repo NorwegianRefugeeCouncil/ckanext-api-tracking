@@ -31,7 +31,7 @@ class TrackingPlugin(plugins.SingletonPlugin, DefaultTranslation):
     def update_config(self, config_):
         toolkit.add_template_directory(config_, "templates")
         toolkit.add_public_directory(config_, "public")
-        toolkit.add_resource("assets", "tracking")
+        toolkit.add_resource("assets", "api_tracking")
 
     def i18n_locales(self):
         """Languages this plugin has translations for."""

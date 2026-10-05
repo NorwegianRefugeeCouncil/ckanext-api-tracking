@@ -1,6 +1,13 @@
 import logging
 from ckan.plugins import toolkit
-from ckanext.api_tracking.queries.users import usage_by_user, users_active_metrics
+from ckanext.api_tracking.dashboard.charts import line_chart
+from ckanext.api_tracking.queries.users import (
+    DORMANT_DAYS,
+    usage_by_user,
+    usage_by_user_daily,
+    usage_by_user_summary,
+    users_active_metrics,
+)
 
 
 log = logging.getLogger(__name__)
@@ -54,6 +61,33 @@ def get_usage_by_user(days=DEFAULT_PERIOD, limit=100):
             'view_json': json_url,
         },
         'records': results,
+        'summary': usage_by_user_summary(days=days),
+        'dormant_days': DORMANT_DAYS,
+        'daily_chart': get_daily_chart(usage_by_user_daily(days=days)),
+        'top_chart': get_top_users_chart(results),
     }
 
     return ret
+
+
+def get_daily_chart(daily_rows):
+    """ Chart data: users with tracked activity per day """
+    return line_chart(
+        [row['day'].isoformat() for row in daily_rows],
+        [row['users'] for row in daily_rows],
+        toolkit._('Active users'),
+    )
+
+
+def get_top_users_chart(records, top=10):
+    """ Chart data: top users by tracked activity (API token requests + logins) """
+    rows = [row for row in records if row['token_requests'] + row['logins'] > 0]
+    rows = sorted(rows, key=lambda row: row['token_requests'] + row['logins'], reverse=True)[:top]
+    return {
+        'type': 'bar',
+        'labels': [row['user_fullname'] or row['user_name'] for row in rows],
+        'datasets': [
+            {'label': toolkit._('API token requests'), 'data': [row['token_requests'] for row in rows]},
+            {'label': toolkit._('Logins'), 'data': [row['logins'] for row in rows]},
+        ],
+    }

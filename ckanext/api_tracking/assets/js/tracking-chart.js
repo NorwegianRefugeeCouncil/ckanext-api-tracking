@@ -28,7 +28,8 @@ ckan.module("api-tracking-chart", function ($) {
           backgroundColor: COLORS[i],
           borderColor: isBar ? "#ffffff" : COLORS[i],
           borderWidth: 2,
-          pointRadius: 0,
+          // A line with one point is invisible without its marker
+          pointRadius: chart.labels.length === 1 ? 4 : 0,
         };
       });
 

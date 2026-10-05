@@ -49,3 +49,24 @@ def usage_by_user(days=30, limit=100):
             if row[key]:
                 row[key] = row[key].isoformat()
     return rows
+
+
+# Users not seen for this many days are "dormant"
+DORMANT_DAYS = 90
+
+
+def usage_by_user_summary(days=30):
+    """ Summary numbers for the usage by user page (see dashboard/sql/usage-by-user-summary.sql) """
+    now = datetime.now()
+    params = {
+        'measure_from': now - timedelta(days=days),
+        'dormant_from': now - timedelta(days=DORMANT_DAYS),
+        'site_user_name': toolkit.config.get('ckan.site_id'),
+    }
+    return query_results('usage-by-user-summary.sql', params=params)[0]
+
+
+def usage_by_user_daily(days=30):
+    """ Users with tracked activity per day, one row per day (see dashboard/sql/usage-by-user-daily.sql) """
+    params = {'measure_from': datetime.now() - timedelta(days=days)}
+    return query_results('usage-by-user-daily.sql', params=params)
