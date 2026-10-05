@@ -138,7 +138,7 @@ def _track_request(response):
 
     api_token = get_api_token()
     # We only track requests using an API token (for now).
-    # current_user is also available for UI sessions, see PLAN.md
+    # current_user is also available here for UI sessions (not tracked yet)
     if not api_token:
         return
 
