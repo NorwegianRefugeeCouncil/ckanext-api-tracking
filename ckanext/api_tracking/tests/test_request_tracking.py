@@ -56,7 +56,6 @@ class TestRequestTracking:
     def test_logged_in_user_is_available(self, app, monkeypatch):
         """ The UI user is visible in the hook.
             This was impossible in the WSGI middleware.
-            We don't store UI sessions yet, so nothing is saved
         """
         client, user = logged_in_client(app)
         seen = {}
@@ -71,7 +70,8 @@ class TestRequestTracking:
         assert response.status_code == 200
 
         assert seen['user_name'] == user["name"]
-        assert usage_count() == 0
+        tu = model.Session.query(TrackingUsage).filter(TrackingUsage.tracking_sub_type != 'login').one()
+        assert tu.user_id == user["id"]
 
     def test_errors_not_tracked(self, app):
         """ 4xx/5xx responses are not usage """
@@ -184,3 +184,171 @@ class TestViewMatching:
         tu = model.Session.query(TrackingUsage).one()
         assert tu.user_id == user_with_token["id"]
         assert tu.object_type == 'page'
+
+
+@pytest.mark.usefixtures('clean_db', 'clean_index')
+@pytest.mark.ckan_config('ckanext.api_tracking.track_ui_users', True)
+class TestUISessionTracking:
+    """ Web visits of logged in users (ckanext.api_tracking.track_ui_users) """
+
+    def _get(self, client, url, **kwargs):
+        response = client.get(url, base_url=session_base_url(), **kwargs)
+        assert response.status_code < 400
+        return response
+
+    def test_dataset_page(self, app):
+        client, user = logged_in_client(app)
+        dataset = factories.Dataset()
+        self._get(client, url_for('dataset.read', id=dataset['name']))
+
+        tu = model.Session.query(TrackingUsage).filter(TrackingUsage.tracking_sub_type != 'login').one()
+        assert tu.user_id == user['id']
+        assert tu.token_name is None
+        assert (tu.tracking_type, tu.tracking_sub_type) == ('ui', 'show')
+        assert (tu.object_type, tu.object_id) == ('dataset', dataset['id'])
+        assert tu.visitor_key
+
+    def test_pages(self, app):
+        """ All the web pages we track """
+        client, user = logged_in_client(app)
+        org = factories.Organization()
+        resource = factories.Resource()
+        self._get(client, url_for('dataset.search'))
+        self._get(client, url_for('dataset_resource.read', id=resource['package_id'], resource_id=resource['id']))
+        self._get(
+            client,
+            url_for('dataset_resource.download', id=resource['package_id'], resource_id=resource['id']),
+            follow_redirects=False,
+        )
+        self._get(client, url_for('organization.index'))
+        self._get(client, url_for('organization.read', id=org['name']))
+
+        rows = model.Session.query(TrackingUsage).filter(
+            TrackingUsage.tracking_sub_type != 'login'
+        ).order_by(TrackingUsage.timestamp).all()
+        assert [(tu.tracking_sub_type, tu.object_type) for tu in rows] == [
+            ('home', 'dataset'),
+            ('show', 'resource'),
+            ('download', 'resource'),
+            ('home', 'organization'),
+            ('show', 'organization'),
+        ]
+        assert {tu.user_id for tu in rows} == {user['id']}
+
+    def test_api_calls_with_session_not_tracked(self, app):
+        """ CKAN's own JS calls the API with the session cookie: not API usage """
+        client, user = logged_in_client(app)
+        dataset = factories.Dataset()
+        self._get(client, url_for('api.action', ver=3, logic_function='package_show', id=dataset['id']))
+        assert usage_count() == 0
+
+    @pytest.mark.ckan_config('ckanext.api_tracking.track_ui_anonymous', False)
+    def test_anonymous_not_tracked_when_disabled(self, app):
+        dataset = factories.Dataset()
+        app.get(url_for('dataset.read', id=dataset['name']), status=200)
+        assert usage_count() == 0
+
+    def test_api_token_still_tracked(self, app):
+        user_with_token = factories.UserWithToken()
+        dataset = factories.Dataset()
+        url = url_for("api.action", ver=3, logic_function="package_show", id=dataset["id"])
+        app.get(url, headers={"Authorization": user_with_token['token']}, status=200)
+        tu = model.Session.query(TrackingUsage).one()
+        assert tu.token_name
+        assert tu.tracking_type == 'api'
+
+
+@pytest.mark.usefixtures('clean_db', 'clean_index')
+def test_ui_sessions_tracked_by_default(app):
+    """ ckanext.api_tracking.track_ui_users is true by default """
+    client, user = logged_in_client(app)
+    dataset = factories.Dataset()
+    response = client.get(url_for('dataset.read', id=dataset['name']), base_url=session_base_url())
+    assert response.status_code == 200
+    assert usage_count() == 1
+
+
+@pytest.mark.usefixtures('clean_db', 'clean_index')
+@pytest.mark.ckan_config('ckanext.api_tracking.track_ui_users', False)
+def test_ui_sessions_not_tracked_when_disabled(app):
+    client, user = logged_in_client(app)
+    dataset = factories.Dataset()
+    response = client.get(url_for('dataset.read', id=dataset['name']), base_url=session_base_url())
+    assert response.status_code == 200
+    assert usage_count() == 0
+
+
+@pytest.mark.usefixtures('clean_db', 'clean_index')
+@pytest.mark.ckan_config('ckanext.api_tracking.track_ui_anonymous', True)
+class TestAnonymousTracking:
+    """ Web visits of anonymous users (ckanext.api_tracking.track_ui_anonymous) """
+
+    BROWSER = 'Mozilla/5.0 (X11; Linux x86_64) Firefox/130.0'
+
+    def _visit(self, app, url, user_agent=BROWSER):
+        app.get(url, headers={'User-Agent': user_agent}, status=200)
+
+    def test_dataset_page(self, app):
+        dataset = factories.Dataset()
+        self._visit(app, url_for('dataset.read', id=dataset['name']))
+
+        tu = model.Session.query(TrackingUsage).one()
+        assert tu.user_id is None
+        assert tu.token_name is None
+        assert (tu.tracking_type, tu.tracking_sub_type) == ('ui', 'show')
+        assert (tu.object_type, tu.object_id) == ('dataset', dataset['id'])
+        # sha256 hex, no IP stored
+        assert len(tu.visitor_key) == 64
+
+    def test_visitor_key(self, app):
+        """ Same browser, same key (unique visitors). Another browser, another key """
+        url = url_for('dataset.search')
+        self._visit(app, url)
+        self._visit(app, url)
+        self._visit(app, url, user_agent='Mozilla/5.0 (Windows NT 10.0) Chrome/129.0')
+
+        keys = [tu.visitor_key for tu in model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp)]
+        assert keys[0] == keys[1]
+        assert keys[0] != keys[2]
+
+    @pytest.mark.parametrize('user_agent', [
+        'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+        'curl/8.5.0',
+        'python-requests/2.32.3',
+        '',
+    ])
+    def test_bots_not_tracked(self, app, user_agent):
+        self._visit(app, url_for('dataset.search'), user_agent=user_agent)
+        assert usage_count() == 0
+
+    @pytest.mark.ckan_config('ckanext.api_tracking.ignore_user_agents', 'firefox')
+    def test_custom_ignore_user_agents(self, app):
+        self._visit(app, url_for('dataset.search'))
+        assert usage_count() == 0
+
+    def test_api_calls_not_tracked(self, app):
+        dataset = factories.Dataset()
+        self._visit(app, url_for('api.action', ver=3, logic_function='package_show', id=dataset['id']))
+        assert usage_count() == 0
+
+    @pytest.mark.ckan_config('ckanext.api_tracking.track_ui_users', False)
+    def test_logged_in_users_have_their_own_setting(self, app):
+        """ track_ui_users off: logged in users are not tracked, even with track_ui_anonymous on """
+        client, user = logged_in_client(app)
+        response = client.get(url_for('dataset.search'), base_url=session_base_url())
+        assert response.status_code == 200
+        assert usage_count() == 0
+
+
+@pytest.mark.usefixtures('clean_db', 'clean_index')
+def test_anonymous_tracked_by_default(app):
+    """ ckanext.api_tracking.track_ui_anonymous is true by default """
+    app.get(url_for('dataset.search'), headers={'User-Agent': 'Mozilla/5.0'}, status=200)
+    assert usage_count() == 1
+
+
+@pytest.mark.usefixtures('clean_db', 'clean_index')
+@pytest.mark.ckan_config('ckanext.api_tracking.track_ui_anonymous', False)
+def test_anonymous_not_tracked_when_disabled(app):
+    app.get(url_for('dataset.search'), headers={'User-Agent': 'Mozilla/5.0'}, status=200)
+    assert usage_count() == 0
