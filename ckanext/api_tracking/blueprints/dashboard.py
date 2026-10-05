@@ -4,6 +4,7 @@ from ckan.plugins import toolkit
 from ckanext.stats import stats as stats_lib
 from ckanext.api_tracking.dashboard.charts import daily_line_chart, line_chart
 from ckanext.api_tracking.dashboard.stats import get_dataset_views, get_unique_dataset_views, get_resource_downloads
+from ckanext.api_tracking.queries.api import get_token_requests_per_day
 from ckanext.api_tracking.dashboard.stats_api import get_api_token_usage_aggregated, get_latest_api_token_usage
 from ckanext.api_tracking.dashboard.users import (
     PERIOD_CHOICES,
@@ -127,6 +128,12 @@ def latest_api_token_usage():
         'latest_api_usage': data['records'],
         'links': data['links'],
         'active': 'latest-api',
+        # Last 30 calendar days, days without requests are 0
+        'chart': daily_line_chart(
+            get_token_requests_per_day(days=30),
+            days=30,
+            label=toolkit._('API token requests'),
+        ),
     }
     return toolkit.render('dashboard/latest-api-token-usage.html', extra_vars)
 
