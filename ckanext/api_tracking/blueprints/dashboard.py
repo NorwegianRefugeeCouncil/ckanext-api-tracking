@@ -1,10 +1,15 @@
 import logging
-from flask import Blueprint
+from flask import Blueprint, request
 from ckan.plugins import toolkit
 from ckanext.stats import stats as stats_lib
 from ckanext.api_tracking.dashboard.stats import get_dataset_views, get_unique_dataset_views, get_resource_downloads
 from ckanext.api_tracking.dashboard.stats_api import get_api_token_usage_aggregated, get_latest_api_token_usage
-from ckanext.api_tracking.dashboard.users import get_users_active_metrics
+from ckanext.api_tracking.dashboard.users import (
+    PERIOD_CHOICES,
+    get_period_days,
+    get_usage_by_user,
+    get_users_active_metrics,
+)
 from ckanext.api_tracking.decorators import require_sysadmin_user
 
 
@@ -148,3 +153,19 @@ def users_active_metrics():
         'tracking_login_enabled': tracking_login_enabled,
     }
     return toolkit.render('dashboard/users-active-metrics.html', extra_vars)
+
+
+@tracking_dashboard_blueprint.route('/users-usage')
+@require_sysadmin_user
+def users_usage():
+    """ Show usage by user in a period """
+    days = get_period_days(request.args)
+    usage = get_usage_by_user(days=days, limit=100)
+    extra_vars = {
+        'users_usage': usage['records'],
+        'links': usage['links'],
+        'days': days,
+        'period_choices': PERIOD_CHOICES,
+        'active': 'users-usage',
+    }
+    return toolkit.render('dashboard/users-usage.html', extra_vars)

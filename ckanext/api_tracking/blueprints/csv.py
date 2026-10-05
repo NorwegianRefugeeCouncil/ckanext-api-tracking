@@ -2,7 +2,7 @@ import csv
 import logging
 from io import StringIO
 
-from flask import Blueprint, Response
+from flask import Blueprint, Response, request
 from ckan.common import current_user
 from ckan.plugins import toolkit
 
@@ -13,6 +13,8 @@ from ckanext.api_tracking.queries.data import (
     most_accessed_resource_with_token_data,
     users_active_metrics_dict,
 )
+from ckanext.api_tracking.dashboard.users import get_period_days
+from ckanext.api_tracking.queries.users import usage_by_user
 
 
 log = logging.getLogger(__name__)
@@ -98,4 +100,16 @@ def users_active_metrics_csv():
         users_active_metrics_dict,
         {'limit': 3650},
         'users-active-metrics.csv',
+    )
+
+
+@tracking_csv_blueprint.route('/usage-by-user.csv', methods=["GET"])
+def usage_by_user_csv():
+    """ Get usage by user in a period (?days=7|30|90|365) """
+    days = get_period_days(request.args)
+    return _csv_response(
+        'usage_by_user',
+        usage_by_user,
+        {'days': days, 'limit': 1000},
+        f'usage-by-user-{days}-days.csv',
     )
