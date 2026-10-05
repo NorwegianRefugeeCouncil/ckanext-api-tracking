@@ -13,10 +13,10 @@
           </tr>
         </thead>
         <tbody>
-          {% for user, num_packages in top_package_creators %}
+          {% for row in top_dataset_creators %}
             <tr>
-              <td class="media">{{ h.linked_user(user) }}</td>
-              <td class="metric">{{ num_packages }}</td>
+              <td class="media">{{ h.linked_user(row.user_name) }}</td>
+              <td class="metric">{{ row.total }}</td>
             </tr>
           {% endfor %}
         </tbody>

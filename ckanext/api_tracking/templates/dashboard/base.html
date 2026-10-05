@@ -1,5 +1,5 @@
 {% extends "page.html" %}
-{# This started as copy of ckanext/stats/templates/ckanext/stats/index.html which is not easy to extend #}
+{# Started as a copy of ckanext/stats index.html. It does not use the stats plugin anymore #}
 
 
 {% block breadcrumb_content %}
@@ -12,7 +12,7 @@
 {% block secondary_content %}
   <section class="module module-narrow">
     <h2 class="module-heading"><i class="fa fa-chart-bar"></i>{{ _('Statistics Menu') }}</h2>
-    <nav data-module="stats-nav">
+    <nav>
       <ul class="unstyled nav nav-simple">
 
         {% block pre_links_menu %}
@@ -86,7 +86,6 @@
 
 {% block scripts %}
   {{ super() }}
-  {% asset "ckanext_stats/stats" %}
   {% asset "api_tracking/tracking-chart" %}
   {% asset "api_tracking/tracking-css" %}
 {% endblock %}
