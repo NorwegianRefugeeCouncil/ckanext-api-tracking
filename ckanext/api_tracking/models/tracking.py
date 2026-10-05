@@ -1,6 +1,6 @@
 import logging
 
-from sqlalchemy import Column, DateTime
+from sqlalchemy import Column, DateTime, Index
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.ext.mutable import MutableDict
@@ -22,6 +22,13 @@ class TrackingUsage(Base):
     The CKAN core tracking method is not sufficient for our needs.
     """
     __tablename__ = "tracking_usage"
+    # Created by migration 002 (keep both in sync)
+    __table_args__ = (
+        Index("ix_tracking_usage_timestamp", "timestamp"),
+        Index("ix_tracking_usage_user_id_timestamp", "user_id", "timestamp"),
+        Index("ix_tracking_usage_object", "object_type", "object_id"),
+        Index("ix_tracking_usage_sub_type_timestamp", "tracking_sub_type", "timestamp"),
+    )
 
     id = Column(UnicodeText, primary_key=True, default=make_uuid)
     timestamp = Column(DateTime, nullable=False, server_default=func.now())
