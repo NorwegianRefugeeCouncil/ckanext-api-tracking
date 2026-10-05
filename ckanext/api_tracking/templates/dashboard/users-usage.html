@@ -1,0 +1,71 @@
+{% extends "dashboard/base.html" %}
+
+{% block primary_content %}
+  <article class="module">
+
+    <section id="stats-users-usage" class="module-content tab-content active">
+      <h2>{{ _('Usage by user') }}</h2>
+      <p>
+        {{ _('Users with any activity in the last {days} days.').format(days=days) }}
+      </p>
+      <div class="alert alert-info">
+        {{ _('Web activity is only available as "Last seen" for now (the latest date, not a history of page views).') }}
+      </div>
+
+      <p>
+        {{ _('Period') }}:
+        <span class="btn-group" role="group">
+          {% for choice in period_choices %}
+            <a class="btn btn-sm {% if choice == days %}btn-primary{% else %}btn-outline-primary{% endif %}"
+               href="{{ h.url_for('tracking_dashboard.users_usage', days=choice) }}">
+              {{ _('{days} days').format(days=choice) }}
+            </a>
+          {% endfor %}
+        </span>
+      </p>
+      <p>
+        <a class="btn btn-primary" href="{{ links.download_csv }}">{{ _('Download as CSV') }}</a>
+        <a class="btn btn-primary" href="{{ links.view_json }}" target="_blank">{{ _('View API') }}</a>
+      </p>
+
+      {% if users_usage %}
+      <table class="table table-chunky table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>{{ _('User') }}</th>
+            <th>{{ _('Organizations') }}</th>
+            <th class="metric">{{ _('API token requests') }}</th>
+            <th class="metric">{{ _('Tokens used') }}</th>
+            <th class="metric">{{ _('Logins') }}</th>
+            <th>{{ _('Last login') }}</th>
+            <th>{{ _('Last seen') }}</th>
+            <th>{{ _('Created') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in users_usage %}
+            <tr>
+              <th>
+                <a href="{{ h.url_for('user.read', id=row.user_name) }}">
+                  {{ row.user_fullname or row.user_name }}
+                </a>
+                {% if row.sysadmin %}<span class="badge bg-secondary">{{ _('Sysadmin') }}</span>{% endif %}
+              </th>
+              <td>{{ row.organizations }}</td>
+              <td class="metric">{{ row.token_requests }}</td>
+              <td class="metric">{{ row.tokens_used }}</td>
+              <td class="metric">{{ row.logins }}</td>
+              <td>{% if row.last_login %}{{ h.render_datetime(row.last_login) }}{% endif %}</td>
+              <td>{% if row.last_active %}{{ h.render_datetime(row.last_active) }}{% endif %}</td>
+              <td>{% if row.created %}{{ h.render_datetime(row.created) }}{% endif %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p class="empty">{{ _('No user activity in this period.') }}</p>
+      {% endif %}
+    </section>
+
+  </article>
+{% endblock %}

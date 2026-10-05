@@ -1,5 +1,9 @@
+from datetime import datetime, timedelta
+
 from ckan import model
+from ckan.plugins import toolkit
 from sqlalchemy import func, desc
+from ckanext.api_tracking.dashboard import query_results
 from ckanext.api_tracking.models import TrackingUsage
 from ckanext.api_tracking.queries import rows_as_dicts
 
@@ -26,3 +30,22 @@ def users_active_metrics(limit=30):
     ).limit(limit)
 
     return rows_as_dicts(query)
+
+
+def usage_by_user(days=30, limit=100):
+    """
+    Usage by user in the last `days` days.
+    One row per user with activity in the period (see dashboard/sql/usage-by-user.sql)
+    Dates are returned as ISO strings so the same rows work for the API, CSV and HTML.
+    """
+    params = {
+        'measure_from': datetime.now() - timedelta(days=days),
+        'limit': limit,
+        'site_user_name': toolkit.config.get('ckan.site_id'),
+    }
+    rows = query_results('usage-by-user.sql', params=params)
+    for row in rows:
+        for key in ('created', 'last_active', 'last_login'):
+            if row[key]:
+                row[key] = row[key].isoformat()
+    return rows

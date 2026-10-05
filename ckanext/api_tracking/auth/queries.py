@@ -16,3 +16,7 @@ def all_token_usage(context, data_dict):
 
 def users_active_metrics(context, data_dict):
     return {'success': False}
+
+
+def usage_by_user(context, data_dict):
+    return {'success': False}
