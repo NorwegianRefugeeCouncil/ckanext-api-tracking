@@ -11,8 +11,10 @@ New Features:
   [#43](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/43)
 - Charts for dashboards [#44](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/44)
 - Chart for "Latest API token usage" [#45](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/45)
+- Stop using the CKAN core `stats` plugin [#46](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/46)
 
 Bug Fixes:
+- "Users creating most datasets" was empty when `ckan.auth.public_user_details` was false
 - Do not track pages that only looked like a dataset page (e.g. `/dataset/new`)
 
 # 0.5.4 2025-09-11
