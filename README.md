@@ -36,6 +36,7 @@ See [tracking_type.md](/DOCS/imgs/tracking_type.md) for more information on the 
  - most_accessed_dataset_with_token: `/api/action/most_accessed_dataset_with_token[?limit=10]` It returns the most accessed datasets with a user token. Sort by most requested dataset.
  - most_accessed_token: `/api/action/most_accessed_token[?limit=10]` It returns the most accessed user token. Sort by most used token.
  - users_active_metrics: `/api/action/users_active_metrics[?limit=10]` It returns the most active users. Sort by most active user.
+ - usage_by_user: `/api/action/usage_by_user[?days=30&limit=100]` It returns usage per user in the last `days` days (API token requests, tokens used, logins, last seen). Sort by most active user.
 
 ![Api calls](/DOCS/imgs/api-calls.png)
 
@@ -47,6 +48,7 @@ A more _human-readable_ way to access the same API data through CSV files. The f
  - `/tracking-csv/most-accessed-token.csv`
  - `/tracking-csv/all-token-usage.csv`
  - `/tracking-csv/users-active-metrics.csv`
+ - `/tracking-csv/usage-by-user.csv[?days=7|30|90|365]`
 
 ### Questions / issues
 

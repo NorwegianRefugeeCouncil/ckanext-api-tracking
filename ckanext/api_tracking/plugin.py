@@ -58,6 +58,7 @@ class TrackingPlugin(plugins.SingletonPlugin, DefaultTranslation):
             "most_accessed_token": auth_queries.most_accessed_token,
             "most_accessed_token_csv": auth_csv.most_accessed_token_csv,
             "tracking_usage_create": auth_base.tracking_usage_create,
+            "usage_by_user": auth_queries.usage_by_user,
             "users_active_metrics": auth_queries.users_active_metrics,
         }
 
@@ -70,6 +71,7 @@ class TrackingPlugin(plugins.SingletonPlugin, DefaultTranslation):
             "most_accessed_resource_with_token": action_queries.most_accessed_resource_with_token,
             "most_accessed_token": action_queries.most_accessed_token,
             "tracking_usage_create": action_base.tracking_usage_create,
+            "usage_by_user": action_queries.usage_by_user,
             "users_active_metrics": action_queries.get_users_active_metrics,
         }
 

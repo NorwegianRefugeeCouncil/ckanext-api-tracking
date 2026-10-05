@@ -16,7 +16,7 @@
         {{ _('Period') }}:
         <span class="btn-group" role="group">
           {% for choice in period_choices %}
-            <a class="btn btn-sm {% if choice == days %}btn-primary{% else %}btn-default{% endif %}"
+            <a class="btn btn-sm {% if choice == days %}btn-primary{% else %}btn-outline-primary{% endif %}"
                href="{{ h.url_for('tracking_dashboard.users_usage', days=choice) }}">
               {{ _('{days} days').format(days=choice) }}
             </a>
@@ -49,7 +49,7 @@
                 <a href="{{ h.url_for('user.read', id=row.user_name) }}">
                   {{ row.user_fullname or row.user_name }}
                 </a>
-                {% if row.sysadmin %}<span class="badge">{{ _('Sysadmin') }}</span>{% endif %}
+                {% if row.sysadmin %}<span class="badge bg-secondary">{{ _('Sysadmin') }}</span>{% endif %}
               </th>
               <td>{{ row.organizations }}</td>
               <td class="metric">{{ row.token_requests }}</td>
