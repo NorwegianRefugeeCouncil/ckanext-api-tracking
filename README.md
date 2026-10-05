@@ -92,12 +92,34 @@ Restart CKAN.
 
 ## Config settings
 
-CKAN has a philosophy where less data collected is better so you'll need to eanble the tracking in the configuration file.  
-Ensure tracking only what you need.  
+Login and logout events are not tracked by default. To track them:
 
 ```
 ckanext.api_tracking.track_login = true  # default is false
 ckanext.api_tracking.track_logout = true # default is false
+```
+
+Web visits are tracked by default (this extension exists to track usage).
+To disable them:
+
+```
+ckanext.api_tracking.track_ui_users = false      # default is true
+ckanext.api_tracking.track_ui_anonymous = false  # default is true
+```
+
+`track_ui_users` and `track_ui_anonymous` store the web pages (datasets, resources,
+downloads, organizations and their lists) visited by logged in and anonymous users.
+This happens on the server: no JavaScript and no `POST /_tracking` like CKAN core tracking.
+Requests made with an API token are always tracked.
+
+Each web visit gets a `visitor_key` to count unique visitors: a hash of IP + browser,
+salted with the app secret and the date. The IP is never stored and keys change every day.
+
+Bots are not tracked for anonymous visits. The default list of ignored user agents
+can be replaced with a regular expression (case insensitive):
+
+```
+ckanext.api_tracking.ignore_user_agents = bot|crawl|spider|curl
 ```
 
 
