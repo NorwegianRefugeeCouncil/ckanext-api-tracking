@@ -6,6 +6,10 @@ New Features:
 - Detect what to track by CKAN view function instead of URL regexes
   [#42](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/42)
 
+- New dashboard page "Usage by user" (`/tracking-dashboard/users-usage`) with
+  period selector, CSV (`/tracking-csv/usage-by-user.csv`) and API action `usage_by_user`
+  [#43](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/43)
+
 Bug Fixes:
 - Do not track pages that only looked like a dataset page (e.g. `/dataset/new`)
 
