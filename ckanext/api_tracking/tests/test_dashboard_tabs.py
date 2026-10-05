@@ -26,6 +26,7 @@ def setup_data():
         'most_create',
         'latest_api_token_usage',
         'api_token_usage_aggregated',
+        'users_usage',
     ]
     return obj
 
