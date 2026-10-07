@@ -18,6 +18,7 @@ def get_most_accessed_resource_with_token(limit=10):
     ).filter(
         TrackingUsage.object_id.isnot(None),
         TrackingUsage.token_name.isnot(None),
+        TrackingUsage.token_name != '',
         TrackingUsage.object_type == 'resource'
     ).group_by(TrackingUsage.object_id).order_by(
         desc('total')
@@ -38,6 +39,7 @@ def get_most_accessed_dataset_with_token(limit=10):
     ).filter(
         TrackingUsage.object_id.isnot(None),
         TrackingUsage.token_name.isnot(None),
+        TrackingUsage.token_name != '',
         TrackingUsage.object_type == 'dataset'
     ).group_by(TrackingUsage.object_id).order_by(
         desc('total')
@@ -56,7 +58,8 @@ def get_most_accessed_token(limit=10):
         TrackingUsage.token_name,
         func.count(TrackingUsage.token_name).label('total')
     ).filter(
-        TrackingUsage.token_name.isnot(None)
+        TrackingUsage.token_name.isnot(None),
+        TrackingUsage.token_name != '',
     ).group_by(TrackingUsage.token_name, TrackingUsage.user_id).order_by(
         desc('total')
     ).limit(limit)
@@ -79,7 +82,8 @@ def get_all_token_usage(limit=1000):
         TrackingUsage.object_type,
         TrackingUsage.object_id,
     ).filter(
-        TrackingUsage.token_name.isnot(None)
+        TrackingUsage.token_name.isnot(None),
+        TrackingUsage.token_name != '',
     ).order_by(
         desc(TrackingUsage.timestamp)
     ).limit(limit)
@@ -99,6 +103,7 @@ def get_token_requests_per_day(days=30):
         func.count(TrackingUsage.id).label('total')
     ).filter(
         TrackingUsage.token_name.isnot(None),
+        TrackingUsage.token_name != '',
         TrackingUsage.timestamp >= since,
     ).group_by(day)
 

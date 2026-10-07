@@ -7,6 +7,9 @@ from ckanext.api_tracking.models import CKANURL
 
 log = logging.getLogger(__name__)
 
+# Deliberate opt-out, distinct from broken handlers returning None.
+SKIP_TRACKING = object()
+
 
 class IUsage(Interface):
     '''
@@ -54,6 +57,9 @@ class IUsage(Interface):
             log.error(f"plugin.'{fn_name}' not defined. Unable to track")
             return
 
+        if ret_data is SKIP_TRACKING:
+            return
+
         if not ret_data:
             log.error(f"plugin.'{fn_name}' returned no data. Unable to track")
             return
@@ -78,6 +84,13 @@ class IUsage(Interface):
         tracking_type = ret_data.get('tracking_type')
         tracking_sub_type = ret_data.get('tracking_sub_type')
         token_name = api_token.name if api_token else None
+        internal_tokens = toolkit.aslist(toolkit.config.get(
+            'ckanext.api_tracking.internal_token_names', ''
+        ))
+        if (tracking_type == 'ui' and tracking_sub_type == 'download'
+                and token_name in internal_tokens):
+            tracking_type = 'internal'
+
         object_id = ret_data.get('object_id')
         object_type = ret_data.get('object_type')
         ctx = {'ignore_auth': True}
@@ -171,6 +184,10 @@ class IUsage(Interface):
             return fn(ckan_url)
         else:
             log.error(f"Unable to track {method} API action '{action_name}'")
+
+    def track_post_api_action_xloader_hook(self, ckan_url):
+        """XLoader progress callbacks are operational, not dataset usage."""
+        return SKIP_TRACKING
 
     def track_get_api_action(self, ckan_url):
         """
