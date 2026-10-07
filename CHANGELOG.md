@@ -18,6 +18,10 @@ New Features:
   [#49](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/49)
 
 Bug Fixes:
+- Include language-prefixed dataset URLs in unique visitor counts, deduplicating across URL variants.
+- Exclude empty token names as well as NULL before limiting token queries.
+- Skip XLoader callbacks explicitly without hiding errors from broken handlers.
+- Support `ckanext.api_tracking.internal_token_names` to classify service downloads as `internal.download`.
 - "Users creating most datasets" was empty when `ckan.auth.public_user_details` was false
 - Do not track pages that only looked like a dataset page (e.g. `/dataset/new`)
 - Multiple fixes PR [#48](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/48)
