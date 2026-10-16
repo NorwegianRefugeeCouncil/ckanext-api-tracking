@@ -31,6 +31,8 @@ Bug Fixes:
 - Redirects to a login page (e.g. SAML for anonymous users) were tracked as visits.
   Only successful responses count now, plus downloads redirecting to the resource URL
   [#51](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/51)
+- Downloads of resources whose URL has no scheme (e.g. `example.com/data.csv`) were not tracked
+  [#52](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/52)
 
 # 0.5.4 2025-09-11
 

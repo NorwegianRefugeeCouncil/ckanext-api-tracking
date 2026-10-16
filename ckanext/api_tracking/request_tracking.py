@@ -11,6 +11,7 @@ import hashlib
 import logging
 import re
 from datetime import date
+from urllib.parse import urlsplit
 
 from flask import Blueprint, current_app
 from ckan import plugins
@@ -181,8 +182,17 @@ def is_usage_response(response, tracking_type):
     if tracking_type == 'resource_download' and 300 <= response.status_code < 400:
         resource_id = (request.view_args or {}).get('resource_id')
         resource = model.Resource.get(resource_id) if resource_id else None
-        return bool(resource and resource.url) and response.headers.get('Location') == resource.url
+        return bool(resource and resource.url) and response.headers.get('Location') == get_download_url(resource.url)
     return False
+
+
+def get_download_url(url):
+    """ The URL CKAN redirects to when downloading a resource with this URL.
+        Like resource_show, CKAN adds http:// to URLs saved without a scheme
+    """
+    if urlsplit(url).scheme:
+        return url
+    return 'http://' + url.lstrip('/')
 
 
 @tracking_capture_blueprint.after_app_request
