@@ -172,6 +172,15 @@ def get_visitor_key():
     return hashlib.sha256('|'.join(parts).encode()).hexdigest()
 
 
+def is_preview():
+    """ The browser loads the file inside a page (e.g. pdf_view <object>, image_view <img>).
+        That is a preview, not a download. Browsers send Sec-Fetch-Dest "document" when
+        the user opens or downloads the file, scripts don't send it at all.
+    """
+    dest = request.headers.get('Sec-Fetch-Dest')
+    return bool(dest) and dest != 'document'
+
+
 def is_usage_response(response, tracking_type):
     """ Only successful answers are usage. Errors are not, and redirects usually
         mean "go to the login page" (sent by CKAN or an extension before the view runs).
@@ -211,6 +220,9 @@ def _track_request(response):
         return
 
     if not is_usage_response(response, tracking_type):
+        return
+
+    if tracking_type == 'resource_download' and is_preview():
         return
 
     api_token = get_api_token()
