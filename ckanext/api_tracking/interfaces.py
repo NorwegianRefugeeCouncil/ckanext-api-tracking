@@ -29,6 +29,7 @@ class IUsage(Interface):
         data: dict
             tracking_type: keys from METHOD->TYPE defined in define_paths
             environ: Full request environ
+            response: Flask response (or None)
             user_id: ID of the user CKAN identified for this request (or None)
             visitor_key: anonymous daily key for web visits (or None)
         api_token: ApiToken object or None
@@ -39,10 +40,11 @@ class IUsage(Interface):
             data = item.before_track_usage(data)
 
         environ = data.pop('environ', None)
+        response = data.pop('response', None)
         if not environ:
             log.warning('No environment initialized for request. Unable to track')
             return
-        ckan_url = CKANURL(environ)
+        ckan_url = CKANURL(environ, response=response)
         method = ckan_url.method.lower()
         tracking_type = data['tracking_type']
         log.debug(f"Track: {method} :: {tracking_type}")
@@ -184,18 +186,39 @@ class IUsage(Interface):
         """
         return self._track_api_action('post', ckan_url)
 
-    def _track_api_show(self, ckan_url, object_type, model_class):
-        """ API show actions. The id can come in the query string (GET) or
-            in the body (POST, JSON or form). Callers may send a name or an id,
-            we always store the id so the same object is counted once
+    def _get_api_object_id(self, ckan_url, model_class):
+        """ The id can come in the query string (GET) or in the body (POST,
+            JSON or form). Callers may send a name or an id, we always store
+            the id so the same object is counted once
         """
         object_ref = ckan_url.get_data().get('id')
         obj = model_class.get(str(object_ref)) if object_ref else None
+        return obj.id if obj else object_ref
+
+    def _track_api_show(self, ckan_url, object_type, model_class):
+        """ API show actions """
         return {
             'tracking_type': 'api',
             'tracking_sub_type': 'show',
             'object_type': object_type,
-            'object_id': obj.id if obj else object_ref,
+            'object_id': self._get_api_object_id(ckan_url, model_class),
+        }
+
+    def _track_api_change(self, ckan_url, object_type, model_class, sub_type='edit'):
+        """ API actions that create, update or delete an object.
+            New objects only have an id in the response, so we read it from there first
+        """
+        result = ckan_url.get_response_result()
+        object_id = result.get('id') if isinstance(result, dict) else None
+        if not object_id:
+            object_id = self._get_api_object_id(ckan_url, model_class)
+        api_version, action_name = ckan_url.get_api_action()
+        return {
+            'tracking_type': 'api',
+            'tracking_sub_type': sub_type,
+            'object_type': object_type,
+            'object_id': object_id,
+            'extras': {'action': action_name},
         }
 
     def track_get_api_action_package_show(self, ckan_url):
@@ -217,13 +240,40 @@ class IUsage(Interface):
         return self._track_api_show(ckan_url, 'resource', model.Resource)
 
     def track_post_api_action_package_create(self, ckan_url):
-        object_id = ckan_url.get_query_param('id')
-        return {
-            'tracking_type': 'api',
-            'tracking_sub_type': 'edit',
-            'object_type': 'dataset',
-            'object_id': object_id,
-        }
+        return self._track_api_change(ckan_url, 'dataset', model.Package)
+
+    def track_post_api_action_package_update(self, ckan_url):
+        return self._track_api_change(ckan_url, 'dataset', model.Package)
+
+    def track_post_api_action_package_patch(self, ckan_url):
+        return self._track_api_change(ckan_url, 'dataset', model.Package)
+
+    def track_post_api_action_package_delete(self, ckan_url):
+        return self._track_api_change(ckan_url, 'dataset', model.Package, sub_type='delete')
+
+    def track_post_api_action_resource_create(self, ckan_url):
+        return self._track_api_change(ckan_url, 'resource', model.Resource)
+
+    def track_post_api_action_resource_update(self, ckan_url):
+        return self._track_api_change(ckan_url, 'resource', model.Resource)
+
+    def track_post_api_action_resource_patch(self, ckan_url):
+        return self._track_api_change(ckan_url, 'resource', model.Resource)
+
+    def track_post_api_action_resource_delete(self, ckan_url):
+        return self._track_api_change(ckan_url, 'resource', model.Resource, sub_type='delete')
+
+    def track_post_api_action_organization_create(self, ckan_url):
+        return self._track_api_change(ckan_url, 'organization', model.Group)
+
+    def track_post_api_action_organization_update(self, ckan_url):
+        return self._track_api_change(ckan_url, 'organization', model.Group)
+
+    def track_post_api_action_organization_patch(self, ckan_url):
+        return self._track_api_change(ckan_url, 'organization', model.Group)
+
+    def track_post_api_action_organization_delete(self, ckan_url):
+        return self._track_api_change(ckan_url, 'organization', model.Group, sub_type='delete')
 
     def before_track_usage(self, data):
         ''' Before tracking usage '''

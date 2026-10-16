@@ -535,3 +535,75 @@ class TestApiShowIds:
         resource = factories.Resource()
         tu = self._call(app, 'resource_show', method='post', json={'id': resource['id']})
         assert (tu.object_type, tu.object_id) == ('resource', resource['id'])
+
+
+@pytest.mark.usefixtures('clean_db', 'clean_index')
+class TestApiChanges:
+    """ API actions that create, update or delete datasets, resources and organizations """
+
+    @pytest.fixture
+    def call(self, app):
+        user = factories.SysadminWithToken()
+
+        def _call(action, status=200, **kwargs):
+            url = url_for('api.action', ver=3, logic_function=action)
+            return app.post(url, headers={'Authorization': user['token']}, status=status, **kwargs)
+        return _call
+
+    def rows(self):
+        return model.Session.query(TrackingUsage).order_by(TrackingUsage.timestamp).all()
+
+    def check(self, tu, sub_type, object_type, object_id, action):
+        assert (tu.tracking_type, tu.tracking_sub_type) == ('api', sub_type)
+        assert (tu.object_type, tu.object_id) == (object_type, object_id)
+        assert tu.extras['action'] == action
+        assert tu.token_name
+
+    def test_package_create_json(self, call):
+        response = call('package_create', json={'name': 'new-dataset'})
+        self.check(self.rows()[0], 'edit', 'dataset', response.json['result']['id'], 'package_create')
+
+    def test_package_create_form(self, call):
+        response = call('package_create', data={'name': 'new-dataset'})
+        self.check(self.rows()[0], 'edit', 'dataset', response.json['result']['id'], 'package_create')
+
+    def test_package_update_patch_delete(self, call):
+        dataset = factories.Dataset()
+        call('package_update', json={'id': dataset['name'], 'name': dataset['name'], 'title': 'New'})
+        call('package_patch', json={'id': dataset['name'], 'title': 'Newer'})
+        call('package_delete', json={'id': dataset['name']})
+        rows = self.rows()
+        self.check(rows[0], 'edit', 'dataset', dataset['id'], 'package_update')
+        self.check(rows[1], 'edit', 'dataset', dataset['id'], 'package_patch')
+        self.check(rows[2], 'delete', 'dataset', dataset['id'], 'package_delete')
+
+    def test_resources(self, call):
+        dataset = factories.Dataset()
+        response = call('resource_create', json={'package_id': dataset['id'], 'url': 'https://example.com/a.csv'})
+        resource_id = response.json['result']['id']
+        call('resource_update', json={'id': resource_id, 'url': 'https://example.com/b.csv'})
+        call('resource_patch', json={'id': resource_id, 'name': 'B'})
+        call('resource_delete', json={'id': resource_id})
+        rows = self.rows()
+        self.check(rows[0], 'edit', 'resource', resource_id, 'resource_create')
+        self.check(rows[1], 'edit', 'resource', resource_id, 'resource_update')
+        self.check(rows[2], 'edit', 'resource', resource_id, 'resource_patch')
+        self.check(rows[3], 'delete', 'resource', resource_id, 'resource_delete')
+
+    def test_organizations(self, call):
+        response = call('organization_create', json={'name': 'new-org'})
+        org_id = response.json['result']['id']
+        call('organization_update', json={'id': 'new-org', 'name': 'new-org', 'title': 'New'})
+        call('organization_patch', json={'id': 'new-org', 'title': 'Newer'})
+        call('organization_delete', json={'id': 'new-org'})
+        rows = self.rows()
+        self.check(rows[0], 'edit', 'organization', org_id, 'organization_create')
+        self.check(rows[1], 'edit', 'organization', org_id, 'organization_update')
+        self.check(rows[2], 'edit', 'organization', org_id, 'organization_patch')
+        self.check(rows[3], 'delete', 'organization', org_id, 'organization_delete')
+
+    def test_failed_create_not_tracked(self, call):
+        """ e.g. a validation error (409) """
+        dataset = factories.Dataset()
+        call('package_create', json={'name': dataset['name']}, status=409)
+        assert self.rows() == []

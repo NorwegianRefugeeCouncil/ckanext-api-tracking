@@ -18,6 +18,8 @@ New Features:
   [#49](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/49)
 - "Usage by user" shows web page views (column, top users chart, order)
   [#51](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/51)
+- API: track create, update, patch and delete of datasets, resources and organizations
+  [#56](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/56)
 
 Bug Fixes:
 - "Users creating most datasets" was empty when `ckan.auth.public_user_details` was false
@@ -31,6 +33,8 @@ Bug Fixes:
 - Redirects to a login page (e.g. SAML for anonymous users) were tracked as visits.
   Only successful responses count now, plus downloads redirecting to the resource URL
   [#51](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/51)
+- API: track create, update, patch and delete of datasets, resources and organizations
+  [#55](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/55)
 - API `package_show`, `organization_show` and `resource_show`: store the id even when the caller
   sends a name, and track POST calls (JSON or form) too. They were not tracked
   [#54](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/54)

@@ -11,8 +11,10 @@ class CKANURL:
         This is a class helper for common CKAN URL operations
     """
 
-    def __init__(self, environ):
+    def __init__(self, environ, response=None):
         self.environ = environ
+        # Flask response, when we track after the view ran
+        self.response = response
         # Get the wsgi.input data and ensure it is available for the next request
         self.url = environ.get("PATH_INFO", "").strip('/')
         self.method = environ.get("REQUEST_METHOD", "GET")
@@ -101,6 +103,15 @@ class CKANURL:
             log.error(f"Unable to identify API action in URL: {self.url}")
             return None, None
         return api_version, action_name
+
+    def get_response_result(self):
+        """ The "result" of an API response, None if not available """
+        if self.response is None:
+            return None
+        body = self.response.get_json(silent=True)
+        if not isinstance(body, dict):
+            return None
+        return body.get('result')
 
     def get_url_part(self, index):
         """ Split the URL in parts by "/" """
