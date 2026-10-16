@@ -80,14 +80,18 @@ def get_daily_chart(daily_rows):
 
 
 def get_top_users_chart(records, top=10):
-    """ Chart data: top users by tracked activity (API token requests + logins) """
-    rows = [row for row in records if row['token_requests'] + row['logins'] > 0]
-    rows = sorted(rows, key=lambda row: row['token_requests'] + row['logins'], reverse=True)[:top]
+    """ Chart data: top users by tracked activity (API token requests + web views + logins) """
+    def activity(row):
+        return row['token_requests'] + row['web_views'] + row['logins']
+
+    rows = [row for row in records if activity(row) > 0]
+    rows = sorted(rows, key=activity, reverse=True)[:top]
     return {
         'type': 'bar',
         'labels': [row['user_fullname'] or row['user_name'] for row in rows],
         'datasets': [
             {'label': toolkit._('API token requests'), 'data': [row['token_requests'] for row in rows]},
+            {'label': toolkit._('Web page views'), 'data': [row['web_views'] for row in rows]},
             {'label': toolkit._('Logins'), 'data': [row['logins'] for row in rows]},
         ],
     }

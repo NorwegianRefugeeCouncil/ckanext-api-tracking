@@ -8,10 +8,6 @@
       <p>
         {{ _('Users with any activity in the last {days} days.').format(days=days) }}
       </p>
-      <div class="alert alert-info">
-        {{ _('Web activity is only available as "Last seen" for now (the latest date, not a history of page views).') }}
-      </div>
-
       <p>
         {{ _('Period') }}:
         <span class="btn-group" role="group">
@@ -52,7 +48,7 @@
       </div>
 
       <h3>{{ _('Active users per day') }}</h3>
-      <p class="text-muted">{{ _('Users with API token requests or logins each day. Web visits are not included yet.') }}</p>
+      <p class="text-muted">{{ _('Users with API token requests, web visits or logins each day.') }}</p>
       <div class="tracking-chart" data-module="api-tracking-chart" data-module-chart="{{ h.dump_json(daily_chart) }}">
         <canvas role="img" aria-label="{{ _('Active users per day') }}"></canvas>
       </div>
@@ -60,7 +56,7 @@
       {% if top_chart.labels %}
       <h3>{{ _('Top users') }}</h3>
       <div class="tracking-chart" data-module="api-tracking-chart" data-module-chart="{{ h.dump_json(top_chart) }}">
-        <canvas role="img" aria-label="{{ _('Top users by API token requests and logins') }}"></canvas>
+        <canvas role="img" aria-label="{{ _('Top users by API token requests, web page views and logins') }}"></canvas>
       </div>
       {% endif %}
 
@@ -73,6 +69,7 @@
             <th>{{ _('Organizations') }}</th>
             <th class="metric">{{ _('API token requests') }}</th>
             <th class="metric">{{ _('Tokens used') }}</th>
+            <th class="metric">{{ _('Web page views') }}</th>
             <th class="metric">{{ _('Logins') }}</th>
             <th>{{ _('Last login') }}</th>
             <th>{{ _('Last seen') }}</th>
@@ -91,6 +88,7 @@
               <td>{{ row.organizations }}</td>
               <td class="metric">{{ row.token_requests }}</td>
               <td class="metric">{{ row.tokens_used }}</td>
+              <td class="metric">{{ row.web_views }}</td>
               <td class="metric">{{ row.logins }}</td>
               <td>{% if row.last_login %}{{ h.render_datetime(row.last_login) }}{% endif %}</td>
               <td>{% if row.last_active %}{{ h.render_datetime(row.last_active) }}{% endif %}</td>

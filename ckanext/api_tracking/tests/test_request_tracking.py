@@ -352,3 +352,55 @@ def test_anonymous_tracked_by_default(app):
 def test_anonymous_not_tracked_when_disabled(app):
     app.get(url_for('dataset.search'), headers={'User-Agent': 'Mozilla/5.0'}, status=200)
     assert usage_count() == 0
+
+
+@pytest.mark.usefixtures('clean_db', 'clean_index')
+class TestRedirectToLogin:
+    """ Extensions can send anonymous users to a login page before the view runs
+        (e.g. a before_request registered in make_middleware). That is not usage.
+    """
+
+    @pytest.fixture
+    def login_required(self, app):
+        from flask import redirect, request as flask_request
+
+        def redirect_to_login():
+            if flask_request.path != '/user/login':
+                return redirect('/user/login')
+
+        app.flask_app.before_request(redirect_to_login)
+
+    def test_dataset_page(self, app, login_required):
+        dataset = factories.Dataset()
+        app.get(
+            url_for('dataset.read', id=dataset['name']),
+            headers={'User-Agent': 'Mozilla/5.0'},
+            follow_redirects=False,
+            status=302,
+        )
+        assert usage_count() == 0
+
+    def test_download(self, app, login_required):
+        resource = factories.Resource()
+        app.get(
+            url_for('dataset_resource.download', id=resource['package_id'], resource_id=resource['id']),
+            headers={'User-Agent': 'Mozilla/5.0'},
+            follow_redirects=False,
+            status=302,
+        )
+        assert usage_count() == 0
+
+
+@pytest.mark.usefixtures('clean_db', 'clean_index')
+def test_download_redirect_to_resource_url_tracked(app):
+    """ Resources with an external URL: the download redirects to that URL. That is a download """
+    resource = factories.Resource(url='https://example.com/data.csv')
+    response = app.get(
+        url_for('dataset_resource.download', id=resource['package_id'], resource_id=resource['id']),
+        headers={'User-Agent': 'Mozilla/5.0'},
+        follow_redirects=False,
+        status=302,
+    )
+    assert response.headers['Location'] == 'https://example.com/data.csv'
+    tu = model.Session.query(TrackingUsage).one()
+    assert (tu.tracking_sub_type, tu.object_type, tu.object_id) == ('download', 'resource', resource['id'])
