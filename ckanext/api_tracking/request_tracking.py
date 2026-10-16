@@ -17,6 +17,7 @@ from ckan import plugins
 from ckan.plugins import toolkit
 from ckan.common import config, current_user, g, request
 from ckan.lib import api_token as api_token_lib
+from ckan import model
 from ckan.model import ApiToken
 
 from ckanext.api_tracking.interfaces import IUsage
@@ -170,6 +171,20 @@ def get_visitor_key():
     return hashlib.sha256('|'.join(parts).encode()).hexdigest()
 
 
+def is_usage_response(response, tracking_type):
+    """ Only successful answers are usage. Errors are not, and redirects usually
+        mean "go to the login page" (sent by CKAN or an extension before the view runs).
+        The exception: downloads of resources with an external URL redirect to that URL.
+    """
+    if 200 <= response.status_code < 300:
+        return True
+    if tracking_type == 'resource_download' and 300 <= response.status_code < 400:
+        resource_id = (request.view_args or {}).get('resource_id')
+        resource = model.Resource.get(resource_id) if resource_id else None
+        return bool(resource and resource.url) and response.headers.get('Location') == resource.url
+    return False
+
+
 @tracking_capture_blueprint.after_app_request
 def track_request(response):
     """ Ensure this never breaks the response """
@@ -181,12 +196,11 @@ def track_request(response):
 
 
 def _track_request(response):
-    # Errors are not usage
-    if response.status_code >= 400:
-        return
-
     tracking_type = get_tracking_type()
     if not tracking_type:
+        return
+
+    if not is_usage_response(response, tracking_type):
         return
 
     api_token = get_api_token()

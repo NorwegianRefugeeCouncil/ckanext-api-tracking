@@ -9,6 +9,7 @@ One row per active user with any activity in the period:
 Columns:
  - token_requests: requests made with an API token (any token_name)
  - tokens_used: distinct token names used
+ - web_views: web pages viewed without a token (datasets, resources, organizations and their lists)
  - logins / last_login: login events (needs ckanext.api_tracking.track_login)
  - last_active: CKAN "last seen", only the latest date, not a history
 
@@ -20,6 +21,9 @@ WITH usage AS (
         t.user_id,
         COUNT(*) FILTER (WHERE t.token_name IS NOT NULL) AS token_requests,
         COUNT(DISTINCT t.token_name) AS tokens_used,
+        COUNT(*) FILTER (
+            WHERE t.token_name IS NULL AND t.tracking_type = 'ui' AND t.tracking_sub_type IN ('show', 'home')
+        ) AS web_views,
         COUNT(*) FILTER (WHERE t.tracking_sub_type = 'login') AS logins,
         MAX(t.timestamp) FILTER (WHERE t.tracking_sub_type = 'login') AS last_login
     FROM tracking_usage AS t
@@ -52,6 +56,7 @@ SELECT
     COALESCE(o.organizations, '') AS organizations,
     COALESCE(us.token_requests, 0) AS token_requests,
     COALESCE(us.tokens_used, 0) AS tokens_used,
+    COALESCE(us.web_views, 0) AS web_views,
     COALESCE(us.logins, 0) AS logins,
     us.last_login
 FROM "user" AS u
@@ -63,7 +68,7 @@ WHERE
     u.name != :site_user_name AND
     (us.user_id IS NOT NULL OR u.last_active >= :measure_from)
 ORDER BY
-    COALESCE(us.token_requests, 0) + COALESCE(us.logins, 0) DESC,
+    COALESCE(us.token_requests, 0) + COALESCE(us.web_views, 0) + COALESCE(us.logins, 0) DESC,
     u.last_active DESC NULLS LAST,
     u.name
 LIMIT :limit;

@@ -7,8 +7,8 @@
 ckan.module("api-tracking-chart", function ($) {
   "use strict";
 
-  // Fixed order, max 2 series (validated for color blindness)
-  var COLORS = ["#2a78d6", "#eb6834"];
+  // Fixed order, max 3 series (validated for color blindness)
+  var COLORS = ["#2a78d6", "#eb6834", "#1baf7a"];
 
   return {
     options: {

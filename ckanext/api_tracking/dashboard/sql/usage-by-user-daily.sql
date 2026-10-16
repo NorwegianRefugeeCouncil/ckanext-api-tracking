@@ -1,7 +1,6 @@
 /*
-Users with tracked activity per day (API token requests and logins).
+Users with tracked activity per day (API token requests, web visits and logins).
 Days without activity are returned with 0.
-Web visits are not included yet: user.last_active only keeps the latest date.
 
 Used by ckanext/api_tracking/queries/users.py usage_by_user_daily()
 */

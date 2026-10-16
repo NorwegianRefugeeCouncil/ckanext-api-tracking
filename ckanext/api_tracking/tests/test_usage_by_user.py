@@ -47,6 +47,34 @@ class TestUsageByUserQuery:
         factories.User()
         assert usage_by_user(days=30) == []
 
+    def test_web_views(self):
+        """ Web pages viewed without a token. Logins and token requests are not web views """
+        web_user = factories.User()
+        api_user = factories.User()
+        for sub_type in ['show', 'show', 'home']:
+            add_usage(web_user['id'], tracking_type='ui', tracking_sub_type=sub_type)
+        add_login(web_user['id'])
+        # A web page visited with an API token is a token request
+        add_usage(api_user['id'], token_name='token-1', tracking_type='ui', tracking_sub_type='show')
+
+        rows = rows_by_user(usage_by_user(days=30))
+
+        assert rows[web_user['id']]['web_views'] == 3
+        assert rows[web_user['id']]['logins'] == 1
+        assert rows[api_user['id']]['web_views'] == 0
+        assert rows[api_user['id']]['token_requests'] == 1
+
+    def test_web_views_count_for_order(self):
+        reader = factories.User()
+        api_user = factories.User()
+        for _ in range(3):
+            add_usage(reader['id'], tracking_type='ui', tracking_sub_type='show')
+        add_usage(api_user['id'], token_name='token-1')
+
+        rows = usage_by_user(days=30)
+
+        assert [row['user_id'] for row in rows] == [reader['id'], api_user['id']]
+
     def test_counts(self):
         user_a = factories.User()
         user_b = factories.User()
@@ -171,15 +199,19 @@ class TestUsageByUserSummary:
 
 def test_top_users_chart():
     records = [
-        {'user_name': 'quiet', 'user_fullname': '', 'token_requests': 0, 'logins': 0},
-        {'user_name': 'low', 'user_fullname': 'Low User', 'token_requests': 1, 'logins': 0},
-        {'user_name': 'high', 'user_fullname': '', 'token_requests': 5, 'logins': 2},
+        {'user_name': 'quiet', 'user_fullname': '', 'token_requests': 0, 'web_views': 0, 'logins': 0},
+        {'user_name': 'low', 'user_fullname': 'Low User', 'token_requests': 1, 'web_views': 0, 'logins': 0},
+        {'user_name': 'high', 'user_fullname': '', 'token_requests': 5, 'web_views': 0, 'logins': 2},
+        {'user_name': 'web', 'user_fullname': '', 'token_requests': 0, 'web_views': 3, 'logins': 1},
     ]
     chart = get_top_users_chart(records)
     # Users without tracked activity are not in the chart, most active first
-    assert chart['labels'] == ['high', 'Low User']
-    assert chart['datasets'][0]['data'] == [5, 1]
-    assert chart['datasets'][1]['data'] == [2, 0]
+    assert chart['labels'] == ['high', 'web', 'Low User']
+    assert [dataset['data'] for dataset in chart['datasets']] == [
+        [5, 0, 1],  # API token requests
+        [0, 3, 0],  # Web page views
+        [2, 1, 0],  # Logins
+    ]
 
 
 @pytest.mark.usefixtures('clean_db')
