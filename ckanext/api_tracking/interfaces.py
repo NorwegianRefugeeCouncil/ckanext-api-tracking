@@ -184,32 +184,37 @@ class IUsage(Interface):
         """
         return self._track_api_action('post', ckan_url)
 
-    def track_get_api_action_package_show(self, ckan_url):
-        object_id = ckan_url.get_query_param('id')
+    def _track_api_show(self, ckan_url, object_type, model_class):
+        """ API show actions. The id can come in the query string (GET) or
+            in the body (POST, JSON or form). Callers may send a name or an id,
+            we always store the id so the same object is counted once
+        """
+        object_ref = ckan_url.get_data().get('id')
+        obj = model_class.get(str(object_ref)) if object_ref else None
         return {
             'tracking_type': 'api',
             'tracking_sub_type': 'show',
-            'object_type': 'dataset',
-            'object_id': object_id,
+            'object_type': object_type,
+            'object_id': obj.id if obj else object_ref,
         }
+
+    def track_get_api_action_package_show(self, ckan_url):
+        return self._track_api_show(ckan_url, 'dataset', model.Package)
+
+    def track_post_api_action_package_show(self, ckan_url):
+        return self._track_api_show(ckan_url, 'dataset', model.Package)
 
     def track_get_api_action_organization_show(self, ckan_url):
-        object_id = ckan_url.get_query_param('id')
-        return {
-            'tracking_type': 'api',
-            'tracking_sub_type': 'show',
-            'object_type': 'organization',
-            'object_id': object_id,
-        }
+        return self._track_api_show(ckan_url, 'organization', model.Group)
+
+    def track_post_api_action_organization_show(self, ckan_url):
+        return self._track_api_show(ckan_url, 'organization', model.Group)
 
     def track_get_api_action_resource_show(self, ckan_url):
-        object_id = ckan_url.get_query_param('id')
-        return {
-            'tracking_type': 'api',
-            'tracking_sub_type': 'show',
-            'object_type': 'resource',
-            'object_id': object_id,
-        }
+        return self._track_api_show(ckan_url, 'resource', model.Resource)
+
+    def track_post_api_action_resource_show(self, ckan_url):
+        return self._track_api_show(ckan_url, 'resource', model.Resource)
 
     def track_post_api_action_package_create(self, ckan_url):
         object_id = ckan_url.get_query_param('id')

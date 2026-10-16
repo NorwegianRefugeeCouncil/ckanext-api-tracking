@@ -496,3 +496,42 @@ class TestDownloads:
 ])
 def test_get_download_url(url, expected):
     assert request_tracking.get_download_url(url) == expected
+
+
+@pytest.mark.usefixtures('clean_db', 'clean_index')
+class TestApiShowIds:
+    """ API show calls store the object id, whatever the caller sent """
+
+    def _call(self, app, action, method='get', **kwargs):
+        user = factories.UserWithToken()
+        url = url_for('api.action', ver=3, logic_function=action)
+        getattr(app, method)(url, headers={'Authorization': user['token']}, status=200, **kwargs)
+        return model.Session.query(TrackingUsage).one()
+
+    @pytest.mark.parametrize('use_name', [True, False])
+    def test_package_show_get(self, app, use_name):
+        dataset = factories.Dataset()
+        ref = dataset['name'] if use_name else dataset['id']
+        tu = self._call(app, 'package_show', query_string={'id': ref})
+        assert (tu.object_type, tu.object_id) == ('dataset', dataset['id'])
+
+    def test_package_show_post_json(self, app):
+        dataset = factories.Dataset()
+        tu = self._call(app, 'package_show', method='post', json={'id': dataset['name']})
+        assert (tu.tracking_type, tu.tracking_sub_type) == ('api', 'show')
+        assert (tu.object_type, tu.object_id) == ('dataset', dataset['id'])
+
+    def test_package_show_post_form(self, app):
+        dataset = factories.Dataset()
+        tu = self._call(app, 'package_show', method='post', data={'id': dataset['name']})
+        assert (tu.object_type, tu.object_id) == ('dataset', dataset['id'])
+
+    def test_organization_show_name(self, app):
+        org = factories.Organization()
+        tu = self._call(app, 'organization_show', method='post', json={'id': org['name']})
+        assert (tu.object_type, tu.object_id) == ('organization', org['id'])
+
+    def test_resource_show_post(self, app):
+        resource = factories.Resource()
+        tu = self._call(app, 'resource_show', method='post', json={'id': resource['id']})
+        assert (tu.object_type, tu.object_id) == ('resource', resource['id'])

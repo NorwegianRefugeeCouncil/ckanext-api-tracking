@@ -31,6 +31,9 @@ Bug Fixes:
 - Redirects to a login page (e.g. SAML for anonymous users) were tracked as visits.
   Only successful responses count now, plus downloads redirecting to the resource URL
   [#51](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/51)
+- API `package_show`, `organization_show` and `resource_show`: store the id even when the caller
+  sends a name, and track POST calls (JSON or form) too. They were not tracked
+  [#54](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/54)
 - Previews (e.g. pdf_view, image_view loading the file in the page) were tracked as downloads
   [#53](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/53)
 - Downloads of resources whose URL has no scheme (e.g. `example.com/data.csv`) were not tracked
