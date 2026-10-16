@@ -18,6 +18,8 @@ New Features:
   [#49](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/49)
 - "Usage by user" shows web page views (column, top users chart, order)
   [#51](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/51)
+- API: track create, update, patch and delete of datasets, resources and organizations
+  [#55](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/55)
 
 Bug Fixes:
 - "Users creating most datasets" was empty when `ckan.auth.public_user_details` was false

@@ -166,10 +166,9 @@ class TestCKANURLIntegration:
         )
         assert response.status_code == 200
 
-        # Test TrackingUsage record was NOT created
-        # We didn't track resource creation  #TODO
-        tracking_records = model.Session.query(TrackingUsage).all()
-        assert len(tracking_records) == 0
+        tr = model.Session.query(TrackingUsage).one()
+        assert (tr.tracking_sub_type, tr.object_type) == ('edit', 'resource')
+        assert tr.object_id == response.json['result']['id']
 
     def test_empty_request_tracking(self, middleware_app):
         """Test tracking for request containing no data"""

@@ -239,6 +239,7 @@ def _track_request(response):
         data = {
             'tracking_type': tracking_type,
             'environ': request.environ,
+            'response': response,
             # Anonymous users have id ""
             'user_id': current_user.id or None,
             'visitor_key': visitor_key,
