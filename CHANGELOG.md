@@ -16,6 +16,8 @@ New Features:
 - New settings `ckanext.api_tracking.track_ui_users` and `track_ui_anonymous`
   (default true): store web pages visits (no JS required)
   [#49](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/49)
+- "Usage by user" shows web page views (column, top users chart, order)
+  [#51](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/51)
 
 Bug Fixes:
 - "Users creating most datasets" was empty when `ckan.auth.public_user_details` was false
@@ -26,6 +28,9 @@ Bug Fixes:
   - Latest API token usage no longer crashes for datasets without organization
   - Latest API token usage looks up each user and object once (it was once per row)
   - Remove unused SQL files and helpers
+- Redirects to a login page (e.g. SAML for anonymous users) were tracked as visits.
+  Only successful responses count now, plus downloads redirecting to the resource URL
+  [#51](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/51)
 
 # 0.5.4 2025-09-11
 
