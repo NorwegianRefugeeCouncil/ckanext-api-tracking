@@ -454,6 +454,33 @@ class TestDownloads:
         app.test_client().head(download_url(resource), headers=BROWSER, follow_redirects=False)
         assert download_rows() == []
 
+    @pytest.mark.parametrize('dest, tracked', [
+        (None, True),  # scripts, old browsers
+        ('document', True),  # the user opens or downloads the file
+        ('object', False),  # pdf_view
+        ('image', False),  # image_view
+        ('iframe', False),
+        ('empty', False),  # JS fetch
+    ])
+    def test_previews_not_tracked(self, app, dest, tracked):
+        resource = factories.Resource(url='https://example.com/data.pdf')
+        headers = dict(BROWSER, **{'Sec-Fetch-Dest': dest}) if dest else BROWSER
+        app.get(download_url(resource), headers=headers, follow_redirects=False)
+        assert len(download_rows()) == (1 if tracked else 0)
+
+    def test_preview_with_api_token_not_tracked(self, app):
+        user = factories.UserWithToken()
+        resource = factories.Resource(url='https://example.com/data.pdf')
+        headers = {'Authorization': user['token'], 'Sec-Fetch-Dest': 'image'}
+        app.get(download_url(resource), headers=headers, follow_redirects=False)
+        assert download_rows() == []
+
+    def test_other_pages_ignore_sec_fetch_dest(self, app):
+        """ Only downloads can be previews """
+        dataset = factories.Dataset()
+        app.get(url_for('dataset.read', id=dataset['name']), headers=dict(BROWSER, **{'Sec-Fetch-Dest': 'iframe'}))
+        assert usage_count() == 1
+
     def test_missing_resource_not_tracked(self, app):
         dataset = factories.Dataset()
         url = url_for('dataset_resource.download', id=dataset['id'], resource_id='missing')
