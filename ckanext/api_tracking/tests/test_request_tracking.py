@@ -391,16 +391,81 @@ class TestRedirectToLogin:
         assert usage_count() == 0
 
 
+BROWSER = {'User-Agent': 'Mozilla/5.0'}
+
+
+def download_url(resource, **kwargs):
+    return url_for('dataset_resource.download', id=resource['package_id'], resource_id=resource['id'], **kwargs)
+
+
+def download_rows():
+    return model.Session.query(TrackingUsage).filter(TrackingUsage.tracking_sub_type == 'download').all()
+
+
 @pytest.mark.usefixtures('clean_db', 'clean_index')
-def test_download_redirect_to_resource_url_tracked(app):
-    """ Resources with an external URL: the download redirects to that URL. That is a download """
-    resource = factories.Resource(url='https://example.com/data.csv')
-    response = app.get(
-        url_for('dataset_resource.download', id=resource['package_id'], resource_id=resource['id']),
-        headers={'User-Agent': 'Mozilla/5.0'},
-        follow_redirects=False,
-        status=302,
-    )
-    assert response.headers['Location'] == 'https://example.com/data.csv'
-    tu = model.Session.query(TrackingUsage).one()
-    assert (tu.tracking_sub_type, tu.object_type, tu.object_id) == ('download', 'resource', resource['id'])
+class TestDownloads:
+    """ CKAN serves uploaded files (200) and redirects to the URL of the other resources (302) """
+
+    def test_uploaded_file(self, app, create_with_upload):
+        dataset = factories.Dataset()
+        resource = create_with_upload('a,b\n1,2\n', 'data.csv', package_id=dataset['id'])
+        app.get(download_url(resource), headers=BROWSER, status=200)
+        app.get(download_url(resource, filename='data.csv'), headers=BROWSER, status=200)
+
+        rows = download_rows()
+        assert len(rows) == 2
+        assert {(tu.tracking_type, tu.object_type, tu.object_id) for tu in rows} == {('ui', 'resource', resource['id'])}
+
+    def test_redirect_to_resource_url(self, app):
+        resource = factories.Resource(url='https://example.com/data.csv')
+        response = app.get(download_url(resource), headers=BROWSER, follow_redirects=False, status=302)
+        assert response.headers['Location'] == 'https://example.com/data.csv'
+        tu = model.Session.query(TrackingUsage).one()
+        assert (tu.tracking_sub_type, tu.object_type, tu.object_id) == ('download', 'resource', resource['id'])
+
+    def test_resource_url_without_scheme(self, app):
+        """ CKAN adds http:// when it redirects """
+        resource = factories.Resource(url='example.com/data.csv')
+        response = app.get(download_url(resource), headers=BROWSER, follow_redirects=False, status=302)
+        assert response.headers['Location'] == 'http://example.com/data.csv'
+        assert len(download_rows()) == 1
+
+    def test_logged_in_user(self, app):
+        client, user = logged_in_client(app)
+        resource = factories.Resource(url='https://example.com/data.csv')
+        client.get(download_url(resource), headers=BROWSER, base_url=session_base_url(), follow_redirects=False)
+        tu = download_rows()[0]
+        assert tu.user_id == user['id']
+        assert tu.token_name is None
+
+    def test_api_token(self, app):
+        """ Scripts can download with a token. We keep the token name """
+        user = factories.UserWithToken()
+        resource = factories.Resource(url='https://example.com/data.csv')
+        app.get(download_url(resource), headers={'Authorization': user['token']}, follow_redirects=False)
+        tu = download_rows()[0]
+        assert tu.user_id == user['id']
+        assert tu.token_name
+        assert tu.visitor_key is None
+
+    def test_head_not_tracked(self, app):
+        """ HEAD only checks the file (e.g. link checkers), nothing is downloaded """
+        resource = factories.Resource(url='https://example.com/data.csv')
+        app.test_client().head(download_url(resource), headers=BROWSER, follow_redirects=False)
+        assert download_rows() == []
+
+    def test_missing_resource_not_tracked(self, app):
+        dataset = factories.Dataset()
+        url = url_for('dataset_resource.download', id=dataset['id'], resource_id='missing')
+        app.get(url, headers=BROWSER, status=404)
+        assert download_rows() == []
+
+
+@pytest.mark.parametrize('url, expected', [
+    ('https://example.com/data.csv', 'https://example.com/data.csv'),
+    ('ftp://example.com/data.csv', 'ftp://example.com/data.csv'),
+    ('example.com/data.csv', 'http://example.com/data.csv'),
+    ('//example.com/data.csv', 'http://example.com/data.csv'),
+])
+def test_get_download_url(url, expected):
+    assert request_tracking.get_download_url(url) == expected
