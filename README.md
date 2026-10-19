@@ -85,7 +85,8 @@ or clone the source and install it on the virtualenv
 Add `api_tracking` to the `ckan.plugins` setting in your CKAN
    config file (by default the config file is located at
    `/etc/ckan/default/ckan.ini`).
-It's also required to add the core extenstion `tracking` to the `ckan.plugins` setting.
+The CKAN core `tracking` plugin is not needed: this extension replaces it
+(its old data is imported once, see below).
 
 
 Restart CKAN.

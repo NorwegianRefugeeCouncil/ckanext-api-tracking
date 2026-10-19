@@ -1,16 +1,21 @@
- -- Similar to the query in use at the CKAN core function _recent_views (ckan/cli/tracking.py)
- -- This query is used to get the most viewed datasets from the tracking_summary table
+/*
+Daily unique visits to dataset pages in a period: a person visiting a dataset
+page several times in a day counts once that day (same as CKAN core tracking).
+Used by dashboard/stats.py
+*/
 
-SELECT 
-    p.id as package_id,
-    p.name as package_name,
-    p.title as package_title,
-    COALESCE(SUM(s.count), 0) AS total_views
-FROM package AS p
-LEFT OUTER JOIN tracking_summary AS s ON s.package_id = p.id
+SELECT
+    p.id AS package_id,
+    p.name AS package_name,
+    p.title AS package_title,
+    COUNT(DISTINCT (CAST(t.timestamp AS date), COALESCE(t.user_id, t.visitor_key))) AS total_views
+FROM tracking_usage AS t
+JOIN package AS p ON p.id = t.object_id
 WHERE
-  s.tracking_date >= :measure_from and
-  s.package_id != '~~not~found~~'
-GROUP BY p.id, p.name
-ORDER BY total_views DESC
+    t.tracking_type = 'ui'
+    AND t.tracking_sub_type = 'show'
+    AND t.object_type = 'dataset'
+    AND t.timestamp >= :measure_from
+GROUP BY p.id, p.name, p.title
+ORDER BY total_views DESC, p.name
 LIMIT :limit;
