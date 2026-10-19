@@ -20,6 +20,8 @@ New Features:
   [#51](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/51)
 - API: track create, update, patch and delete of datasets, resources and organizations
   [#55](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/55)
+- Import the CKAN core tracking data (`tracking_raw`) once, with a migration on `ckan db upgrade`.
+  [#56](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/56)
 
 Bug Fixes:
 - "Users creating most datasets" was empty when `ckan.auth.public_user_details` was false
