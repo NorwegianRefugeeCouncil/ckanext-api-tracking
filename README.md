@@ -122,6 +122,31 @@ can be replaced with a regular expression (case insensitive):
 ckanext.api_tracking.ignore_user_agents = bot|crawl|spider|curl
 ```
 
+## Import CKAN core tracking data
+
+This extension replaces the CKAN core `tracking` plugin. Its old page views and
+downloads (`tracking_raw` table) are imported once into this extension's table by
+a migration, when you run `ckan db upgrade`. Only rows older than the first web
+visit tracked by this extension are imported, so nothing is counted twice.
+Imported rows have `extras.source = "tracking_raw"`.
+
+A failed import does not stop `ckan db upgrade` (CKAN starts anyway): check the logs.
+
+To skip the automatic import (to run it by hand, or never):
+
+```
+ckanext.api_tracking.import_legacy_on_upgrade = false  # default is true
+```
+
+The same import can be run by hand. It is safe to run again, rows already
+imported are skipped:
+
+```
+ckan api-tracking import-legacy --dry-run   # only count the rows
+ckan api-tracking import-legacy
+ckan api-tracking import-legacy --before 2026-01-01
+```
+
 
 ## License
 

@@ -4,6 +4,7 @@ from ckan.plugins import toolkit
 from ckan.lib.plugins import DefaultTranslation
 
 from ckanext.api_tracking import blueprints
+from ckanext.api_tracking.cli import api_tracking as api_tracking_cli
 from ckanext.api_tracking.interfaces import IUsage
 from ckanext.api_tracking.request_tracking import tracking_capture_blueprint
 from ckanext.api_tracking.auth import base as auth_base
@@ -21,10 +22,16 @@ class TrackingPlugin(plugins.SingletonPlugin, DefaultTranslation):
     plugins.implements(plugins.IActions)
     plugins.implements(plugins.IAuthFunctions)
     plugins.implements(plugins.IBlueprint)
+    plugins.implements(plugins.IClick)
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.ISignal)
     plugins.implements(IUsage, inherit=True)
     plugins.implements(plugins.ITranslation)
+
+    # IClick
+
+    def get_commands(self):
+        return [api_tracking_cli]
 
     # IConfigurer
 
