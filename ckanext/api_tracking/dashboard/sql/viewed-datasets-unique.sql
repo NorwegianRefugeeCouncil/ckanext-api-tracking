@@ -8,19 +8,16 @@ This query is used in ckanext/api_tracking/dashboard/stats.py module to collect 
 */
 
 SELECT 
-    CASE 
-        WHEN tr.url LIKE '/dataset/%' THEN substring(tr.url FROM '/dataset/([^/]+)')
-        ELSE NULL 
-    END AS package_name,
+    p.name AS package_name,
     p.title as package_title,
     p.id as package_id,
     COUNT(DISTINCT user_key) AS total_views
 FROM tracking_raw as tr
-JOIN package as p ON p.name = substring(tr.url FROM '/dataset/([^/]+)')
+JOIN package as p ON p.name = substring(tr.url FROM '^/(?:[a-z]{2}(?:[_-][A-Za-z]{2})?/)?dataset/([^/?#]+)')
 WHERE
   access_timestamp >= :measure_from and
   tracking_type = 'page' and
-  tr.url LIKE '/dataset/%'
+  tr.url ~ '^/(?:[a-z]{2}(?:[_-][A-Za-z]{2})?/)?dataset/[^/?#]+'
 
 GROUP BY package_name, package_title, package_id
 ORDER BY total_views DESC

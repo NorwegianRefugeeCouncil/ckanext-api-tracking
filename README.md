@@ -123,6 +123,22 @@ ckanext.api_tracking.ignore_user_agents = bot|crawl|spider|curl
 ```
 
 
+### Internal service downloads
+
+To distinguish automated resource downloads from web downloads, list service
+API token names (space-separated; empty by default):
+
+```ini
+ckanext.api_tracking.internal_token_names = datapusher_multi
+```
+
+Downloads authenticated with these tokens are stored as `internal.download`.
+They remain in token usage metrics, and their classification is visible in the
+dashboard, CSV and API. Reserve these names for service tokens: the name is an
+operational convention, not proof that a request originated from XLoader.
+Existing events are not reclassified. XLoader POST callbacks (`xloader_hook`)
+are deliberately excluded from usage tracking.
+
 ## License
 
 [AGPL](https://www.gnu.org/licenses/agpl-3.0.en.html)
