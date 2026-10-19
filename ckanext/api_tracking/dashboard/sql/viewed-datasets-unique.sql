@@ -1,27 +1,24 @@
 /*
-Unique views in a period
-If a user views a dataset multiple times in a period, it will only be counted once
-
-Based on the tracking_raw table because the tracking_summary table does not allow to count unique views in a period.
-
-This query is used in ckanext/api_tracking/dashboard/stats.py module to collect views statistics.
+Unique visits to dataset pages in a period.
+A person is counted once: the user when logged in, otherwise the anonymous visitor_key
+(it changes every day, so anonymous visitors are unique per day).
+Optional :package_id (id or name) to get a single dataset.
+Used by dashboard/stats.py
 */
 
-SELECT 
-    CASE 
-        WHEN tr.url LIKE '/dataset/%' THEN substring(tr.url FROM '/dataset/([^/]+)')
-        ELSE NULL 
-    END AS package_name,
-    p.title as package_title,
-    p.id as package_id,
-    COUNT(DISTINCT user_key) AS total_views
-FROM tracking_raw as tr
-JOIN package as p ON p.name = substring(tr.url FROM '/dataset/([^/]+)')
+SELECT
+    p.name AS package_name,
+    p.title AS package_title,
+    p.id AS package_id,
+    COUNT(DISTINCT COALESCE(t.user_id, t.visitor_key)) AS total_views
+FROM tracking_usage AS t
+JOIN package AS p ON p.id = t.object_id
 WHERE
-  access_timestamp >= :measure_from and
-  tracking_type = 'page' and
-  tr.url LIKE '/dataset/%'
-
-GROUP BY package_name, package_title, package_id
-ORDER BY total_views DESC
+    t.tracking_type = 'ui'
+    AND t.tracking_sub_type = 'show'
+    AND t.object_type = 'dataset'
+    AND t.timestamp >= :measure_from
+    AND (CAST(:package_id AS text) IS NULL OR p.id = :package_id OR p.name = :package_id)
+GROUP BY p.id, p.name, p.title
+ORDER BY total_views DESC, p.name
 LIMIT :limit;

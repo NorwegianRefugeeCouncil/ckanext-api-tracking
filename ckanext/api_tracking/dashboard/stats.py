@@ -1,99 +1,65 @@
 """
-Stats for our dashboard
+Stats for our dashboard: dataset views and resource downloads.
+Read only from tracking_usage (CKAN core tracking data is imported once, see legacy.py)
 """
 import logging
 from datetime import datetime, timedelta
-from ckan import model
+from ckan.plugins import toolkit
 from ckanext.api_tracking.dashboard import query_results
 
 
 log = logging.getLogger(__name__)
 
 
-def get_unique_dataset_views(days_ago=365, limit=10, package_id=None):
-    """ Get an ordered list of most viewed datasets """
-
-    log.debug(f'Getting dataset views for the last {days_ago} days')
-    sql_file = 'viewed-datasets-unique.sql'
-    measure_from = datetime.now() - timedelta(days=days_ago)
-    params = {
+def _params(days_ago, limit, package_id=None):
+    return {
         'limit': limit,
-        'measure_from': measure_from,
+        'measure_from': datetime.now() - timedelta(days=days_ago),
+        'package_id': package_id,
     }
-    results = query_results(sql_file, params=params)
 
-    ret = []
-    for row in results:
-        if package_id and package_id not in [row['package_name'], row['package_id']]:
-            continue
-        ret.append({
+
+def get_unique_dataset_views(days_ago=365, limit=10, package_id=None):
+    """ Get an ordered list of most viewed datasets (unique visits in the period) """
+    log.debug(f'Getting unique dataset views for the last {days_ago} days')
+    results = query_results('viewed-datasets-unique.sql', params=_params(days_ago, limit, package_id))
+    return [
+        {
             'name': row['package_name'],
             'views': row['total_views'],
             'title': row['package_title'],
             'id': row['package_id'],
-        })
-    return ret
+        }
+        for row in results
+    ]
 
 
 def get_dataset_views(days_ago=365, limit=10):
-    """ Get an ordered list of most viewed datasets """
-
+    """ Get an ordered list of most viewed datasets (daily unique visits) """
     log.debug(f'Getting dataset views for the last {days_ago} days')
-    sql_file = 'viewed-datasets.sql'
-    measure_from = datetime.now() - timedelta(days=days_ago)
-    params = {
-        'limit': limit,
-        'measure_from': measure_from,
-    }
-    results = query_results(sql_file, params=params)
-
-    ret = []
-    for row in results:
-        ret.append({
+    results = query_results('viewed-datasets.sql', params=_params(days_ago, limit))
+    return [
+        {
             'name': row['package_name'],
             'views': row['total_views'],
             'title': row['package_title'],
-        })
-    return ret
+        }
+        for row in results
+    ]
 
 
 def get_resource_downloads(days_ago=365, limit=10, package_id=None):
     """ Get an ordered list of most downloaded resources """
-
     log.debug(f'Getting resource downloads for the last {days_ago} days')
-    # We take advantage of ckan tracking update to summarize our custom tracking data
-    sql_file = 'downloaded-resources.sql'
-    measure_from = datetime.now() - timedelta(days=days_ago)
-    params = {
-        'limit': limit,
-        'measure_from': measure_from,
-    }
-    results = query_results(sql_file, params=params)
-
-    ret = []
-    for row in results:
-        url = row['url']
-        # url is like '/dataset/{package_name}/resource/{resource_id}'
-        resource_id = url.split('/')[-1]
-        resource = model.Resource.get(resource_id)
-        if not resource:
-            log.error(f'Resource {resource_id} not found')
-            continue
-        resource_name = resource.name if resource else 'No name'
-        package = model.Package.get(resource.package_id)
-        if not package:
-            log.error(f'Package {resource.package_id} not found for {resource_id}')
-            continue
-
-        if package_id and package_id not in [package.id, package.name]:
-            continue
-
-        package_title = package.title if package.title else package.name
-        name = f'{resource_name} - {package_title}'
-        ret.append({
-            'resource_id': resource_id,
+    results = query_results('downloaded-resources.sql', params=_params(days_ago, limit, package_id))
+    return [
+        {
+            'resource_id': row['resource_id'],
             'downloads': row['total_downloads'],
-            'title': name,
-            'url': url,
-        })
-    return ret
+            'title': f"{row['resource_name'] or row['resource_id']} - {row['package_title']}",
+            'url': toolkit.url_for(
+                'dataset_resource.read', id=row['package_name'], resource_id=row['resource_id']
+            ),
+        }
+        for row in results
+    ]
