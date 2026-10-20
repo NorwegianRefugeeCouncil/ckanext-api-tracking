@@ -1,4 +1,10 @@
-# Next release
+# next release
+
+New Features:
+
+Bug Fixes:
+
+# 0.6.0 2026-10-19
 
 New Features:
 - Capture usage in `after_app_request` hook instead of a WSGI middleware
