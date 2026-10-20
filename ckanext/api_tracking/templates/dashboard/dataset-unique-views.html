@@ -13,6 +13,12 @@
           If a user visits a dataset page multiple times in a day, week, month, or year, it will be counted as one unique visit.
         {% endtrans %}
       </p>
+      <p>
+        {% trans %}
+          Visitors who are not logged in are identified by a key that changes every day,
+          so they count once per day.
+        {% endtrans %}
+      </p>
       <h3>{{  _("Last week")  }}</h3>
       <table class="table table-chunky table-bordered table-striped">
         <thead>

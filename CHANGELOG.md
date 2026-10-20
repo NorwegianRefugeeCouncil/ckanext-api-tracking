@@ -23,8 +23,7 @@ New Features:
 - Import the CKAN core tracking data (`tracking_raw`) once, with a migration on `ckan db upgrade`.
   [#56](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/56)
 - "Most viewed datasets" (unique and daily) and "Resource downloads" read only from this
-  extension's data. The CKAN core `tracking` plugin and its `ckan tracking update` cron are not
-  needed anymore. [#57](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/57)
+  extension's data. The CKAN core `tracking` plugin and its `ckan tracking update` cron are not needed anymore. [#57](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/57)
 
 Bug Fixes:
 - "Users creating most datasets" was empty when `ckan.auth.public_user_details` was false
@@ -45,6 +44,7 @@ Bug Fixes:
   [#53](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/53)
 - Downloads of resources whose URL has no scheme (e.g. `example.com/data.csv`) were not tracked
   [#52](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/52)
+- "Most viewed datasets" (unique) explains that visitors who are not logged in count once per day [#58](https://github.com/NorwegianRefugeeCouncil/ckanext-api-tracking/pull/58)
 
 # 0.5.4 2025-09-11
 
