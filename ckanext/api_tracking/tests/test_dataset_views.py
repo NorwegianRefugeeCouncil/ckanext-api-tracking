@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
-from pathlib import Path
 
 import pytest
 from ckan import model
 from ckan.lib.helpers import url_for
+from ckan.plugins import toolkit
 from ckan.tests import factories
 
 from ckanext.api_tracking.dashboard.stats import get_dataset_views, get_resource_downloads, get_unique_dataset_views
@@ -173,11 +173,8 @@ class TestPages:
         assert title in response.body
 
 
-def test_dashboards_do_not_read_core_tracking():
-    """ This extension replaces CKAN core tracking: its tables are only read by the legacy import """
-    dashboard = Path(__file__).parent.parent / 'dashboard'
-    for path in dashboard.rglob('*'):
-        if path.suffix in ('.py', '.sql'):
-            text = path.read_text()
-            assert 'tracking_raw' not in text, path
-            assert 'tracking_summary' not in text, path
+def test_core_tracking_plugin_not_loaded():
+    """ The whole test suite runs without the CKAN core tracking plugin """
+    plugins = toolkit.aslist(toolkit.config.get('ckan.plugins'))
+    assert 'tracking' not in plugins
+    assert not toolkit.asbool(toolkit.config.get('ckan.tracking_enabled', False))
